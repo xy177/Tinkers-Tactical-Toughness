@@ -14,7 +14,7 @@ apply plugin: 'maven-publish'
 
 version = '1.0'
 group = "com.xy177.tt2"
-archivesBaseName = "tinkerstacticaltoughness"
+archivesBaseName = "TinkersTacticalToughness"
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 
@@ -31,7 +31,7 @@ minecraft {
         }
     }
 
-    accessTransformer = file('src/main/resources/META-INF/bxlib_at.cfg')
+    accessTransformer = file('src/main/resources/META-INF/tt2_at.cfg')
 }
 
 dependencies {
