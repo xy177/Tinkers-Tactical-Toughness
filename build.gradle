@@ -1,0 +1,83 @@
+buildscript {
+    repositories {
+        maven { url = 'https://maven.minecraftforge.net/' }
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:3.+'
+    }
+}
+
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
+
+version = '1.0'
+group = "com.xy177.tt2"
+archivesBaseName = "tinkerstacticaltoughness"
+
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
+
+minecraft {
+    mappings channel: 'stable', version: '39-1.12'
+
+    runs {
+        client {
+            workingDirectory project.file('run')
+            jvmArgs "-XX:+UseG1GC", "-Xmx2G"
+        }
+        server {
+            workingDirectory project.file('run/server')
+        }
+    }
+
+    accessTransformer = file('src/main/resources/META-INF/bxlib_at.cfg')
+}
+
+dependencies {
+    minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2864'
+
+    implementation files('libs/TinkersAntique-1.12.2-2.13.0.205.jar')
+    implementation files('libs/Mantle-1.12-1.3.3.49.jar')
+    implementation files('libs/AntiqueArmory-1.12.2-1.2.7.jar')
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDir 'resources'
+        }
+    }
+}
+
+
+jar {
+    manifest {
+        attributes([
+                "Specification-Title"      : "Tinkers' Tactical Toughness",
+                "Specification-Vendor"     : "xy177",
+                "Specification-Version"    : "1",
+                "Implementation-Title"     : project.name,
+                "Implementation-Version"   : "${version}",
+                "Implementation-Vendor"    : "xy177",
+                "Implementation-Timestamp" : new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
+}
+
+jar.finalizedBy('reobfJar')
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact jar
+        }
+    }
+    repositories {
+        maven {
+            url "file:///${project.projectDir}/mcmodsrepo"
+        }
+    }
+}
+
+
