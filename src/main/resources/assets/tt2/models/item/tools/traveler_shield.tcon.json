@@ -1,0 +1,8 @@
+{
+  "textures": {
+    "layer0":        "tt2:items/traveler_shield/head",
+    "layer1":        "tt2:items/traveler_shield/handle",
+    "broken0": "tt2:items/traveler_shield/head_broken",
+    "broken1": "tt2:items/traveler_shield/handle_broken"
+  }
+}
