@@ -2,7 +2,7 @@
 
 # 物品名称
 item.tt2.traveler_shield.name=旅行者盾牌
-item.tt2.traveler_shield.desc=有别于战斗牌子的轻型盾牌，格挡时不会降低移速，累计格挡一定伤害后会无法使用一段时间。若在即将遭受攻击时抓住机会进行格挡，则伤害不会参与累计的同时还会使用盾牌对敌人进行反击。
+item.tt2.traveler_shield.desc=有别于战斗牌子的轻型盾牌，格挡时不会降低移速，累计格挡一定伤害后会无法使用一段时间。\n 若在即将遭受攻击时抓住机会进行格挡，则伤害不会参与累计的同时还会使用盾牌对敌人进行反击。
 
 # 药水效果（键名由 PotionParryWindow 中 setPotionName 指定）
 effect.tt2.parry_window=严阵以待

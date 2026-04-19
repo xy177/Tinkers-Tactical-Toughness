@@ -34,7 +34,7 @@ public class TT2Config {
                 "cooldownCoefficient",
                 1.0,
                 "破盾冷却时长系数。数值越大冷却越长。\n" +
-                "冷却时长(tick) = ceil(5 / (盘材料耐久 / 200) x 此系数 x 20)。\n" +
+                "冷却时长(tick) = ceil((5 / 大板手柄耐久系数) x 此系数 x 20)，最低 30 tick（1.5 秒）。\n" +
                 "默认值: 1.0"
             ).getDouble();
 

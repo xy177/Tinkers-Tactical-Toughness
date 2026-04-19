@@ -1,11 +1,11 @@
 # Tinkers' Tactical Toughness - English
 
-# Item names
+# Item Name
 item.tt2.traveler_shield.name=Traveler's Shield
-item.tt2.traveler_shield.desc=A shield built for travelers. Parries within 1.5 seconds trigger a counter-attack. Sustained blocking accumulates parry damage.
+item.tt2.traveler_shield.desc=A lightweight shield distinct from standard combat shields. It does not reduce movement speed while blocking, but will become unusable for a duration after accumulating a certain amount of blocked damage.\n If you time your block perfectly just before an attack lands, the damage will not be accumulated, and you will perform a counter-attack against the enemy.
 
-# Potion effects (key set via setPotionName in PotionParryWindow)
-effect.tt2.parry_window=Parry Window
+# Potion Effect
+effect.tt2.parry_window=On Guard
 
-# Tooltip shown on the item
+# Tooltip Display
 tooltip.tt2.parry_value=Parry Value
