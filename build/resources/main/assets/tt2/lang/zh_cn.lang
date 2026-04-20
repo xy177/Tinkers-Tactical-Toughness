@@ -1,11 +1,17 @@
 # Tinkers' Tactical Toughness - 简体中文
 
 # 物品名称
-item.tt2.traveler_shield.name=旅行者盾牌
-item.tt2.traveler_shield.desc=有别于战斗牌子的轻型盾牌，格挡时不会降低移速，累计格挡一定伤害后会无法使用一段时间。若在即将遭受攻击时抓住机会进行格挡，则伤害不会参与累计的同时还会使用盾牌对敌人进行反击。
+item.tt2.swift_shield.name=迅捷盾
+item.tt2.swift_shield.desc=为旅行者打造的轻型盾牌，格挡时不会降低移速，累计格挡一定伤害后会无法使用一段时间。\n若在即将遭受攻击时抓住机会进行格挡，则伤害不会参与累计的同时还会对攻击者发动反击。\n格挡值上限与冷却时间基于大板的耐久系数。
 
-# 药水效果（键名由 PotionParryWindow 中 setPotionName 指定）
+item.tt2.heavy_shield.name=重装盾
+item.tt2.heavy_shield.desc=厚重的防御型盾牌，格挡角度宽广，持有时会轻微降低攻击伤害，格挡时则会降低跳跃高度。\n成功格挡后使攻击攻击伤害恢复正常一段时间。\n命中敌人可使其陷入失衡状态，使其攻击伤害降低，受伤增加，且非首领单位还会因此无法移动。\n失衡状态结束后敌人会免疫失衡一段时间，这期间会有明显的提示。\n失衡持续时长与冷却时长取决于坚韧手柄的耐久系数。
+
+# 药水效果
 effect.tt2.parry_window=严阵以待
+effect.tt2.opportunity=良机
+effect.tt2.imbalance=失衡
+effect.tt2.imbalance_immunity=失衡免疫
 
 # 物品 tooltip 显示
 tooltip.tt2.parry_value=招架值

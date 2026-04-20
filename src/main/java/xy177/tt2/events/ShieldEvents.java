@@ -22,7 +22,7 @@ import slimeknights.tconstruct.library.utils.TagUtil;
 import slimeknights.tconstruct.library.utils.ToolHelper;
 import xy177.tt2.config.TT2Config;
 import xy177.tt2.potion.TT2Potions;
-import xy177.tt2.tools.TravelerShield;
+import xy177.tt2.tools.SwiftShield;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,36 +32,16 @@ import java.util.UUID;
 
 public class ShieldEvents {
 
-    /** 上一tick是否正在举盾，用于检测举盾开始时刻 */
     private final Map<UUID, Boolean> wasBlocking = new HashMap<>();
 
-    /**
-     * 暂存格挡原始伤害量。
-     *
-     * 背景：vanilla 在 EntityLivingBase.attackEntityFrom 中，
-     * 当 isActiveItemStackBlocking() 为 true 且攻击来自正面时，
-     * 会在触发 LivingHurtEvent 之前将 f 置为 0。
-     * 因此 LivingHurtEvent.getAmount() 对于被正面格挡的攻击始终为 0，
-     * 无法用它来累积招架值。
-     *
-     * LivingAttackEvent 在 f=0 赋值之前触发（是 attackEntityFrom 里的第一个 Forge 钩子），
-     * 可以在此捕获原始伤害值，供后续 LivingHurtEvent 使用。
-     * 两个事件均仅在服务端触发（attackEntityFrom 有 world.isRemote 前置判断）。
-     */
     private final Map<UUID, Float> pendingParryDamage = new HashMap<>();
 
-    /** 防止精准格挡反击时再次进入 onLivingHurt 造成死循环 */
     private final Set<UUID> counterAttacking = new HashSet<>();
 
-    // -----------------------------------------------------------------------
-    // 玩家Tick：检测举盾开始，给予窗口期药水（仅服务端）
-    // -----------------------------------------------------------------------
 
     @SubscribeEvent
     public void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (event.phase != TickEvent.Phase.START) return;
-        // 只在服务端处理药水逻辑：客户端的 updatePotionEffects 因 world.isRemote==true
-        // 不执行 iterator.remove()，若在客户端添加药水则永不过期。
         if (event.player.world.isRemote) return;
 
         EntityPlayer player = event.player;
@@ -70,7 +50,6 @@ public class ShieldEvents {
         boolean currentlyBlocking = isBlockingWithShield(player);
         boolean prev = wasBlocking.getOrDefault(id, false);
 
-        // 举盾开始（false→true 跳变）才给药水，长按右键不会反复给予
         if (currentlyBlocking && !prev) {
             applyParryWindowPotion(player);
         }
@@ -81,7 +60,7 @@ public class ShieldEvents {
     private boolean isBlockingWithShield(EntityPlayer player) {
         return player.isHandActive()
             && !player.getActiveItemStack().isEmpty()
-            && player.getActiveItemStack().getItem() instanceof TravelerShield;
+            && player.getActiveItemStack().getItem() instanceof SwiftShield;
     }
 
     private void applyParryWindowPotion(EntityPlayer player) {
@@ -94,10 +73,6 @@ public class ShieldEvents {
         ));
     }
 
-    // -----------------------------------------------------------------------
-    // LivingAttackEvent：在 vanilla 将伤害归零之前捕获原始伤害量
-    // -----------------------------------------------------------------------
-
     @SubscribeEvent
     public void onLivingAttack(LivingAttackEvent event) {
         if (!(event.getEntityLiving() instanceof EntityPlayer)) return;
@@ -106,20 +81,14 @@ public class ShieldEvents {
         if (!isBlockingWithShield(player)) return;
 
         ItemStack shieldStack = player.getActiveItemStack();
-        if (player.getCooldownTracker().hasCooldown((TravelerShield) shieldStack.getItem())) return;
+        if (player.getCooldownTracker().hasCooldown((SwiftShield) shieldStack.getItem())) return;
         if (event.getSource().isUnblockable()) return;
 
-        // 角度检查：攻击来自正面（90° 弧内）
         Entity attacker = event.getSource().getTrueSource();
-        if (!isInBlockingArc(player, attacker, TravelerShield.BLOCK_HALF_ANGLE_DEG)) return;
+        if (!isInBlockingArc(player, attacker, SwiftShield.BLOCK_HALF_ANGLE_DEG)) return;
 
-        // 暂存原始伤害量；LivingHurtEvent 中 event.getAmount() 已被 vanilla 归零
         pendingParryDamage.put(player.getUniqueID(), event.getAmount());
     }
-
-    // -----------------------------------------------------------------------
-    // LivingHurtEvent：处理格挡结果（perfect parry 或普通格挡）
-    // -----------------------------------------------------------------------
 
     @SubscribeEvent(priority = EventPriority.NORMAL)
     public void onLivingHurt(LivingHurtEvent event) {
@@ -128,8 +97,6 @@ public class ShieldEvents {
 
         UUID id = player.getUniqueID();
 
-        // 若没有暂存的伤害量，说明该次攻击未经过 onLivingAttack 的条件检查
-        // （角度不在格挡弧内、盾牌冷却中、不可格挡伤害等）→ 不处理
         if (!pendingParryDamage.containsKey(id)) return;
 
         float originalDamage = pendingParryDamage.remove(id);
@@ -137,14 +104,12 @@ public class ShieldEvents {
         if (!isBlockingWithShield(player)) return;
 
         ItemStack shieldStack = player.getActiveItemStack();
-        TravelerShield shield = (TravelerShield) shieldStack.getItem();
+        SwiftShield shield = (SwiftShield) shieldStack.getItem();
 
         if (player.getCooldownTracker().hasCooldown(shield)) return;
 
-        // 精准格挡判定（窗口期药水是否仍存在）
         boolean isPerfectParry = player.isPotionActive(TT2Potions.PARRY_WINDOW);
 
-        // vanilla 对正面格挡攻击已将 event.getAmount() 归零，显式取消保持一致性
         event.setCanceled(true);
 
         if (isPerfectParry) {
@@ -153,10 +118,6 @@ public class ShieldEvents {
             handleNormalBlock(player, shieldStack, originalDamage, shield);
         }
     }
-
-    // -----------------------------------------------------------------------
-    // 精准格挡
-    // -----------------------------------------------------------------------
 
     private void handlePerfectParry(EntityPlayer player, ItemStack shieldStack,
                                     DamageSource source, Entity attacker) {
@@ -184,12 +145,8 @@ public class ShieldEvents {
         }
     }
 
-    // -----------------------------------------------------------------------
-    // 普通格挡：使用 originalDamage（来自 LivingAttackEvent，格挡前原始值）
-    // -----------------------------------------------------------------------
-
     private void handleNormalBlock(EntityPlayer player, ItemStack shieldStack,
-                                   float originalDamage, TravelerShield shield) {
+                                   float originalDamage, SwiftShield shield) {
         if (player.world.isRemote) return;
 
         player.world.playSound(null,
@@ -199,23 +156,17 @@ public class ShieldEvents {
             1.0f, 0.8f + player.world.rand.nextFloat() * 0.4f
         );
 
-        float current = TravelerShield.getParryAccum(shieldStack) + originalDamage;
-        float max = TravelerShield.getParryMax(shieldStack);
+        float current = SwiftShield.getParryAccum(shieldStack) + originalDamage;
+        float max = SwiftShield.getParryMax(shieldStack);
 
         if (current >= max) {
-            TravelerShield.setParryAccum(shieldStack, 0f);
-            player.getCooldownTracker().setCooldown(shield, TravelerShield.getCooldownTicks(shieldStack));
-            // ★ 强制中断举盾动作，否则玩家不放开右键时会继续处于 isHandActive 状态，
-            // 导致后续攻击仍被判定为格挡
+            SwiftShield.setParryAccum(shieldStack, 0f);
+            player.getCooldownTracker().setCooldown(shield, SwiftShield.getCooldownTicks(shieldStack));
             player.stopActiveHand();
         } else {
-            TravelerShield.setParryAccum(shieldStack, current);
+            SwiftShield.setParryAccum(shieldStack, current);
         }
     }
-
-    // -----------------------------------------------------------------------
-    // 精准格挡反击
-    // -----------------------------------------------------------------------
 
     private void performCounterAttack(ItemStack shieldStack, EntityPlayer player,
                                       EntityLivingBase attacker) {
@@ -245,10 +196,6 @@ public class ShieldEvents {
         }
     }
 
-    // -----------------------------------------------------------------------
-    // 格挡角度判断
-    // -----------------------------------------------------------------------
-
     private boolean isInBlockingArc(EntityPlayer player, Entity attacker, double halfAngleDeg) {
         if (attacker == null) return true;
 
@@ -268,10 +215,6 @@ public class ShieldEvents {
         double cosHalf  = Math.cos(Math.toRadians(halfAngleDeg));
         return cosAngle >= cosHalf;
     }
-
-    // -----------------------------------------------------------------------
-    // 清理
-    // -----------------------------------------------------------------------
 
     @SubscribeEvent
     public void onPlayerLogout(PlayerLoggedOutEvent event) {

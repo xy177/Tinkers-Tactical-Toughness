@@ -1,11 +1,17 @@
 # Tinkers' Tactical Toughness - English
 
 # Item names
-item.tt2.traveler_shield.name=Traveler's Shield
-item.tt2.traveler_shield.desc=A shield built for travelers. Parries within 1.5 seconds trigger a counter-attack. Sustained blocking accumulates parry damage.
+item.tt2.swift_shield.name=Swift Shield
+item.tt2.swift_shield.desc=A lightweight shield crafted for travelers. It does not reduce movement speed while blocking. After blocking a certain amount of cumulative damage, it will become unusable for a period of time.\nBlocking at the right moment just before being hit prevents damage from accumulating and triggers a counter-attack against the attacker.\nMaximum block value and cooldown are based on the Large Plate's durability coefficient.
 
-# Potion effects (key set via setPotionName in PotionParryWindow)
+item.tt2.heavy_shield.name=Heavy Shield
+item.tt2.heavy_shield.desc=A thick defensive shield with a wide blocking angle. It slightly reduces your attack damage while held and reduces jump height while blocking.\nSuccessfully blocking restores attack damage to normal for a short duration.\nHitting enemies inflicts Imbalance, reducing their attack damage, increasing damage taken, and preventing non-boss units from moving.\nAfter Imbalance ends, enemies gain Imbalance Immunity for a duration, indicated by a clear visual cue.\nImbalance duration and cooldown are based on the Tough Tool Rod's durability coefficient.
+
+# Potion effects
 effect.tt2.parry_window=Parry Window
+effect.tt2.opportunity=Opportunity
+effect.tt2.imbalance=Imbalance
+effect.tt2.imbalance_immunity=Imbalance Immunity
 
-# Tooltip shown on the item
+# Tooltip
 tooltip.tt2.parry_value=Parry Value

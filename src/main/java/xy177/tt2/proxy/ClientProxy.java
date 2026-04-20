@@ -1,6 +1,8 @@
 package xy177.tt2.proxy;
 
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import xy177.tt2.events.HeavyShieldClientEvents;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import slimeknights.tconstruct.library.TinkerRegistryClient;
@@ -17,18 +19,25 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void init(FMLInitializationEvent event) {
         super.init(event);
+        MinecraftForge.EVENT_BUS.register(new HeavyShieldClientEvents());
     }
 
     @Override
     public void postInit(FMLPostInitializationEvent event) {
         super.postInit(event);
 
-        // 注册工具站 GUI 中的槽位坐标（两个部件：盘 + 大板）
-        if (TT2Items.TRAVELER_SHIELD != null) {
-            ToolBuildGuiInfo info = new ToolBuildGuiInfo(TT2Items.TRAVELER_SHIELD);
-            info.addSlotPosition(24, 30); // 盘（pan）
-            info.addSlotPosition(48, 52); // 大板（large plate）
-            TinkerRegistryClient.addToolBuilding(info);
+        // 迅捷盾：2 个槽位（盘 + 大板）
+        if (TT2Items.SWIFT_SHIELD != null) {
+            ToolBuildGuiInfo infoTraveler = new ToolBuildGuiInfo(TT2Items.SWIFT_SHIELD);
+            infoTraveler.addSlotPosition(24, 30); // 盘
+            infoTraveler.addSlotPosition(48, 52); // 大板
+            TinkerRegistryClient.addToolBuilding(infoTraveler);
+        }
+
+        // 重装盾：3 个槽位（牌板 + 大板 + 坚韧手柄）
+        if (TT2Items.HEAVY_SHIELD != null) {
+            ToolBuildGuiInfo infoPlate = ToolBuildGuiInfo.default3Part(TT2Items.HEAVY_SHIELD);
+            TinkerRegistryClient.addToolBuilding(infoPlate);
         }
     }
 }

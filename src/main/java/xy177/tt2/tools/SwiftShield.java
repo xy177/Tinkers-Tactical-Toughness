@@ -32,34 +32,20 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-/**
- * 旅行者盾牌 (Traveler's Shield)
- *
- * 部件：
- *   index 0 → 盘（panHead）   → HeadMaterialStats（耐久、攻击）
- *   index 1 → 大板（largePlate）→ HandleMaterialStats（耐久倍率）
- *
- * 攻击力计算：
- *   NBT 存材料原始攻击力（head.attack），damagePotential() 返回 0.4f
- *   实际攻击 = head.attack × 0.4（由 ToolHelper.getActualAttack 自动计算）
- */
-public class TravelerShield extends TinkerToolCore {
+public class SwiftShield extends TinkerToolCore {
 
-    /** 攻击力系数，通过 damagePotential() 在 getActualAttack() 中自动应用 */
     public static final float ATTACK_COEFF = 0.4f;
 
-    /** Extra NBT 中储存招架累计值的 key */
     public static final String TAG_PARRY_ACCUM = "parry_accum";
 
-    /** 格挡半角（度），总格挡弧度 = 2 × 45° = 90° */
     public static final double BLOCK_HALF_ANGLE_DEG = 45.0;
 
-    public TravelerShield() {
+    public SwiftShield() {
         super(
             PartMaterialType.head(TinkerTools.panHead),       // index 0：盘，HEAD
             PartMaterialType.handle(TinkerTools.largePlate)   // index 1：大板，HANDLE
         );
-        this.setTranslationKey("tt2.traveler_shield");
+        this.setTranslationKey("tt2.swift_shield");
         addCategory(Category.WEAPON);
 
         // ★ 举盾动作驱动属性，与 BattleSign 一致
@@ -86,8 +72,6 @@ public class TravelerShield extends TinkerToolCore {
         HeadMaterialStats head     = materials.get(0).getStatsOrUnknown(MaterialTypes.HEAD);
         HandleMaterialStats handle = materials.get(1).getStatsOrUnknown(MaterialTypes.HANDLE);
 
-        // ★ 存入材料原始攻击力，不在此处乘以系数
-        // 实际攻击 = data.attack × damagePotential()，由 getActualAttack() 负责
         data.head(head);
         data.handle(handle);
 
@@ -95,14 +79,6 @@ public class TravelerShield extends TinkerToolCore {
         return data;
     }
 
-    // -----------------------------------------------------------------------
-    // 工具属性
-    // -----------------------------------------------------------------------
-
-    /**
-     * ★ 攻击力系数：0.4f
-     * getActualAttack(stack) = NBT_attack × damagePotential() = head.attack × 0.4
-     */
     @Override
     public float damagePotential() {
         return ATTACK_COEFF;
@@ -113,18 +89,12 @@ public class TravelerShield extends TinkerToolCore {
         return 1.2d;
     }
 
-    // -----------------------------------------------------------------------
-    // 物品行为
-    // -----------------------------------------------------------------------
-
-    /** 举盾时保持正常移速 */
     @Override
     public void onUpdate(ItemStack stack, World world, Entity entity, int slot, boolean isSelected) {
         preventSlowDown(entity, 1.0f);
         super.onUpdate(stack, world, entity, slot, isSelected);
     }
 
-    /** 右键举盾 */
     @Nonnull
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
@@ -136,7 +106,6 @@ public class TravelerShield extends TinkerToolCore {
         return new ActionResult<>(EnumActionResult.FAIL, stack);
     }
 
-    /** 使用动画：格挡 */
     @Nonnull
     @Override
     public EnumAction getItemUseAction(ItemStack stack) {
@@ -154,10 +123,6 @@ public class TravelerShield extends TinkerToolCore {
         return false;
     }
 
-    // -----------------------------------------------------------------------
-    // 招架值工具方法（供 ShieldEvents 使用）
-    // -----------------------------------------------------------------------
-
     public static float getParryAccum(ItemStack stack) {
         NBTTagCompound extra = TagUtil.getExtraTag(stack);
         return extra.getFloat(TAG_PARRY_ACCUM);
@@ -169,10 +134,6 @@ public class TravelerShield extends TinkerToolCore {
         TagUtil.setExtraTag(stack, extra);
     }
 
-    /**
-     * 招架值上限 = 盘材料原始攻击 × 大板手柄耐久倍率 × parryThresholdPercent/100
-     * 使用材料原始值，与 damagePotential 无关
-     */
     public static float getParryMax(ItemStack stack) {
         net.minecraft.nbt.NBTTagList matList = TagUtil.getBaseMaterialsTagList(stack);
         if (matList == null || matList.tagCount() < 2) return 20f;
@@ -190,30 +151,21 @@ public class TravelerShield extends TinkerToolCore {
             * (float)(xy177.tt2.config.TT2Config.parryThresholdPercent / 100.0);
     }
 
-    /**
-     * 破盾冷却tick。
-     * 公式：ceil((5 / 大板手柄耐久系数) × cooldownCoefficient × 20)
-     * 大板的手柄耐久系数（HandleMaterialStats.modifier）越高 → 冷却越短。
-     * 最低 30 tick（1.5 秒）。
-     */
     public static int getCooldownTicks(ItemStack stack) {
         net.minecraft.nbt.NBTTagList matList = TagUtil.getBaseMaterialsTagList(stack);
         if (matList == null || matList.tagCount() < 2) return 30;
 
-        // index 1 = 大板（HANDLE 部件）
         Material handleMat = TinkerRegistry.getMaterial(matList.getStringTagAt(1));
         if (handleMat == null) return 30;
 
         HandleMaterialStats handleStats = handleMat.getStats(MaterialTypes.HANDLE);
         if (handleStats == null || handleStats.modifier <= 0) return 30;
 
-        // modifier 是手柄耐久倍率（如铁 1.0、钴 1.3 等）
         int ticks = (int) Math.ceil(
             (5.0 / handleStats.modifier)
             * xy177.tt2.config.TT2Config.cooldownCoefficient
             * 20.0
         );
-        // 最低 1.5 秒 = 30 tick
         return Math.max(30, ticks);
     }
 
