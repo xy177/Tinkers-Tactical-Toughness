@@ -1,0 +1,20 @@
+{
+  "tool": "nunchaku",
+  "text": [
+    {
+      "text": "A fast weapon with low base damage. Successive hits build Combo stacks that boost your damage output."
+    },
+    {
+      "text": "\n"
+    },
+    {
+      "text": "Max stacks depend on Tough Binding durability. Combo resets when idle. Hold right-click to auto-attack."
+    }
+  ],
+  "properties": [
+    "Fast attack, low base damage",
+    "Combo stacks boost damage per hit",
+    "Cap depends on binding material",
+    "Hold right-click for auto-attack"
+  ]
+}

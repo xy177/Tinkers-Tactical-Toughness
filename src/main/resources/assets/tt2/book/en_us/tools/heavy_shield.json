@@ -1,0 +1,20 @@
+{
+  "tool": "heavy_shield",
+  "text": [
+    {
+      "text": "A sturdy bastion with a wide blocking angle, though its weight significantly slows the wielder."
+    },
+    {
+      "text": "\n"
+    },
+    {
+      "text": "Disrupt enemies with Stagger to reduce their damage and increase vulnerability."
+    }
+  ],
+  "properties": [
+    "145° Blocking Angle",
+    "Slightly reduced damage while held; returns normal after successful block",
+    "Attacks can cause enemy Stagger",
+    "Staggered enemies deal less damage and take increased damage"
+  ]
+}

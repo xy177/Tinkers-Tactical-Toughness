@@ -12,7 +12,7 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = '1.0'
+version = '1.1'
 group = "xy177.tt2"
 archivesBaseName = "TinkersTacticalToughness"
 
@@ -60,7 +60,12 @@ jar {
                 "Implementation-Title"     : project.name,
                 "Implementation-Version"   : "${version}",
                 "Implementation-Vendor"    : "xy177",
-                "Implementation-Timestamp" : new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+                "Implementation-Timestamp" : new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                //Access Transformer，性质其实类似语法糖，只会影响语法，编译时正常
+                'FMLAT': 'tt2_at.cfg',
+                //ASM加载在这！
+                'FMLCorePlugin': "xy177.tt2.risky.asm.ASMLoader",
+                'FMLCorePluginContainsFMLMod': 'true'
         ])
     }
 }

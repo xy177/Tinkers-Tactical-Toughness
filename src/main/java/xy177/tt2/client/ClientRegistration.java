@@ -19,5 +19,8 @@ public class ClientRegistration {
         if (TT2Items.HEAVY_SHIELD != null) {
             ModelRegisterUtil.registerToolModel(TT2Items.HEAVY_SHIELD);
         }
+        if (TT2Items.NUNCHAKU != null) {
+            ModelRegisterUtil.registerToolModel(TT2Items.NUNCHAKU);
+        }
     }
 }

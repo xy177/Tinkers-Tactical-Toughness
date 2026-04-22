@@ -15,3 +15,11 @@ effect.tt2.imbalance_immunity=失衡免疫
 
 # 物品 tooltip 显示
 tooltip.tt2.parry_value=招架值
+
+# 双节棍
+item.tt2.nunchaku.name=双节棍
+item.tt2.nunchaku.desc=双节棍是一种特殊的攻击性武器，它的初始伤害较低，但伤害会随着攻击而不断上升，其上限取决于所用的坚韧绑定结的耐久系数——长按右键持续发起攻击。
+
+# 连击词条
+modifier.nunchaku_combo.name=连击
+modifier.nunchaku_combo.desc=哼哼哈嘿！\n§r攻击敌人积累连击以提升伤害；上限由绑定结材质决定，停止攻击后一段时间清零。

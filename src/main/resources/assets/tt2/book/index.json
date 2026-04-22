@@ -1,0 +1,12 @@
+[
+  {
+    "name": "tt2_shields",
+    "data": "sections/tt2_shields.json",
+    "icon": {
+      "item": {
+        "id": "minecraft:shield"
+      }
+    }
+  }
+]
+

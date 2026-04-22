@@ -1,0 +1,17 @@
+[
+  {
+    "name": "swift_shield",
+    "type": "tool",
+    "data": "tools/swift_shield.json"
+  },
+  {
+    "name": "heavy_shield",
+    "type": "tool",
+    "data": "tools/heavy_shield.json"
+  },
+  {
+    "name": "nunchaku",
+    "type": "tool",
+    "data": "tools/nunchaku.json"
+  }
+]

@@ -1,0 +1,20 @@
+{
+  "tool": "swift_shield",
+  "text": [
+    {
+      "text": "A lightweight shield built for speed. Unlike others, it does not reduce movement speed while blocking."
+    },
+    {
+      "text": "\n"
+    },
+    {
+      "text": "Blocking builds Parry Value toward a cooldown. Perfect Blocks avoid accumulation and trigger counterattacks."
+    }
+  ],
+  "properties": [
+    "90° Blocking Angle",
+    "Each block accumulates Parry Value",
+    "Perfect Block triggers a counterattack and avoids Parry Value accumulation",
+    "Counterattacks are treated as attacks made with the Swift Shield"
+  ]
+}

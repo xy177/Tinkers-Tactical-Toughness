@@ -49,6 +49,20 @@ public class TT2Config {
      */
     public static int imbalanceGlowMode = 0;
 
+    // ---- 双节棍 ----
+
+    /** 攻击速度（原版剑=1.6）*/
+    public static double nunchakuAttackSpeed = 2.5;
+
+    /** 每次命中获得的连击加成（0.1 = 10%）*/
+    public static float nunchakuComboGainPerHit = 0.1f;
+
+    /** 连击能量上限倍率（与绑定结 modifier 相乘）*/
+    public static float nunchakuComboCapBindingMultiplier = 0.45f;
+
+    /** 停止命中后连击保持的时长（ticks，20=1秒）*/
+    public static int nunchakuComboDecayDelay = 60;
+
     public static void init(File configFile) {
         Configuration cfg = new Configuration(configFile);
         try {
@@ -167,6 +181,38 @@ public class TT2Config {
                 "1 = Glow during [Stagger], but not during [Imbalance Immunity] alone\n" +
                 "2 = Glow during both [Stagger] and [Imbalance Immunity] periods",
                 0, 2
+            ).getInt();
+
+            nunchakuAttackSpeed = cfg.get(
+                Configuration.CATEGORY_GENERAL,
+                "nunchakuAttackSpeed",
+                2.5,
+                "双节棍攻击速度。原版剑=1.6，数值越高越快。范围: 0.1~4.0",
+                0.1, 4.0
+            ).getDouble();
+
+            nunchakuComboGainPerHit = (float) cfg.get(
+                Configuration.CATEGORY_GENERAL,
+                "nunchakuComboGainPerHit",
+                0.1,
+                "双节棍每次命中获得的连击伤害加成（0.1 = 10%）。范围: 0.01~1.0",
+                0.01, 1.0
+            ).getDouble();
+
+            nunchakuComboCapBindingMultiplier = (float) cfg.get(
+                Configuration.CATEGORY_GENERAL,
+                "nunchakuComboCapBindingMultiplier",
+                0.45,
+                "连击上限与绑定结 modifier 的乘数。范围: 0.1~10.0",
+                0.1, 10.0
+            ).getDouble();
+
+            nunchakuComboDecayDelay = cfg.get(
+                Configuration.CATEGORY_GENERAL,
+                "nunchakuComboDecayDelay",
+                60,
+                "停止命中后连击效果保持的 tick 数（20 tick = 1 秒）。默认: 60",
+                1, 600
             ).getInt();
 
         } finally {

@@ -15,3 +15,11 @@ effect.tt2.imbalance_immunity=Imbalance Immunity
 
 # Tooltip
 tooltip.tt2.parry_value=Parry Value
+
+# Nunchaku
+item.tt2.nunchaku.name=Nunchaku
+item.tt2.nunchaku.desc=A special offensive weapon. It starts with low damage, but the damage increases with each successive hit. The cap depends on the Tough Binding material. Hold right-click to keep attacking.
+
+# Combo trait
+modifier.nunchaku_combo.name=Combo
+modifier.nunchaku_combo.desc=Hm hm ha hey!\n§rHitting enemies builds combo stacks to boost damage. Cap depends on binding material; resets after inactivity.
