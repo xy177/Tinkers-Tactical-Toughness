@@ -23,3 +23,4 @@ item.tt2.nunchaku.desc=A special offensive weapon. It starts with low damage, bu
 # Combo trait
 modifier.nunchaku_combo.name=Combo
 modifier.nunchaku_combo.desc=Hm hm ha hey!\n§rHitting enemies builds combo stacks to boost damage. Cap depends on binding material; resets after inactivity.
+tt2.trait.nunchaku_combo=Combo %s/%s  (+%s%%)  Damage x%s

@@ -187,7 +187,8 @@ public class TT2Config {
                 Configuration.CATEGORY_GENERAL,
                 "nunchakuAttackSpeed",
                 2.5,
-                "双节棍攻击速度。原版剑=1.6，数值越高越快。范围: 0.1~4.0",
+                "双节棍攻击速度。原版剑=1.6，数值越高越快。范围: 0.1~4.0\n"+
+                "Nunchaku Attack Speed. Original sword=1.6, higher value means faster. Range: 0.1~4.0",
                 0.1, 4.0
             ).getDouble();
 
@@ -195,7 +196,8 @@ public class TT2Config {
                 Configuration.CATEGORY_GENERAL,
                 "nunchakuComboGainPerHit",
                 0.1,
-                "双节棍每次命中获得的连击伤害加成（0.1 = 10%）。范围: 0.01~1.0",
+                "双节棍每次命中获得的连击伤害加成（0.1 = 10%）。范围: 0.01~1.0\n"+
+                "Combo damage bonus per nunchaku hit (0.1 = 10%). Range: 0.01~1.0",
                 0.01, 1.0
             ).getDouble();
 
@@ -203,7 +205,8 @@ public class TT2Config {
                 Configuration.CATEGORY_GENERAL,
                 "nunchakuComboCapBindingMultiplier",
                 0.45,
-                "连击上限与绑定结 modifier 的乘数。范围: 0.1~10.0",
+                "连击上限与绑定结 modifier 的乘数。范围: 0.1~10.0\n"+
+                "Multiplier for combo limit and binding knot modifier. Range: 0.1~10.0",
                 0.1, 10.0
             ).getDouble();
 
@@ -211,7 +214,8 @@ public class TT2Config {
                 Configuration.CATEGORY_GENERAL,
                 "nunchakuComboDecayDelay",
                 60,
-                "停止命中后连击效果保持的 tick 数（20 tick = 1 秒）。默认: 60",
+                "停止命中后连击效果保持的 tick 数（20 tick = 1 秒）。默认: 60\n"+
+                "Ticks that combo effect remains after stopping hits (20 ticks = 1 second). Default: 60",
                 1, 600
             ).getInt();
 

@@ -23,3 +23,4 @@ item.tt2.nunchaku.desc=双节棍是一种特殊的攻击性武器，它的初始
 # 连击词条
 modifier.nunchaku_combo.name=连击
 modifier.nunchaku_combo.desc=哼哼哈嘿！\n§r攻击敌人积累连击以提升伤害；上限由绑定结材质决定，停止攻击后一段时间清零。
+tt2.trait.nunchaku_combo=连击 %s/%s  (+%s%%)  伤害x%s

@@ -12,16 +12,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-/**
- * 客户端双节棍行为处理器（仅客户端注册）
- *
- * 功能：
- *  1. 检测右键持续按下 → 设置旋转状态 → 自动攻击准星目标
- *  2. 松开右键 → 清除旋转状态
- *
- * 注册位置：ClientProxy.init() 中调用
- *   MinecraftForge.EVENT_BUS.register(new NunchakuClientHandler())
- */
+
 @SideOnly(Side.CLIENT)
 public class NunchakuClientHandler {
 

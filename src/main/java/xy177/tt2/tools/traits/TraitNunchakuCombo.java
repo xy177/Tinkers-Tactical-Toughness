@@ -58,9 +58,13 @@ public class TraitNunchakuCombo extends AbstractTrait {
             int percent = Math.round(next * TT2Config.nunchakuComboGainPerHit * 100f);
             float multiplier = 1f + next * TT2Config.nunchakuComboGainPerHit;
             ((EntityPlayer) attacker).sendStatusMessage(
-                new TextComponentString("连击 " + next + "/" + maxLevel
-                    + "  (+" + percent + "%)  伤害x"
-                    + String.format("%.2f", multiplier))
+                    new net.minecraft.util.text.TextComponentTranslation(
+                            "tt2.trait.nunchaku_combo",
+                            next,
+                            maxLevel,
+                            percent,
+                            String.format("%.2f", multiplier)
+                    )
                     .setStyle(new Style().setColor(TextFormatting.GOLD)),
                 true
             );

@@ -28,15 +28,11 @@ import slimeknights.tconstruct.tools.TinkerTools;
 import javax.annotation.Nullable;
 import java.util.List;
 
-/**
- * 匠魂双节棍
- * 部件：坚韧工具杆x2（HEAD）+ 坚韧绑定结（HANDLE）
- */
+
 public class TinkerNunchaku extends SwordCore {
 
     public static final TraitNunchakuCombo COMBO_TRAIT = new TraitNunchakuCombo();
 
-    /** 存于玩家 EntityData 中的旋转状态键，由客户端 NunchakuClientHandler 同步 */
     public static final String KEY_SPINNING = "tt2_nunchaku_spinning";
 
     private static final float PULL_STRENGTH = 0.3F;
@@ -50,7 +46,6 @@ public class TinkerNunchaku extends SwordCore {
         this.setTranslationKey("tt2.nunchaku");
         addCategory(Category.WEAPON);
 
-        // 旋转属性覆盖：值为 1 时切换到旋转模型
         this.addPropertyOverride(
             new ResourceLocation(TT2.MOD_ID, "spinning"),
             new IItemPropertyGetter() {
@@ -72,7 +67,6 @@ public class TinkerNunchaku extends SwordCore {
     @Override public double attackSpeed() { return xy177.tt2.config.TT2Config.nunchakuAttackSpeed; }
     @Override public float knockback() { return 0f; }
 
-    /** 命中后反向击退（拉近目标） */
     @Override
     public boolean dealDamage(ItemStack stack, EntityLivingBase attacker,
                               Entity target, float damage) {
@@ -89,7 +83,6 @@ public class TinkerNunchaku extends SwordCore {
         return hit;
     }
 
-    /** 禁用默认挥臂，动画完全由连续攻击逻辑驱动 */
     @Override
     public boolean onEntitySwing(EntityLivingBase entityLiving, ItemStack stack) {
         return false;
