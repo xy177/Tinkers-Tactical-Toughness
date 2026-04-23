@@ -1,0 +1,57 @@
+{
+  "textures": {
+    "layer0": "tt2:items/doppelhander/head",
+    "layer1": "tt2:items/doppelhander/extra",
+    "layer2": "tt2:items/doppelhander/armorplate",
+    "layer3": "tt2:items/doppelhander/handle"
+  },
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [0, 0, 0],
+      "translation": [0, 0, 0],
+      "scale": [1, 1, 1]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [0, 0, 0],
+      "translation": [0, 0, 0],
+      "scale": [1, 1, 1]
+    },
+    "firstperson_righthand": {
+      "rotation": [0, 0, 0],
+      "translation": [0, 0, 0],
+      "scale": [1, 1, 1]
+    },
+    "firstperson_lefthand": {
+      "rotation": [0, 0, 0],
+      "translation": [0, 0, 0],
+      "scale": [1, 1, 1]
+    }
+  },
+  "overrides": {
+    "predicate": {
+      "blocking": 1
+    },
+    "display": {
+      "thirdperson_righthand": {
+        "rotation": [55.73, -38.5, 91.54],
+        "translation": [-5.25, 4.75, 3.75],
+        "scale": [1, 1, 1]
+      },
+      "thirdperson_lefthand": {
+        "rotation": [55.73, -38.5, 91.54],
+        "translation": [-5.25, 4.75, 3.75],
+        "scale": [1, 1, 1]
+      },
+      "firstperson_righthand": {
+        "rotation": [0.5, -11.59, 118.21],
+        "translation": [-2.75, 3.2, 1.13],
+        "scale": [1, 1, 1]
+      },
+      "firstperson_lefthand": {
+        "rotation": [0.5, -11.59, 118.21],
+        "translation": [-2.75, 3.2, 1.13],
+        "scale": [1, 1, 1]
+      }
+    }
+  }
+}
