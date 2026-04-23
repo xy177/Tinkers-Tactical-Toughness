@@ -35,20 +35,17 @@ import java.util.List;
 public class SwiftShield extends TinkerToolCore {
 
     public static final float ATTACK_COEFF = 0.4f;
-
     public static final String TAG_PARRY_ACCUM = "parry_accum";
-
     public static final double BLOCK_HALF_ANGLE_DEG = 45.0;
 
     public SwiftShield() {
         super(
-            PartMaterialType.head(TinkerTools.panHead),       // index 0：盘，HEAD
-            PartMaterialType.handle(TinkerTools.largePlate)   // index 1：大板，HANDLE
+            PartMaterialType.head(TinkerTools.panHead),
+            PartMaterialType.handle(TinkerTools.largePlate)
         );
         this.setTranslationKey("tt2.swift_shield");
         addCategory(Category.WEAPON);
 
-        // ★ 举盾动作驱动属性，与 BattleSign 一致
         this.addPropertyOverride(new ResourceLocation("blocking"), new IItemPropertyGetter() {
             @Override
             @SideOnly(Side.CLIENT)
@@ -61,15 +58,11 @@ public class SwiftShield extends TinkerToolCore {
         });
     }
 
-    // -----------------------------------------------------------------------
-    // NBT 构建
-    // -----------------------------------------------------------------------
-
     @Override
     protected ToolNBT buildTagData(List<Material> materials) {
         ToolNBT data = new ToolNBT();
 
-        HeadMaterialStats head     = materials.get(0).getStatsOrUnknown(MaterialTypes.HEAD);
+        HeadMaterialStats head = materials.get(0).getStatsOrUnknown(MaterialTypes.HEAD);
         HandleMaterialStats handle = materials.get(1).getStatsOrUnknown(MaterialTypes.HANDLE);
 
         data.head(head);
@@ -138,17 +131,17 @@ public class SwiftShield extends TinkerToolCore {
         net.minecraft.nbt.NBTTagList matList = TagUtil.getBaseMaterialsTagList(stack);
         if (matList == null || matList.tagCount() < 2) return 20f;
 
-        Material headMat   = TinkerRegistry.getMaterial(matList.getStringTagAt(0));
+        Material headMat = TinkerRegistry.getMaterial(matList.getStringTagAt(0));
         Material handleMat = TinkerRegistry.getMaterial(matList.getStringTagAt(1));
         if (headMat == null || handleMat == null) return 20f;
 
-        HeadMaterialStats headStats     = headMat.getStats(MaterialTypes.HEAD);
+        HeadMaterialStats headStats = headMat.getStats(MaterialTypes.HEAD);
         HandleMaterialStats handleStats = handleMat.getStats(MaterialTypes.HANDLE);
         if (headStats == null || handleStats == null) return 20f;
 
         return headStats.attack
             * handleStats.modifier
-            * (float)(xy177.tt2.config.TT2Config.parryThresholdPercent / 100.0);
+            * (float) (xy177.tt2.config.TT2Config.parryThresholdPercent / 100.0);
     }
 
     public static int getCooldownTicks(ItemStack stack) {
@@ -169,10 +162,6 @@ public class SwiftShield extends TinkerToolCore {
         return Math.max(30, ticks);
     }
 
-    // -----------------------------------------------------------------------
-    // Tooltip
-    // -----------------------------------------------------------------------
-
     @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World world,
@@ -181,7 +170,7 @@ public class SwiftShield extends TinkerToolCore {
 
         if (stack.hasTagCompound()) {
             float parryAccum = getParryAccum(stack);
-            float parryMax   = getParryMax(stack);
+            float parryMax = getParryMax(stack);
             String label = I18n.format("tooltip.tt2.parry_value");
             tooltip.add(String.format("%s: %.1f / %.1f", label, parryAccum, parryMax));
         }

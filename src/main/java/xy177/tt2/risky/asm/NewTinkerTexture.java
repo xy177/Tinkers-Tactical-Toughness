@@ -16,12 +16,13 @@ import java.util.function.Function;
 
 public class NewTinkerTexture {
     public static Field framesTextureData;
-    public static Field width,height;
+    public static Field width, height;
     public static Field animateMeta;
     public static Field backupTextureLocation;
     public static Method copyFrom;
     public static Method processData;
     public static boolean fail_token = false;
+
     static {
         try {
             framesTextureData = TextureAtlasSprite.class.getDeclaredField("field_110976_a");
@@ -40,17 +41,18 @@ public class NewTinkerTexture {
             fail_token = true;
         }
     }
+
     @SuppressWarnings({"unused", "SameReturnValue"})
-    public static boolean load(Object texture, IResourceManager manager, ResourceLocation location, Function<ResourceLocation, TextureAtlasSprite> textureGetter){
-        if(fail_token) return false;
-        if(backupTextureLocation == null) {
+    public static boolean load(Object texture, IResourceManager manager, ResourceLocation location,
+                               Function<ResourceLocation, TextureAtlasSprite> textureGetter) {
+        if (fail_token) return false;
+        if (backupTextureLocation == null) {
             try {
-                //唯一变量
                 Class<?> clazz = Class.forName("slimeknights.tconstruct.library.client.texture.AbstractColoredTexture");
-                if(clazz.getDeclaredFields().length != 1){
+                if (clazz.getDeclaredFields().length != 1) {
                     System.out.println(
-                            "Class loading invalid,AbstractColoredTexture only have 1 field in source,actual " +
-                            clazz.getDeclaredFields().length + " in game"
+                        "Class loading invalid,AbstractColoredTexture only have 1 field in source,actual " +
+                        clazz.getDeclaredFields().length + " in game"
                     );
                     fail_token = true;
                     return false;
@@ -58,10 +60,9 @@ public class NewTinkerTexture {
                 backupTextureLocation = clazz.getDeclaredFields()[0];
                 backupTextureLocation.setAccessible(true);
                 processData = clazz.getDeclaredMethod("processData", int[].class);
-                //noinspection ConstantValue
-                if(processData == null){
+                if (processData == null) {
                     System.out.println(
-                            "Class loading invalid,AbstractColoredTexture haven't processData(int[]) in game."
+                        "Class loading invalid,AbstractColoredTexture haven't processData(int[]) in game."
                     );
                     fail_token = true;
                     return false;
@@ -74,34 +75,28 @@ public class NewTinkerTexture {
             }
         }
         try {
-            framesTextureData.set(texture,Lists.newArrayList());
-            width.set(texture,0);
-            height.set(texture,0);
+            framesTextureData.set(texture, Lists.newArrayList());
+            width.set(texture, 0);
+            height.set(texture, 0);
             ResourceLocation backUp = (ResourceLocation) backupTextureLocation.get(texture);
-            if(backUp == null) return false;
+            if (backUp == null) return false;
             TextureAtlasSprite baseTexture = textureGetter.apply(backUp);
             if (baseTexture != null && baseTexture.getFrameCount() > 0) {
-                copyFrom.invoke(texture,baseTexture);
+                copyFrom.invoke(texture, baseTexture);
                 @SuppressWarnings("unchecked")
-                List<int[][]> tinkerTextureData = ((List<int[][]>)framesTextureData.get(texture));
+                List<int[][]> tinkerTextureData = ((List<int[][]>) framesTextureData.get(texture));
                 for (int i = 0; i < baseTexture.getFrameCount(); i++) {
                     int[][] original = baseTexture.getFrameTextureData(i);
                     int[][] data = new int[original.length][];
                     data[0] = Arrays.copyOf(original[0], original[0].length);
-                    //noinspection RedundantCast
                     processData.invoke(texture, ((Object) data[0]));
-                    /*
-                    if (tinkerTextureData.isEmpty()) {
-                        tinkerTextureData.add(data);
-                    }
-                    */
                     tinkerTextureData.add(data);
                 }
-                animateMeta.set(texture,animateMeta.get(baseTexture));
+                animateMeta.set(texture, animateMeta.get(baseTexture));
                 return false;
             } else {
-                width.set(texture,1);
-                height.set(texture,1);
+                width.set(texture, 1);
+                height.set(texture, 1);
                 return false;
             }
         } catch (IllegalAccessException | InvocationTargetException e) {
@@ -113,12 +108,12 @@ public class NewTinkerTexture {
     }
 
     public static Field texture2;
+
     @SuppressWarnings({"unused"})
-    public static void processData(Object texture,int[] data){
-        if(fail_token) return;
-        if(texture2 == null) {
+    public static void processData(Object texture, int[] data) {
+        if (fail_token) return;
+        if (texture2 == null) {
             try {
-                //唯一变量
                 Class<?> clazz = Class.forName("slimeknights.tconstruct.library.client.texture.MetalTextureTexture");
                 texture2 = clazz.getDeclaredField("texture2");
                 texture2.setAccessible(true);
@@ -127,7 +122,7 @@ public class NewTinkerTexture {
                 fail_token = true;
             }
         }
-        try{
+        try {
             TextureColoredTexture got = (TextureColoredTexture) texture2.get(texture);
             processData.invoke(got, (Object) data);
         } catch (IllegalAccessException | InvocationTargetException e) {

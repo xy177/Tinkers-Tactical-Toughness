@@ -34,25 +34,21 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-
 public class HeavyShield extends TinkerToolCore {
 
     public static final float ATTACK_COEFF = 0.65f;
-
     public static final double BLOCK_HALF_ANGLE_DEG = 72.5;
-
-    public static final int OPPORTUNITY_TICKS = 100; // 5 秒
+    public static final int OPPORTUNITY_TICKS = 100;
 
     public HeavyShield() {
         super(
-            PartMaterialType.head(TinkerTools.signHead),        // index 0：牌板，HEAD
-            PartMaterialType.extra(TinkerTools.largePlate),     // index 1：大板，EXTRA
-            PartMaterialType.handle(TinkerTools.toughToolRod)   // index 2：坚韧手柄，HANDLE
+            PartMaterialType.head(TinkerTools.signHead),
+            PartMaterialType.extra(TinkerTools.largePlate),
+            PartMaterialType.handle(TinkerTools.toughToolRod)
         );
         this.setTranslationKey("tt2.heavy_shield");
         addCategory(Category.WEAPON);
 
-        // 举盾动作驱动属性
         this.addPropertyOverride(new ResourceLocation("blocking"), new IItemPropertyGetter() {
             @Override
             @SideOnly(Side.CLIENT)
@@ -65,13 +61,12 @@ public class HeavyShield extends TinkerToolCore {
         });
     }
 
-
     @Override
     protected ToolNBT buildTagData(List<Material> materials) {
         ToolNBT data = new ToolNBT();
 
-        HeadMaterialStats head     = materials.get(0).getStatsOrUnknown(MaterialTypes.HEAD);
-        ExtraMaterialStats extra   = materials.get(1).getStatsOrUnknown(MaterialTypes.EXTRA);
+        HeadMaterialStats head = materials.get(0).getStatsOrUnknown(MaterialTypes.HEAD);
+        ExtraMaterialStats extra = materials.get(1).getStatsOrUnknown(MaterialTypes.EXTRA);
         HandleMaterialStats handle = materials.get(2).getStatsOrUnknown(MaterialTypes.HANDLE);
 
         data.head(head);
@@ -84,7 +79,7 @@ public class HeavyShield extends TinkerToolCore {
 
     @Override
     public int[] getRepairParts() {
-        return new int[]{0}; // 用牌板材料修复
+        return new int[]{0};
     }
 
     @Override
@@ -138,7 +133,7 @@ public class HeavyShield extends TinkerToolCore {
             EntityLivingBase targetLiving = (EntityLivingBase) target;
 
             if (!targetLiving.isPotionActive(TT2Potions.IMBALANCE_IMMUNITY)) {
-                int imbalanceTicks = (int)(damage * TT2Config.imbalanceDurationMultiplier * 20.0);
+                int imbalanceTicks = (int) (damage * TT2Config.imbalanceDurationMultiplier * 20.0);
                 if (imbalanceTicks > 0) {
                     targetLiving.addPotionEffect(new PotionEffect(
                         TT2Potions.IMBALANCE, imbalanceTicks, 0, false, false
@@ -166,7 +161,7 @@ public class HeavyShield extends TinkerToolCore {
         if (handleStats == null || handleStats.modifier <= 0) return imbalanceTicks * 3;
 
         double multiplier = Math.max(3.0, 4.0 / handleStats.modifier);
-        return (int)(imbalanceTicks * multiplier);
+        return (int) (imbalanceTicks * multiplier);
     }
 
     public static boolean isHeldByPlayer(EntityPlayer player) {

@@ -17,7 +17,6 @@ public class CommonProxy {
     public void preInit(FMLPreInitializationEvent event) {
         TT2Config.init(new File(event.getModConfigurationDirectory(), "tt2.cfg"));
 
-        // 连击词条仅在双节棍启用时注册
         if (TT2Config.enableNunchaku) {
             TinkerRegistry.addTrait(xy177.tt2.tools.TinkerNunchaku.COMBO_TRAIT);
         }
