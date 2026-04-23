@@ -7,11 +7,16 @@ import java.io.File;
 public class TT2Config {
 
 
+
+    public static boolean enableSwiftShield = true;
+
+    public static boolean enableHeavyShield = true;
+
+    public static boolean enableNunchaku = true;
+
     public static double parryThresholdPercent = 50.0;
 
-
     public static double cooldownCoefficient = 1.0;
-
 
     public static int perfectParryWindowTicks = 30;
 
@@ -41,32 +46,45 @@ public class TT2Config {
 
     public static double imbalanceDamageTakenIncrease = 0.5;
 
-    /**
-     * 失衡发光显示模式：
-     * 0 = 仅在"纯失衡免疫期"（失衡结束后）发光
-     * 1 = 有[失衡]时发光，仅有[失衡免疫]时不发光
-     * 2 = [失衡]和[失衡免疫]期间都发光
-     */
+
     public static int imbalanceGlowMode = 0;
 
-    // ---- 双节棍 ----
-
-    /** 攻击速度（原版剑=1.6）*/
     public static double nunchakuAttackSpeed = 2.5;
 
-    /** 每次命中获得的连击加成（0.1 = 10%）*/
     public static float nunchakuComboGainPerHit = 0.1f;
 
-    /** 连击能量上限倍率（与绑定结 modifier 相乘）*/
     public static float nunchakuComboCapBindingMultiplier = 0.45f;
 
-    /** 停止命中后连击保持的时长（ticks，20=1秒）*/
     public static int nunchakuComboDecayDelay = 60;
 
     public static void init(File configFile) {
         Configuration cfg = new Configuration(configFile);
         try {
             cfg.load();
+
+            enableSwiftShield = cfg.get(
+                Configuration.CATEGORY_GENERAL,
+                "enableSwiftShield",
+                true,
+                "是否注册并启用迅捷盾。设为 false 后该物品不会出现在游戏中，需重启生效。\n" +
+                "Whether to register and enable the Swift Shield. Set to false to remove it from the game. Requires restart."
+            ).getBoolean();
+
+            enableHeavyShield = cfg.get(
+                Configuration.CATEGORY_GENERAL,
+                "enableHeavyShield",
+                true,
+                "是否注册并启用重装盾。设为 false 后该物品不会出现在游戏中，需重启生效。\n" +
+                "Whether to register and enable the Heavy Shield. Set to false to remove it from the game. Requires restart."
+            ).getBoolean();
+
+            enableNunchaku = cfg.get(
+                Configuration.CATEGORY_GENERAL,
+                "enableNunchaku",
+                true,
+                "是否注册并启用双节棍。设为 false 后该物品不会出现在游戏中，需重启生效。\n" +
+                "Whether to register and enable the Nunchaku. Set to false to remove it from the game. Requires restart."
+            ).getBoolean();
 
             parryThresholdPercent = cfg.get(
                 Configuration.CATEGORY_GENERAL,

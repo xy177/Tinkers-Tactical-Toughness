@@ -2,11 +2,14 @@ package xy177.tt2.client;
 
 import xy177.tt2.tools.TinkerNunchaku;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraftforge.client.event.RenderSpecificHandEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -15,6 +18,30 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class NunchakuClientHandler {
+
+    @SubscribeEvent
+    public void onRenderSpecificHand(RenderSpecificHandEvent event) {
+        if (event.getHand() != EnumHand.MAIN_HAND) return;
+
+        Minecraft mc = Minecraft.getMinecraft();
+        AbstractClientPlayer player = mc.player;
+        if (player == null) return;
+
+        ItemStack stack = event.getItemStack();
+        if (!(stack.getItem() instanceof TinkerNunchaku)) return;
+        if (!isSpinning(player)) return;
+
+        event.setCanceled(true);
+        mc.getItemRenderer().renderItemInFirstPerson(
+            player,
+            event.getPartialTicks(),
+            event.getInterpolatedPitch(),
+            EnumHand.MAIN_HAND,
+            0.0F,
+            stack,
+            0.0F
+        );
+    }
 
     @SubscribeEvent
     public void onClientTick(TickEvent.ClientTickEvent event) {
@@ -50,6 +77,10 @@ public class NunchakuClientHandler {
         } else {
             clearSpinning(player);
         }
+    }
+
+    private static boolean isSpinning(AbstractClientPlayer player) {
+        return player.getEntityData().getBoolean(TinkerNunchaku.KEY_SPINNING);
     }
 
     private static void setSpinning(EntityPlayerSP player, boolean value) {

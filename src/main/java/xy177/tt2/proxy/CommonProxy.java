@@ -16,20 +16,27 @@ public class CommonProxy {
 
     public void preInit(FMLPreInitializationEvent event) {
         TT2Config.init(new File(event.getModConfigurationDirectory(), "tt2.cfg"));
-        TinkerRegistry.addTrait(TinkerNunchaku_ref());
-    }
 
-    private static slimeknights.tconstruct.library.traits.ITrait TinkerNunchaku_ref() {
-        return xy177.tt2.tools.TinkerNunchaku.COMBO_TRAIT;
+        // 连击词条仅在双节棍启用时注册
+        if (TT2Config.enableNunchaku) {
+            TinkerRegistry.addTrait(xy177.tt2.tools.TinkerNunchaku.COMBO_TRAIT);
+        }
     }
 
     public void init(FMLInitializationEvent event) {
-        TinkerRegistry.registerToolCrafting(TT2Items.SWIFT_SHIELD);
-        TinkerRegistry.registerToolCrafting(TT2Items.HEAVY_SHIELD);
-        TinkerRegistry.registerToolCrafting(TT2Items.NUNCHAKU);
+        if (TT2Config.enableSwiftShield && TT2Items.SWIFT_SHIELD != null) {
+            TinkerRegistry.registerToolCrafting(TT2Items.SWIFT_SHIELD);
+            MinecraftForge.EVENT_BUS.register(new ShieldEvents());
+        }
 
-        MinecraftForge.EVENT_BUS.register(new ShieldEvents());
-        MinecraftForge.EVENT_BUS.register(new HeavyShieldEvents());
+        if (TT2Config.enableHeavyShield && TT2Items.HEAVY_SHIELD != null) {
+            TinkerRegistry.registerToolCrafting(TT2Items.HEAVY_SHIELD);
+            MinecraftForge.EVENT_BUS.register(new HeavyShieldEvents());
+        }
+
+        if (TT2Config.enableNunchaku && TT2Items.NUNCHAKU != null) {
+            TinkerRegistry.registerToolCrafting(TT2Items.NUNCHAKU);
+        }
     }
 
     public void postInit(FMLPostInitializationEvent event) {
