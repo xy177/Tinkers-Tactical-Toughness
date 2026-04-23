@@ -23,5 +23,8 @@ public class ClientRegistration {
         if (TT2Config.enableNunchaku && TT2Items.NUNCHAKU != null) {
             ModelRegisterUtil.registerToolModel(TT2Items.NUNCHAKU);
         }
+        if (TT2Config.enableDoppelhander && TT2Items.DOPPELHANDER != null) {
+            ModelRegisterUtil.registerToolModel(TT2Items.DOPPELHANDER);
+        }
     }
 }

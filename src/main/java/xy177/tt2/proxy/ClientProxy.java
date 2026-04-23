@@ -58,5 +58,14 @@ public class ClientProxy extends CommonProxy {
             info.addSlotPosition(48, 32);
             TinkerRegistryClient.addToolBuilding(info);
         }
+
+        if (TT2Config.enableDoppelhander && TT2Items.DOPPELHANDER != null) {
+            ToolBuildGuiInfo info = new ToolBuildGuiInfo(TT2Items.DOPPELHANDER);
+            info.addSlotPosition(56, 16);
+            info.addSlotPosition(24, 48);
+            info.addSlotPosition(40, 32);
+            info.addSlotPosition(8, 64);
+            TinkerRegistryClient.addToolBuilding(info);
+        }
     }
 }

@@ -7,20 +7,30 @@ item.tt2.swift_shield.desc=A lightweight shield crafted for travelers. It does n
 item.tt2.heavy_shield.name=Heavy Shield
 item.tt2.heavy_shield.desc=A thick defensive shield with a wide blocking angle. It slightly reduces your attack damage while held and reduces jump height while blocking.\nSuccessfully blocking restores attack damage to normal for a short duration.\nHitting enemies inflicts Imbalance, reducing their attack damage, increasing damage taken, and preventing non-boss units from moving.\nAfter Imbalance ends, enemies gain Imbalance Immunity for a duration, indicated by a clear visual cue.\nImbalance duration and cooldown are based on the Tough Tool Rod's durability coefficient.
 
+item.tt2.nunchaku.name=Nunchaku
+item.tt2.nunchaku.desc=A special offensive weapon. It starts with low damage, but the damage increases with each successive hit. The cap depends on the Tough Binding material. Hold right-click to keep attacking.
+
+item.tt2.doppelhander.name=Doppelhander
+item.tt2.doppelhander.desc=A heavy defensive greatsword. It blocks a wide frontal arc, grants armor and toughness from its armor plate while held, and builds toward a stronger defensive stance with each successful block.\nDuring Defensive Stance, blocking fully protects you, restores health, draws enemy aggro, and turns your attacks into wide sweeping strikes.
+
 # Potion effects
 effect.tt2.parry_window=Parry Window
 effect.tt2.opportunity=Opportunity
 effect.tt2.imbalance=Imbalance
 effect.tt2.imbalance_immunity=Imbalance Immunity
+effect.tt2.defensive_stance=Defensive Stance
 
 # Tooltip
 tooltip.tt2.parry_value=Parry Value
+tooltip.tt2.doppelhander.armor=Provided Armor
+tooltip.tt2.doppelhander.toughness=Provided Toughness
 
-# Nunchaku
-item.tt2.nunchaku.name=Nunchaku
-item.tt2.nunchaku.desc=A special offensive weapon. It starts with low damage, but the damage increases with each successive hit. The cap depends on the Tough Binding material. Hold right-click to keep attacking.
+# Status
+tt2.doppelhander.guard_performance=Defense Performance %s%%
+tt2.doppelhander.defensive_stance_entered=Enter Defensive Stance!
+tt2.doppelhander.defensive_stance_ended=Defensive Stance Ended...
 
 # Combo trait
 modifier.nunchaku_combo.name=Combo
-modifier.nunchaku_combo.desc=Hm hm ha hey!\n§rHitting enemies builds combo stacks to boost damage. Cap depends on binding material; resets after inactivity.
+modifier.nunchaku_combo.desc=Hm hm ha hey!\nHitting enemies builds combo stacks to boost damage. Cap depends on binding material; resets after inactivity.
 tt2.trait.nunchaku_combo=Combo %s/%s  (+%s%%)  Damage x%s

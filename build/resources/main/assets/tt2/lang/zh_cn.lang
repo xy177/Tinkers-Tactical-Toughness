@@ -2,25 +2,35 @@
 
 # 物品名称
 item.tt2.swift_shield.name=迅捷盾
-item.tt2.swift_shield.desc=为旅行者打造的轻型盾牌，格挡时不会降低移速，累计格挡一定伤害后会无法使用一段时间。\n若在即将遭受攻击时抓住机会进行格挡，则伤害不会参与累计的同时还会对攻击者发动反击。\n格挡值上限与冷却时间基于大板的耐久系数。
+item.tt2.swift_shield.desc=为旅者打造的轻型盾牌，格挡时不会降低移动速度。累计格挡一定伤害后会暂时无法使用。\n若在即将受击时精准格挡，则不会累积格挡值，并会对攻击者发动反击。\n格挡上限与冷却时间取决于大板的耐久系数。
 
 item.tt2.heavy_shield.name=重装盾
-item.tt2.heavy_shield.desc=厚重的防御型盾牌，格挡角度宽广，持有时会轻微降低攻击伤害，格挡时则会降低跳跃高度。\n成功格挡后使攻击攻击伤害恢复正常一段时间。\n命中敌人可使其陷入失衡状态，使其攻击伤害降低，受伤增加，且非首领单位还会因此无法移动。\n失衡状态结束后敌人会免疫失衡一段时间，这期间会有明显的提示。\n失衡持续时长与冷却时长取决于坚韧手柄的耐久系数。
+item.tt2.heavy_shield.desc=厚重的防御型盾牌，格挡角度宽阔，手持时会略微降低攻击伤害，格挡时也会降低跳跃高度。\n成功格挡后会在短时间内恢复正常攻击伤害。\n命中敌人可使其陷入失衡状态，降低其伤害输出、提高其所受伤害，并使非首领单位难以行动。\n失衡结束后目标会进入一段时间的失衡免疫，并伴随明显提示。\n相关持续时间与冷却主要受坚韧手柄影响。
+
+item.tt2.nunchaku.name=双节棍
+item.tt2.nunchaku.desc=一种特殊的进攻型武器。初始伤害较低，但可随着连续命中不断提高。连击上限取决于坚韧绑定结材料。长按右键可持续自动攻击。
+
+item.tt2.doppelhander.name=德式双手剑
+item.tt2.doppelhander.desc=兼具防御与压制能力的重型双手剑。手持时会根据护甲板材料提供护甲值与护甲韧性，并在每次成功格挡后逐步提高阻挡伤害比例。\n当累积到极限后，将进入防御姿态：格挡时完全抵御伤害、回复生命、吸引周围敌人的仇恨，并让攻击化为大范围横扫。
 
 # 药水效果
 effect.tt2.parry_window=严阵以待
 effect.tt2.opportunity=良机
 effect.tt2.imbalance=失衡
 effect.tt2.imbalance_immunity=失衡免疫
+effect.tt2.defensive_stance=防御姿态
 
-# 物品 tooltip 显示
-tooltip.tt2.parry_value=招架值
+# 提示
+tooltip.tt2.parry_value=格挡值
+tooltip.tt2.doppelhander.armor=提供护甲
+tooltip.tt2.doppelhander.toughness=提供韧性
 
-# 双节棍
-item.tt2.nunchaku.name=双节棍
-item.tt2.nunchaku.desc=双节棍是一种特殊的攻击性武器，它的初始伤害较低，但伤害会随着攻击而不断上升，其上限取决于所用的坚韧绑定结的耐久系数——长按右键持续发起攻击。
+# 状态提示
+tt2.doppelhander.guard_performance=防御性能 %s%%
+tt2.doppelhander.defensive_stance_entered=进入防御姿态！
+tt2.doppelhander.defensive_stance_ended=防御姿态结束...
 
 # 连击词条
 modifier.nunchaku_combo.name=连击
-modifier.nunchaku_combo.desc=哼哼哈嘿！\n§r攻击敌人积累连击以提升伤害；上限由绑定结材质决定，停止攻击后一段时间清零。
+modifier.nunchaku_combo.desc=攻击敌人时会积累连击层数并提高伤害；上限由绑定结材料决定，停止攻击一段时间后会清零。
 tt2.trait.nunchaku_combo=连击 %s/%s  (+%s%%)  伤害x%s
