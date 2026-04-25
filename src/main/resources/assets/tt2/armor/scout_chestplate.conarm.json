@@ -1,0 +1,8 @@
+{
+  "textures": {
+    "layer0": "tt2:items/scout/chestplate/core",
+    "layer1": "tt2:items/scout/chestplate/plate",
+    "layer2": "tt2:items/scout/chestplate/trim",
+    "broken0": "tt2:items/scout/chestplate/broken_core"
+  }
+}

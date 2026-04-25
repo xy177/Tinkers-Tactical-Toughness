@@ -1,0 +1,16 @@
+{
+  "title": "Defense Damage",
+  "text": [
+    {
+      "text": "Repeated enemy hits can weaken your defenses. Defense Damage lowers armor, toughness, and some defensive armor traits, down to a configurable minimum."
+    },
+    {
+      "text": "Bosses inflict more Defense Damage than normal creatures. Successfully blocking an attack prevents Defense Damage from being added.",
+      "paragraph": true
+    },
+    {
+      "text": "After a short time without taking enemy damage, Defense Damage gradually recovers.",
+      "paragraph": true
+    }
+  ]
+}

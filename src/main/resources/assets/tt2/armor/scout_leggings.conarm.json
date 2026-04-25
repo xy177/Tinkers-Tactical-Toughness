@@ -1,0 +1,8 @@
+{
+  "textures": {
+    "layer0": "tt2:items/scout/leggings/core",
+    "layer1": "tt2:items/scout/leggings/plate",
+    "layer2": "tt2:items/scout/leggings/trim",
+    "broken0": "tt2:items/scout/leggings/broken_core"
+  }
+}

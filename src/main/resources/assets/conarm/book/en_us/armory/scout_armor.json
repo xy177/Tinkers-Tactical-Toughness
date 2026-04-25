@@ -1,0 +1,21 @@
+{
+  "title": "Scout Armor",
+  "text": [
+    {
+      "text": "Scout Armor is a light armor set focused on mobility and utility."
+    },
+    {
+      "text": "It offers only half the armor of standard Tinkers' armor and grants no toughness."
+    },
+    {
+      "text": "In return, it improves movement and ranged combat, grants dodge potential, and reduces fall and environmental damage."
+    }
+  ],
+  "properties": [
+    "Half armor, no toughness",
+    "Can dodge attacks",
+    "Ranged damage scales with toughness from armor plates",
+    "Improves mobility and ranged combat",
+    "Reduces fall and environmental damage"
+  ]
+}

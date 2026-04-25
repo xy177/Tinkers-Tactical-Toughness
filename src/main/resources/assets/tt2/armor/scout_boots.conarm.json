@@ -1,0 +1,8 @@
+{
+  "textures": {
+    "layer0": "tt2:items/scout/boots/core",
+    "layer1": "tt2:items/scout/boots/plate",
+    "layer2": "tt2:items/scout/boots/trim",
+    "broken0": "tt2:items/scout/boots/broken_core"
+  }
+}

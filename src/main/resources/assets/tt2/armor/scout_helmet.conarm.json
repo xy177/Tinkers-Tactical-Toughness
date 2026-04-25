@@ -1,0 +1,8 @@
+{
+  "textures": {
+    "layer0": "tt2:items/scout/helmet/core",
+    "layer1": "tt2:items/scout/helmet/plate",
+    "layer2": "tt2:items/scout/helmet/trim",
+    "broken0": "tt2:items/scout/helmet/broken_core"
+  }
+}

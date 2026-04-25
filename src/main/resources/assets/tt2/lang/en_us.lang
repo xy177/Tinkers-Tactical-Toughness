@@ -13,6 +13,15 @@ item.tt2.nunchaku.desc=A special offensive weapon. It starts with low damage, bu
 item.tt2.doppelhander.name=Doppelhander
 item.tt2.doppelhander.desc=A heavy defensive greatsword. It blocks a wide frontal arc, grants armor and toughness from its armor plate while held, and builds toward a stronger defensive stance with each successful block.\nDuring Defensive Stance, blocking fully protects you, restores health, draws enemy aggro, and turns your attacks into wide sweeping strikes.
 
+item.tt2.scout_helmet.name=Scout Helmet
+item.tt2.scout_chestplate.name=Scout Chestplate
+item.tt2.scout_leggings.name=Scout Leggings
+item.tt2.scout_boots.name=Scout Boots
+item.tt2.scout_helmet.desc=Light armor built for scouting, skirmishing, and evasive movement. It provides only half the armor of standard Tinkers' armor and no toughness, but uses material toughness to increase ranged damage and uses armor value to give the wearer a matching chance to dodge enemy attacks.\nIt improves fall damage reduction and environmental damage reduction, while also making enemies less likely to focus you when other valid targets are nearby.\nSet bonuses improve as more pieces are worn, further enhancing jump and movement capabilities.
+item.tt2.scout_chestplate.desc=Light armor built for scouting, skirmishing, and evasive movement. It provides only half the armor of standard Tinkers' armor and no toughness, but uses material toughness to increase ranged damage and uses armor value to give the wearer a matching chance to dodge enemy attacks.\nIt improves fall damage reduction and environmental damage reduction, while also making enemies less likely to focus you when other valid targets are nearby.\nSet bonuses improve as more pieces are worn, further enhancing jump and movement capabilities.
+item.tt2.scout_leggings.desc=Light armor built for scouting, skirmishing, and evasive movement. It provides only half the armor of standard Tinkers' armor and no toughness, but uses material toughness to increase ranged damage and uses armor value to give the wearer a matching chance to dodge enemy attacks.\nIt improves fall damage reduction and environmental damage reduction, while also making enemies less likely to focus you when other valid targets are nearby.\nSet bonuses improve as more pieces are worn, further enhancing jump and movement capabilities.
+item.tt2.scout_boots.desc=Light armor built for scouting, skirmishing, and evasive movement. It provides only half the armor of standard Tinkers' armor and no toughness, but uses material toughness to increase ranged damage and uses armor value to give the wearer a matching chance to dodge enemy attacks.\nIt improves fall damage reduction and environmental damage reduction, while also making enemies less likely to focus you when other valid targets are nearby.\nSet bonuses improve as more pieces are worn, further enhancing jump and movement capabilities.
+
 # Potion effects
 effect.tt2.parry_window=Parry Window
 effect.tt2.opportunity=Opportunity
@@ -24,6 +33,14 @@ effect.tt2.defensive_stance=Defensive Stance
 tooltip.tt2.parry_value=Parry Value
 tooltip.tt2.doppelhander.armor=Provided Armor
 tooltip.tt2.doppelhander.toughness=Provided Toughness
+tooltip.tt2.scout.dodge=Dodge Chance
+tooltip.tt2.scout.ranged_bonus=Ranged Damage
+tooltip.tt2.scout.fall_reduction=Fall Damage Reduction
+tooltip.tt2.scout.environment_reduction=Environmental Damage Reduction
+tooltip.tt2.scout.set_bonus_1=Set Bonus (1): When multiple valid targets exist, enemies are less likely to target you
+tooltip.tt2.scout.set_bonus_2=Set Bonus (2): When multiple valid targets exist, enemies are somewhat less likely to target you, and your natural jump height increases
+tooltip.tt2.scout.set_bonus_3=Set Bonus (3): When multiple valid targets exist, enemies are much less likely to target you, your step height increases, and your natural jump height increases
+tooltip.tt2.scout.set_bonus_4=Set Bonus (4): When multiple valid targets exist, enemies are extremely unlikely to target you, your step height increases, your natural jump height increases, and you gain Double Jump
 
 # Status
 tt2.doppelhander.guard_performance=Defense Performance %s%%

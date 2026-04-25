@@ -204,6 +204,9 @@ public class DoppelhanderEvents {
         if (stack.isEmpty() || !(stack.getItem() instanceof Doppelhander)) {
             return false;
         }
+        if (player.getActiveHand() != EnumHand.MAIN_HAND) {
+            return false;
+        }
         if (ToolHelper.isBroken(stack)) {
             return false;
         }
@@ -219,12 +222,6 @@ public class DoppelhanderEvents {
         if (mainhand.getItem() instanceof Doppelhander && !ToolHelper.isBroken(mainhand)) {
             return mainhand;
         }
-
-        ItemStack offhand = player.getHeldItemOffhand();
-        if (offhand.getItem() instanceof Doppelhander && !ToolHelper.isBroken(offhand)) {
-            return offhand;
-        }
-
         return ItemStack.EMPTY;
     }
 

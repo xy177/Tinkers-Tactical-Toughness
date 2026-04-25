@@ -4,6 +4,7 @@ import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
+import c4.conarm.client.utils.ArmorModelUtils;
 import slimeknights.tconstruct.common.ModelRegisterUtil;
 import xy177.tt2.TT2;
 import xy177.tt2.config.TT2Config;
@@ -25,6 +26,20 @@ public class ClientRegistration {
         }
         if (TT2Config.enableDoppelhander && TT2Items.DOPPELHANDER != null) {
             ModelRegisterUtil.registerToolModel(TT2Items.DOPPELHANDER);
+        }
+        if (TT2Config.enableScoutArmor) {
+            if (TT2Items.SCOUT_HELMET != null) {
+                ArmorModelUtils.registerArmorModel(TT2Items.SCOUT_HELMET);
+            }
+            if (TT2Items.SCOUT_CHESTPLATE != null) {
+                ArmorModelUtils.registerArmorModel(TT2Items.SCOUT_CHESTPLATE);
+            }
+            if (TT2Items.SCOUT_LEGGINGS != null) {
+                ArmorModelUtils.registerArmorModel(TT2Items.SCOUT_LEGGINGS);
+            }
+            if (TT2Items.SCOUT_BOOTS != null) {
+                ArmorModelUtils.registerArmorModel(TT2Items.SCOUT_BOOTS);
+            }
         }
     }
 }

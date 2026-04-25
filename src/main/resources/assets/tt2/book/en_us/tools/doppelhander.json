@@ -1,0 +1,20 @@
+{
+  "tool": "doppelhander",
+  "text": [
+    {
+      "text": "A heavy greatsword built for guard and control. Each successful block improves its damage reduction."
+    },
+    {
+      "text": "\n"
+    },
+    {
+      "text": "At full guard it enters Defensive Stance, letting blocks restore health while attacks hit harder, sweep in a wide arc, and draw nearby aggro."
+    }
+  ],
+  "properties": [
+    "120° blocking angle",
+    "Base block reduces 60% damage",
+    "Defensive Stance restores health on block and pulls aggro",
+    "Defensive Stance boosts damage and grants 120° sweeping attacks"
+  ]
+}

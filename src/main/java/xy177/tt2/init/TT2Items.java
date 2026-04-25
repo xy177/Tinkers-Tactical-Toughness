@@ -5,6 +5,10 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import xy177.tt2.TT2;
+import xy177.tt2.armor.ScoutBoots;
+import xy177.tt2.armor.ScoutChestplate;
+import xy177.tt2.armor.ScoutHelmet;
+import xy177.tt2.armor.ScoutLeggings;
 import xy177.tt2.config.TT2Config;
 import xy177.tt2.tools.Doppelhander;
 import xy177.tt2.tools.HeavyShield;
@@ -18,6 +22,10 @@ public class TT2Items {
     public static HeavyShield HEAVY_SHIELD;
     public static TinkerNunchaku NUNCHAKU;
     public static Doppelhander DOPPELHANDER;
+    public static ScoutHelmet SCOUT_HELMET;
+    public static ScoutChestplate SCOUT_CHESTPLATE;
+    public static ScoutLeggings SCOUT_LEGGINGS;
+    public static ScoutBoots SCOUT_BOOTS;
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {
@@ -43,6 +51,24 @@ public class TT2Items {
             DOPPELHANDER = new Doppelhander();
             DOPPELHANDER.setRegistryName(TT2.MOD_ID, "doppelhander");
             event.getRegistry().register(DOPPELHANDER);
+        }
+
+        if (TT2Config.enableScoutArmor) {
+            SCOUT_HELMET = new ScoutHelmet();
+            SCOUT_HELMET.setRegistryName(TT2.MOD_ID, "scout_helmet");
+            event.getRegistry().register(SCOUT_HELMET);
+
+            SCOUT_CHESTPLATE = new ScoutChestplate();
+            SCOUT_CHESTPLATE.setRegistryName(TT2.MOD_ID, "scout_chestplate");
+            event.getRegistry().register(SCOUT_CHESTPLATE);
+
+            SCOUT_LEGGINGS = new ScoutLeggings();
+            SCOUT_LEGGINGS.setRegistryName(TT2.MOD_ID, "scout_leggings");
+            event.getRegistry().register(SCOUT_LEGGINGS);
+
+            SCOUT_BOOTS = new ScoutBoots();
+            SCOUT_BOOTS.setRegistryName(TT2.MOD_ID, "scout_boots");
+            event.getRegistry().register(SCOUT_BOOTS);
         }
     }
 }
