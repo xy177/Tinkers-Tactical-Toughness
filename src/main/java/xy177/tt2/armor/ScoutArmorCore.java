@@ -3,31 +3,41 @@ package xy177.tt2.armor;
 import c4.conarm.common.ConstructsRegistry;
 import c4.conarm.common.armor.utils.ArmorHelper;
 import c4.conarm.lib.armor.ArmorCore;
+import c4.conarm.lib.armor.ArmorModifications;
 import c4.conarm.lib.armor.ArmorNBT;
 import c4.conarm.lib.materials.ArmorMaterialType;
 import c4.conarm.lib.materials.CoreMaterialStats;
 import c4.conarm.lib.materials.PlatesMaterialStats;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import net.minecraft.client.model.ModelBiped;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.common.ISpecialArmor;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
+import slimeknights.tconstruct.library.TinkerRegistry;
 import slimeknights.tconstruct.library.materials.Material;
+import slimeknights.tconstruct.library.modifiers.ModifierNBT;
+import slimeknights.tconstruct.library.traits.ITrait;
 import slimeknights.tconstruct.library.tinkering.PartMaterialType;
 import slimeknights.tconstruct.library.utils.TooltipBuilder;
 import slimeknights.tconstruct.library.utils.TagUtil;
 import slimeknights.tconstruct.library.utils.TinkerUtil;
 import slimeknights.tconstruct.library.utils.ToolHelper;
 import c4.conarm.lib.tinkering.ArmorTooltipBuilder;
-import net.minecraft.client.model.ModelBiped;
-import net.minecraft.entity.EntityLivingBase;
 import slimeknights.tconstruct.library.Util;
 import xy177.tt2.TT2;
 import xy177.tt2.client.model.ScoutArmorModel;
@@ -42,7 +52,15 @@ import java.util.UUID;
 
 public abstract class ScoutArmorCore extends ArmorCore {
 
+    private static final String POLISHED_ARMOR_PREFIX = "polished_armor";
     private final Map<EntityEquipmentSlot, ModelBiped> scoutModels = new EnumMap<>(EntityEquipmentSlot.class);
+
+    private static final UUID[] ARMOR_VALUE_MODIFIERS = new UUID[]{
+        UUID.fromString("fc8fc17c-2d33-4b24-9356-ecf6f0f0fd11"),
+        UUID.fromString("3e6a4a75-a678-47db-8f58-a3e1da8bcf0f"),
+        UUID.fromString("ac5d57f9-5b3d-4f0e-82b1-c98f44e63ee9"),
+        UUID.fromString("b7e49d2e-a1dc-42bb-9308-8173e47b9494")
+    };
 
     private static final UUID[] SPEED_MODIFIERS = new UUID[]{
         UUID.fromString("7c6ae507-1ea7-4308-a2d3-3a7c60ba4fd1"),
@@ -96,7 +114,6 @@ public abstract class ScoutArmorCore extends ArmorCore {
 
         info.addDurability(!detailed);
         ArmorTooltipBuilder.addDefense(info, stack);
-        ArmorTooltipBuilder.addToughness(info, stack);
         info.add(formatDodgeChance(stack));
         info.add(formatRangedDamageBonus(stack));
         info.add(formatFallDamageReduction());
@@ -200,14 +217,68 @@ public abstract class ScoutArmorCore extends ArmorCore {
     @Nonnull
     @Override
     public Multimap<String, AttributeModifier> getAttributeModifiers(@Nonnull EntityEquipmentSlot slot, ItemStack armor) {
-        Multimap<String, AttributeModifier> multimap = super.getAttributeModifiers(slot, armor);
+        Multimap<String, AttributeModifier> multimap = HashMultimap.create();
         if (!ToolHelper.isBroken(armor) && slot == this.armorType) {
             multimap.put(
                 SharedMonsterAttributes.MOVEMENT_SPEED.getName(),
                 new AttributeModifier(SPEED_MODIFIERS[slot.getIndex()], "Scout speed bonus", getSpeedBonus(), 2)
             );
+
+            multimap.put(
+                SharedMonsterAttributes.ARMOR.getName(),
+                new AttributeModifier(
+                    ARMOR_VALUE_MODIFIERS[slot.getIndex()],
+                    "Armor modifier",
+                    ArmorHelper.getArmor(armor, slot.getIndex()),
+                    0
+                )
+            );
+        }
+
+        NBTTagList traits = TagUtil.getTraitsTagList(armor);
+        for (int i = 0; i < traits.tagCount(); i++) {
+            ITrait trait = TinkerRegistry.getTrait(traits.getStringTagAt(i));
+            if (trait != null) {
+                trait.getAttributeModifiers(slot, armor, multimap);
+            }
         }
         return multimap;
+    }
+
+    @Override
+    public ISpecialArmor.ArmorProperties getProperties(EntityLivingBase wearer, ItemStack armor, DamageSource source, double damage, int slot) {
+        if (ToolHelper.isBroken(armor) || source.isUnblockable() || !(wearer instanceof EntityPlayer)) {
+            return new ISpecialArmor.ArmorProperties(0, 0, 0);
+        }
+
+        EntityEquipmentSlot equipmentSlot = EntityLiving.getSlotForItemStack(armor);
+        EntityPlayer player = (EntityPlayer) wearer;
+        ArmorModifications modifications = new ArmorModifications(
+            ArmorHelper.getArmor(armor, equipmentSlot.getIndex()),
+            0f
+        );
+
+        NBTTagList traits = TagUtil.getTraitsTagList(armor);
+        for (int i = 0; i < traits.tagCount(); i++) {
+            ITrait trait = TinkerRegistry.getTrait(traits.getStringTagAt(i));
+            if (trait instanceof c4.conarm.lib.traits.IArmorTrait) {
+                modifications = ((c4.conarm.lib.traits.IArmorTrait) trait).getModifications(
+                    player, modifications, armor, source, damage, slot
+                );
+            }
+        }
+
+        float armorValue = modifications.armor * modifications.armorMod * modifications.effective;
+        ISpecialArmor.ArmorProperties properties = ArmorHelper.getPropertiesAfterAbsorb(
+            armor,
+            damage,
+            armorValue,
+            0f,
+            this.armorType
+        );
+        properties.Armor -= ArmorHelper.getArmor(armor, equipmentSlot.getIndex());
+        properties.Toughness = 0;
+        return properties;
     }
 
     public float getSpeedBonus() {
@@ -226,7 +297,7 @@ public abstract class ScoutArmorCore extends ArmorCore {
     }
 
     public float getRangedDamageBonusPercent(ItemStack stack, double coefficient) {
-        return getAveragePlateToughness(stack) * (float) coefficient;
+        return getEffectiveRangedToughness(stack) * (float) coefficient;
     }
 
     public float getFallDamageReductionContribution() {
@@ -248,6 +319,33 @@ public abstract class ScoutArmorCore extends ArmorCore {
             return 0f;
         }
         return (plate1.toughness + plate2.toughness) / 2f;
+    }
+
+    public float getEffectiveRangedToughness(ItemStack stack) {
+        float polishedToughness = getPolishedToughness(stack);
+        if (polishedToughness > 0f) {
+            return polishedToughness;
+        }
+        return getAveragePlateToughness(stack);
+    }
+
+    private float getPolishedToughness(ItemStack stack) {
+        NBTTagList modifiers = TagUtil.getModifiersTagList(stack);
+        for (int i = 0; i < modifiers.tagCount(); i++) {
+            NBTTagCompound tag = modifiers.getCompoundTagAt(i);
+            ModifierNBT data = ModifierNBT.readTag(tag);
+            if (data.identifier != null && data.identifier.startsWith(POLISHED_ARMOR_PREFIX)) {
+                String materialId = data.identifier.substring(POLISHED_ARMOR_PREFIX.length());
+                Material material = TinkerRegistry.getMaterial(materialId);
+                if (material != null) {
+                    PlatesMaterialStats stats = material.getStats(ArmorMaterialType.PLATES);
+                    if (stats != null) {
+                        return stats.toughness;
+                    }
+                }
+            }
+        }
+        return 0f;
     }
 
     public static boolean isScoutArmor(ItemStack stack) {

@@ -2,14 +2,14 @@
   "title": "Defense Damage",
   "text": [
     {
-      "text": "Repeated enemy hits can weaken your defenses. Defense Damage lowers armor, toughness, and some defensive armor traits, down to a configurable minimum."
+      "text": "Repeated enemy attacks weaken your defenses. Defense Damage lowers armor, toughness, and the effects of some defensive on-hit armor traits. Boss attacks inflict more Defense Damage than normal creatures, while successfully blocking an attack prevents Defense Damage from building up."
     },
     {
-      "text": "Bosses inflict more Defense Damage than normal creatures. Successfully blocking an attack prevents Defense Damage from being added.",
+      "text": "After a short period without taking enemy damage, Defense Damage gradually recovers.",
       "paragraph": true
     },
     {
-      "text": "After a short time without taking enemy damage, Defense Damage gradually recovers.",
+      "text": "You can check your current Defense Damage status through Materials and You - Armory Addendum in your inventory.",
       "paragraph": true
     }
   ]

@@ -5,6 +5,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import c4.conarm.lib.ArmoryRegistry;
+import c4.conarm.common.ConstructsRegistry;
 import slimeknights.tconstruct.library.TinkerRegistry;
 import xy177.tt2.config.TT2Config;
 import xy177.tt2.events.DefenseDamageEvents;
@@ -31,6 +32,10 @@ public class CommonProxy {
     }
 
     public void init(FMLInitializationEvent event) {
+        if (ConstructsRegistry.book != null && ConstructsRegistry.book.getMaxDamage() != 100) {
+            ConstructsRegistry.book.setMaxDamage(100);
+        }
+
         if (TT2Config.enableDefenseDamage) {
             MinecraftForge.EVENT_BUS.register(new DefenseDamageEvents());
         }

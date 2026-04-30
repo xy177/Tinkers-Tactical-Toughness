@@ -51,6 +51,7 @@ public class TT2Config {
     public static double defenseDamageBossHitPercent = 0.075;
     public static double defenseDamageNormalHitPercent = 0.0375;
     public static double defenseDamageMinimumEfficiency = 0.25;
+    public static int defenseDamageTriggerIntervalTicks = 15;
     public static int defenseDamageRecoveryDelayTicks = 40;
     public static int defenseDamageRecoveryIntervalTicks = 30;
     public static double defenseDamageRecoveryPercent = 0.15;
@@ -424,6 +425,15 @@ public class TT2Config {
                 "Minimum remaining efficiency for armor, toughness, and related defensive traits under Defense Damage. 0.25 = keep at least 25%.",
                 0.0, 1.0
             ).getDouble();
+
+            defenseDamageTriggerIntervalTicks = cfg.get(
+                Configuration.CATEGORY_GENERAL,
+                "defenseDamageTriggerIntervalTicks",
+                15,
+                "防御损伤对同一名玩家的触发间隔。15 ticks = 0.75 秒；在间隔结束前，高频攻击不会重复累计新的防御损伤。\n\n" +
+                "Trigger interval for Defense Damage on the same player. 15 ticks = 0.75 seconds; hits during this interval will not add more Defense Damage.",
+                0, 1200
+            ).getInt();
 
             defenseDamageRecoveryDelayTicks = cfg.get(
                 Configuration.CATEGORY_GENERAL,

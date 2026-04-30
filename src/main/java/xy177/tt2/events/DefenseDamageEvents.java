@@ -1,12 +1,15 @@
 package xy177.tt2.events;
 
+import c4.conarm.common.ConstructsRegistry;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.EnumAction;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.Vec3d;
@@ -31,8 +34,12 @@ public class DefenseDamageEvents {
 
     private final Map<UUID, Float> damage = new HashMap<>();
     private final Map<UUID, Long> lastHitTick = new HashMap<>();
+    private final Map<UUID, Long> lastTriggerTick = new HashMap<>();
     private final Map<UUID, Long> nextRecoveryTick = new HashMap<>();
+    private final Map<UUID, Long> lastBookCooldownEndTick = new HashMap<>();
     private final Map<UUID, Float> preTraitDamage = new HashMap<>();
+
+    private static final int ARMORY_BOOK_BAR_MAX = 100;
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onLivingHurtEarly(LivingHurtEvent event) {
@@ -83,11 +90,14 @@ public class DefenseDamageEvents {
             return;
         }
 
+        lastHitTick.put(player.getUniqueID(), player.world.getTotalWorldTime());
+
         EntityLivingBase attacker = (EntityLivingBase) event.getSource().getTrueSource();
         float gain = attacker.isNonBoss()
             ? (float) TT2Config.defenseDamageNormalHitPercent
             : (float) TT2Config.defenseDamageBossHitPercent;
-        addDefenseDamage(player, gain);
+        tryAddDefenseDamage(player, gain);
+        syncArmoryBookDisplay(player);
     }
 
     @SubscribeEvent
@@ -102,8 +112,11 @@ public class DefenseDamageEvents {
         if (current <= 0f) {
             damage.remove(id);
             lastHitTick.remove(id);
+            lastTriggerTick.remove(id);
             nextRecoveryTick.remove(id);
+            lastBookCooldownEndTick.remove(id);
             updateArmorPenalty(player, 1f);
+            clearArmoryBookDisplay(player);
             return;
         }
 
@@ -119,6 +132,7 @@ public class DefenseDamageEvents {
         }
 
         updateArmorPenalty(player, getEfficiency(current));
+        syncArmoryBookDisplay(player);
     }
 
     @SubscribeEvent
@@ -126,7 +140,9 @@ public class DefenseDamageEvents {
         UUID id = event.player.getUniqueID();
         damage.remove(id);
         lastHitTick.remove(id);
+        lastTriggerTick.remove(id);
         nextRecoveryTick.remove(id);
+        lastBookCooldownEndTick.remove(id);
         preTraitDamage.remove(id);
         removeModifier(event.player.getEntityAttribute(SharedMonsterAttributes.ARMOR), ARMOR_UUID);
         removeModifier(event.player.getEntityAttribute(SharedMonsterAttributes.ARMOR_TOUGHNESS), TOUGHNESS_UUID);
@@ -141,14 +157,99 @@ public class DefenseDamageEvents {
         return Math.max(min, 1f - Math.min(1f, defenseDamage));
     }
 
+    private void tryAddDefenseDamage(EntityPlayer player, float amount) {
+        UUID id = player.getUniqueID();
+        long now = player.world.getTotalWorldTime();
+        long lastTrigger = lastTriggerTick.getOrDefault(id, Long.MIN_VALUE / 4);
+        if (now - lastTrigger < TT2Config.defenseDamageTriggerIntervalTicks) {
+            return;
+        }
+
+        lastTriggerTick.put(id, now);
+        addDefenseDamage(player, amount);
+    }
+
     private void addDefenseDamage(EntityPlayer player, float amount) {
         UUID id = player.getUniqueID();
         float maxDamage = 1f - (float) TT2Config.defenseDamageMinimumEfficiency;
         float next = Math.min(maxDamage, damage.getOrDefault(id, 0f) + amount);
         damage.put(id, next);
-        lastHitTick.put(id, player.world.getTotalWorldTime());
         nextRecoveryTick.put(id, player.world.getTotalWorldTime() + TT2Config.defenseDamageRecoveryDelayTicks);
         updateArmorPenalty(player, getEfficiency(next));
+    }
+
+    private void syncArmoryBookDisplay(EntityPlayer player) {
+        Item armoryBook = ConstructsRegistry.book;
+        if (armoryBook == null) {
+            return;
+        }
+
+        boolean hasBook = updateArmoryBookBar(player, armoryBook, getEfficiency(player));
+        if (!hasBook) {
+            return;
+        }
+
+        UUID id = player.getUniqueID();
+        if (damage.getOrDefault(id, 0f) <= 0f) {
+            player.getCooldownTracker().removeCooldown(armoryBook);
+            lastBookCooldownEndTick.remove(id);
+            return;
+        }
+
+        long now = player.world.getTotalWorldTime();
+        long lastHit = lastHitTick.getOrDefault(id, now);
+        long cooldownEnd;
+        int cooldownTicks;
+        if (now - lastHit < TT2Config.defenseDamageRecoveryDelayTicks) {
+            cooldownEnd = lastHit + TT2Config.defenseDamageRecoveryDelayTicks;
+            cooldownTicks = (int) Math.max(1, cooldownEnd - now);
+        } else {
+            cooldownEnd = nextRecoveryTick.getOrDefault(id, now);
+            cooldownTicks = (int) Math.max(0, cooldownEnd - now);
+        }
+
+        Long lastAppliedEnd = lastBookCooldownEndTick.get(id);
+        if (cooldownTicks <= 0) {
+            player.getCooldownTracker().removeCooldown(armoryBook);
+            lastBookCooldownEndTick.remove(id);
+        } else if (lastAppliedEnd == null || lastAppliedEnd != cooldownEnd) {
+            player.getCooldownTracker().setCooldown(armoryBook, cooldownTicks);
+            lastBookCooldownEndTick.put(id, cooldownEnd);
+        }
+    }
+
+    private void clearArmoryBookDisplay(EntityPlayer player) {
+        Item armoryBook = ConstructsRegistry.book;
+        if (armoryBook == null) {
+            return;
+        }
+
+        if (updateArmoryBookBar(player, armoryBook, 1f)) {
+            player.getCooldownTracker().removeCooldown(armoryBook);
+        }
+    }
+
+    private boolean updateArmoryBookBar(EntityPlayer player, Item armoryBook, float efficiency) {
+        InventoryPlayer inventory = player.inventory;
+        int displayDamage = Math.max(0, Math.min(
+            ARMORY_BOOK_BAR_MAX,
+            Math.round((1f - efficiency) * ARMORY_BOOK_BAR_MAX)
+        ));
+        boolean found = false;
+
+        for (ItemStack stack : inventory.mainInventory) {
+            if (stack.getItem() == armoryBook) {
+                stack.setItemDamage(displayDamage);
+                found = true;
+            }
+        }
+        for (ItemStack stack : inventory.offHandInventory) {
+            if (stack.getItem() == armoryBook) {
+                stack.setItemDamage(displayDamage);
+                found = true;
+            }
+        }
+        return found;
     }
 
     private void updateArmorPenalty(EntityPlayer player, float efficiency) {
