@@ -1,0 +1,19 @@
+{
+  "tool": "maraca",
+  "text": [
+    {
+      "text": "The maraca is a rhythmic Tinkers' weapon. It buffs you and your allies through melody, and each action changes how it fights.\nLeft-click for Quick Beat (♪), right-click for Adagio (♩), F key for Resonance (♫), and Q key to play recorded combos."
+    },
+    {
+      "text": "Quick Beat: normal attack; Adagio: critical attack; Resonance: area damage."
+    }
+  ],
+  "properties": [
+    "[♪-♪]: Self Empowerment - increases your own damage",
+    "[♪-♩-♩-♩]: Attack Up - increases damage for you and allies",
+    "[♩-♫-♩-♪]: Poise - makes you and allies immune to knockback",
+    "[♩-♪-♫-♪]: Defense Up - reduces damage taken by you and allies",
+    "[♪-♪-♩-♩]: Party Time! - converts all other melody durations into Party Time, greatly boosts Resonance damage, makes the main target enter Imbalance, makes you less likely to be targeted, and Resonance shortens the Party duration",
+    "[♫-♩-♫]: Extended Existing Melodies - extends melody duration except for Party Time"
+  ]
+}

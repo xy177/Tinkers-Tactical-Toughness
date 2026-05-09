@@ -17,6 +17,7 @@ import slimeknights.tconstruct.library.client.ToolBuildGuiInfo;
 import xy177.tt2.TT2;
 import xy177.tt2.client.NunchakuClientHandler;
 import xy177.tt2.client.ScoutArmorClientEvents;
+import xy177.tt2.client.MaracaClientEvents;
 import xy177.tt2.client.book.TT2ArmorySectionTransformer;
 import xy177.tt2.client.book.TT2ToolSectionTransformer;
 import xy177.tt2.client.book.content.TT2ContentScoutArmor;
@@ -50,6 +51,10 @@ public class ClientProxy extends CommonProxy {
             MinecraftForge.EVENT_BUS.register(new NunchakuClientHandler());
         }
 
+        if (TT2Items.MARACA != null) {
+            MinecraftForge.EVENT_BUS.register(new MaracaClientEvents());
+        }
+
         if (TT2Config.enableScoutArmor) {
             MinecraftForge.EVENT_BUS.register(new ScoutArmorClientEvents());
             if (TT2Items.SCOUT_HELMET != null) {
@@ -80,8 +85,7 @@ public class ClientProxy extends CommonProxy {
         }
 
         if (TT2Config.enableHeavyShield && TT2Items.HEAVY_SHIELD != null) {
-            TinkerRegistryClient.addToolBuilding(
-                ToolBuildGuiInfo.default3Part(TT2Items.HEAVY_SHIELD));
+            TinkerRegistryClient.addToolBuilding(ToolBuildGuiInfo.default3Part(TT2Items.HEAVY_SHIELD));
         }
 
         if (TT2Config.enableNunchaku && TT2Items.NUNCHAKU != null) {
@@ -98,6 +102,14 @@ public class ClientProxy extends CommonProxy {
             info.addSlotPosition(24, 48);
             info.addSlotPosition(40, 32);
             info.addSlotPosition(8, 64);
+            TinkerRegistryClient.addToolBuilding(info);
+        }
+
+        if (TT2Items.MARACA != null) {
+            ToolBuildGuiInfo info = new ToolBuildGuiInfo(TT2Items.MARACA);
+            info.addSlotPosition(53, 22);
+            info.addSlotPosition(33, 42);
+            info.addSlotPosition(13, 62);
             TinkerRegistryClient.addToolBuilding(info);
         }
     }
@@ -119,3 +131,4 @@ public class ClientProxy extends CommonProxy {
         }
     }
 }
+

@@ -20,5 +20,8 @@ public final class TT2Network {
         }
         initialized = true;
         CHANNEL.registerMessage(PacketScoutExtraJump.Handler.class, PacketScoutExtraJump.class, nextPacketId++, Side.SERVER);
+        CHANNEL.registerMessage(PacketMaracaAction.Handler.class, PacketMaracaAction.class, nextPacketId++, Side.SERVER);
+        CHANNEL.registerMessage(PacketMaracaUiState.Handler.class, PacketMaracaUiState.class, nextPacketId++, Side.SERVER);
     }
 }
+

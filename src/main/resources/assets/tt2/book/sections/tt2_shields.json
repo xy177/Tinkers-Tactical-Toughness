@@ -13,5 +13,10 @@
     "name": "nunchaku",
     "type": "tool",
     "data": "tools/nunchaku.json"
+  },
+  {
+    "name": "maraca",
+    "type": "tool",
+    "data": "tools/maraca.json"
   }
 ]

@@ -27,6 +27,9 @@ public class ClientRegistration {
         if (TT2Config.enableDoppelhander && TT2Items.DOPPELHANDER != null) {
             ModelRegisterUtil.registerToolModel(TT2Items.DOPPELHANDER);
         }
+        if (TT2Items.MARACA != null) {
+            ModelRegisterUtil.registerToolModel(TT2Items.MARACA);
+        }
         if (TT2Config.enableScoutArmor) {
             if (TT2Items.SCOUT_HELMET != null) {
                 ArmorModelUtils.registerArmorModel(TT2Items.SCOUT_HELMET);
@@ -43,3 +46,4 @@ public class ClientRegistration {
         }
     }
 }
+

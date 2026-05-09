@@ -12,6 +12,7 @@ import xy177.tt2.armor.ScoutLeggings;
 import xy177.tt2.config.TT2Config;
 import xy177.tt2.tools.Doppelhander;
 import xy177.tt2.tools.HeavyShield;
+import xy177.tt2.tools.Maraca;
 import xy177.tt2.tools.SwiftShield;
 import xy177.tt2.tools.TinkerNunchaku;
 
@@ -22,6 +23,7 @@ public class TT2Items {
     public static HeavyShield HEAVY_SHIELD;
     public static TinkerNunchaku NUNCHAKU;
     public static Doppelhander DOPPELHANDER;
+    public static Maraca MARACA;
     public static ScoutHelmet SCOUT_HELMET;
     public static ScoutChestplate SCOUT_CHESTPLATE;
     public static ScoutLeggings SCOUT_LEGGINGS;
@@ -53,6 +55,10 @@ public class TT2Items {
             event.getRegistry().register(DOPPELHANDER);
         }
 
+        MARACA = new Maraca();
+        MARACA.setRegistryName(TT2.MOD_ID, "maraca");
+        event.getRegistry().register(MARACA);
+
         if (TT2Config.enableScoutArmor) {
             SCOUT_HELMET = new ScoutHelmet();
             SCOUT_HELMET.setRegistryName(TT2.MOD_ID, "scout_helmet");
@@ -72,3 +78,4 @@ public class TT2Items {
         }
     }
 }
+

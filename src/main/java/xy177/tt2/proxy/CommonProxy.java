@@ -12,6 +12,7 @@ import xy177.tt2.events.DefenseDamageEvents;
 import xy177.tt2.events.DoppelhanderEvents;
 import xy177.tt2.events.HeavyShieldEvents;
 import xy177.tt2.events.ScoutArmorEvents;
+import xy177.tt2.events.MaracaEvents;
 import xy177.tt2.events.ShieldEvents;
 import xy177.tt2.init.TT2Items;
 import xy177.tt2.network.TT2Network;
@@ -21,6 +22,7 @@ import java.io.File;
 public class CommonProxy {
 
     protected ScoutArmorEvents scoutArmorEvents;
+    protected MaracaEvents maracaEvents;
 
     public void preInit(FMLPreInitializationEvent event) {
         TT2Config.init(new File(event.getModConfigurationDirectory(), "tt2.cfg"));
@@ -46,7 +48,7 @@ public class CommonProxy {
         }
 
         if (TT2Config.enableHeavyShield && TT2Items.HEAVY_SHIELD != null) {
-            TinkerRegistry.registerToolCrafting(TT2Items.HEAVY_SHIELD);
+            TinkerRegistry.registerToolForgeCrafting(TT2Items.HEAVY_SHIELD);
             MinecraftForge.EVENT_BUS.register(new HeavyShieldEvents());
         }
 
@@ -55,8 +57,14 @@ public class CommonProxy {
         }
 
         if (TT2Config.enableDoppelhander && TT2Items.DOPPELHANDER != null) {
-            TinkerRegistry.registerToolCrafting(TT2Items.DOPPELHANDER);
+            TinkerRegistry.registerToolForgeCrafting(TT2Items.DOPPELHANDER);
             MinecraftForge.EVENT_BUS.register(new DoppelhanderEvents());
+        }
+
+        if (TT2Items.MARACA != null) {
+            TinkerRegistry.registerToolForgeCrafting(TT2Items.MARACA);
+            maracaEvents = new MaracaEvents();
+            MinecraftForge.EVENT_BUS.register(maracaEvents);
         }
 
         if (TT2Config.enableScoutArmor) {
@@ -83,4 +91,10 @@ public class CommonProxy {
     public ScoutArmorEvents getScoutArmorEvents() {
         return scoutArmorEvents;
     }
+
+    public MaracaEvents getMaracaEvents() {
+        return maracaEvents;
+    }
 }
+
+

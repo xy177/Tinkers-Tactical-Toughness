@@ -14,6 +14,11 @@ public class TT2Potions {
     public static PotionImbalance IMBALANCE;
     public static PotionImbalanceImmunity IMBALANCE_IMMUNITY;
     public static PotionDefensiveStance DEFENSIVE_STANCE;
+    public static PotionMaracaSelfAttack MARACA_SELF_ATTACK;
+    public static PotionMaracaAttack MARACA_ATTACK;
+    public static PotionMaracaGuard MARACA_GUARD;
+    public static PotionMaracaStability MARACA_STABILITY;
+    public static PotionMaracaParty MARACA_PARTY;
 
     @SubscribeEvent
     public static void registerPotions(RegistryEvent.Register<Potion> event) {
@@ -22,6 +27,11 @@ public class TT2Potions {
         IMBALANCE = register(event, new PotionImbalance(), "imbalance");
         IMBALANCE_IMMUNITY = register(event, new PotionImbalanceImmunity(), "imbalance_immunity");
         DEFENSIVE_STANCE = register(event, new PotionDefensiveStance(), "defensive_stance");
+        MARACA_SELF_ATTACK = register(event, new PotionMaracaSelfAttack(), "maraca_self_attack");
+        MARACA_ATTACK = register(event, new PotionMaracaAttack(), "maraca_attack");
+        MARACA_GUARD = register(event, new PotionMaracaGuard(), "maraca_guard");
+        MARACA_STABILITY = register(event, new PotionMaracaStability(), "maraca_stability");
+        MARACA_PARTY = register(event, new PotionMaracaParty(), "maraca_party");
     }
 
     private static <T extends Potion> T register(RegistryEvent.Register<Potion> event, T potion, String name) {
@@ -30,3 +40,4 @@ public class TT2Potions {
         return potion;
     }
 }
+

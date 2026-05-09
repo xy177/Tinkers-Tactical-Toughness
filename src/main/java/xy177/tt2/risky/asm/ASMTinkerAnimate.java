@@ -136,4 +136,5 @@ public class ASMTinkerAnimate implements IClassTransformer {
 
         return true;
     }
+
 }
