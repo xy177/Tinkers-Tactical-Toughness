@@ -13,6 +13,9 @@ item.tt2.nunchaku.desc=A special offensive weapon. It starts with low damage, bu
 item.tt2.doppelhander.name=Doppelhander
 item.tt2.doppelhander.desc=A heavy defensive greatsword. It blocks a wide frontal arc, grants armor and toughness from its armor plate while held, and builds toward a stronger defensive stance with each successful block.\nDuring Defensive Stance, blocking fully protects you, restores health, draws enemy aggro, and turns your attacks into wide sweeping strikes.
 
+item.tt2.maraca.name=Maraca
+item.tt2.maraca.desc=A rhythmic Tinkers' weapon. Left-click for Quick Beat, right-click for Adagio, F key for Resonance, and Q key to perform recorded combos.\nWhen held in the main hand with an empty offhand, it creates a temporary offhand copy. The maraca records the player's sequence of actions, and when performance begins, any matching melody in the combo will be played and its corresponding effect will trigger.\nSee the Tinkers' book for the melody chart and effects.
+
 item.tt2.scout_helmet.name=Scout Helmet
 item.tt2.scout_chestplate.name=Scout Chestplate
 item.tt2.scout_leggings.name=Scout Leggings
@@ -28,6 +31,11 @@ effect.tt2.opportunity=Opportunity
 effect.tt2.imbalance=Imbalance
 effect.tt2.imbalance_immunity=Imbalance Immunity
 effect.tt2.defensive_stance=Defensive Stance
+effect.tt2.maraca_self_attack=Self Empowerment
+effect.tt2.maraca_attack=Attack Up
+effect.tt2.maraca_guard=Defense Up
+effect.tt2.maraca_stability=Poise
+effect.tt2.maraca_party=Party Time!
 
 # Tooltip
 tooltip.tt2.parry_value=Parry Value
@@ -46,6 +54,18 @@ tooltip.tt2.scout.set_bonus_4=Set Bonus (4): When multiple valid targets exist, 
 tt2.doppelhander.guard_performance=Defense Performance %s%%
 tt2.doppelhander.defensive_stance_entered=Enter Defensive Stance!
 tt2.doppelhander.defensive_stance_ended=Defensive Stance Ended...
+tt2.maraca.record=Current Phrase: %s
+tt2.maraca.action.quick=♪
+tt2.maraca.action.slow=♩
+tt2.maraca.action.resonance=♫
+tt2.maraca.melody.triggered_prefix=Played Melody:
+tt2.maraca.melody.playing=Now Playing: %s
+tt2.maraca.melody.self_attack=Self Empowerment
+tt2.maraca.melody.attack=Attack Up
+tt2.maraca.melody.guard=Defense Up
+tt2.maraca.melody.stability=Poise
+tt2.maraca.melody.party=Party Time!
+tt2.maraca.melody.extend=Extended Existing Melodies
 
 # Combo trait
 modifier.nunchaku_combo.name=Combo
