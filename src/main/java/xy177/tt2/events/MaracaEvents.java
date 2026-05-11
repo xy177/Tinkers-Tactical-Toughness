@@ -72,7 +72,7 @@ public class MaracaEvents {
     private static final int PARTY_RESONANCE_COST = 200;
 
     private static final UUID SELF_ATTACK_UUID = UUID.fromString("762d5364-6aa7-4fd7-8e4a-a8572e58c3dd");
-    private static final UUID ATTACK_UUID = UUID.fromString("4e463dbf-3cf0-43db-b12f-47b7637d51c0a");
+    private static final UUID ATTACK_UUID = UUID.fromString("4e463dbf-3cf0-43db-b12f-47b7637d51c0");
     private static final Map<UUID, String> ACTION_RECORDS = new HashMap<>();
     private static final Set<UUID> SLOW_ATTACKERS = new HashSet<>();
     private final Set<UUID> uiOpenPlayers = new HashSet<>();
