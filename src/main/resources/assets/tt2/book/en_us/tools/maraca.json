@@ -9,11 +9,11 @@
     }
   ],
   "properties": [
-    "[♪-♪]: Self Empowerment - increases your own damage",
-    "[♪-♩-♩-♩]: Attack Up - increases damage for you and allies",
-    "[♩-♫-♩-♪]: Poise - makes you and allies immune to knockback",
-    "[♩-♪-♫-♪]: Defense Up - reduces damage taken by you and allies",
-    "[♪-♪-♩-♩]: Party Time! - converts all other melody durations into Party Time, greatly boosts Resonance damage, makes the main target enter Imbalance, makes you less likely to be targeted, and Resonance shortens the Party duration",
-    "[♫-♩-♫]: Extended Existing Melodies - extends melody duration except for Party Time"
+    "[♪-♪]: Self Empowerment",
+    "[♪-♩-♩-♩]: Attack Up",
+    "[♩-♫-♩-♪]: Poise",
+    "[♩-♪-♫-♪]: Defense Up",
+    "[♫-♩-♫]: Encore",
+    "[♪-♪-♩-♩]: Party Time! - turns other melodies, boosts Resonance, inflicts Imbalance on the main target"
   ]
 }

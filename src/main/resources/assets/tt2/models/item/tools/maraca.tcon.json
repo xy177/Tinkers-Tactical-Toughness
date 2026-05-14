@@ -1,8 +1,7 @@
-﻿gggggggg{
+{
   "textures": {
     "layer0": "tt2:items/maraca/head",
     "layer1": "tt2:items/maraca/binding",
     "layer2": "tt2:items/maraca/handle"
   }
 }
-
