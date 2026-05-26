@@ -1,6 +1,9 @@
 package xy177.tt2.client;
 
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.item.Item;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -9,6 +12,7 @@ import slimeknights.tconstruct.common.ModelRegisterUtil;
 import xy177.tt2.TT2;
 import xy177.tt2.config.TT2Config;
 import xy177.tt2.init.TT2Items;
+import xy177.tt2.init.TT2Blocks;
 
 @Mod.EventBusSubscriber(modid = TT2.MOD_ID, value = Side.CLIENT)
 public class ClientRegistration {
@@ -29,6 +33,18 @@ public class ClientRegistration {
         }
         if (TT2Items.MARACA != null) {
             ModelRegisterUtil.registerToolModel(TT2Items.MARACA);
+        }
+        if (TT2Items.MODIFIER_CRYSTAL != null) {
+            ModelLoader.setCustomModelResourceLocation(TT2Items.MODIFIER_CRYSTAL, 0,
+                new ModelResourceLocation(TT2.MOD_ID + ":modifier_crystal", "inventory"));
+        }
+        if (TT2Items.EXPERIENCE_BOTTLE != null) {
+            ModelLoader.setCustomModelResourceLocation(TT2Items.EXPERIENCE_BOTTLE, 0,
+                new ModelResourceLocation(TT2.MOD_ID + ":experience_bottle", "inventory"));
+        }
+        if (TT2Blocks.MODIFIER_WORKTABLE != null) {
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(TT2Blocks.MODIFIER_WORKTABLE), 0,
+                new ModelResourceLocation(TT2.MOD_ID + ":modifier_worktable", "inventory"));
         }
         if (TT2Config.enableScoutArmor) {
             if (TT2Items.SCOUT_HELMET != null) {

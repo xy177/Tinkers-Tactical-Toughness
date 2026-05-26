@@ -15,6 +15,9 @@ import xy177.tt2.events.ScoutArmorEvents;
 import xy177.tt2.events.MaracaEvents;
 import xy177.tt2.events.ShieldEvents;
 import xy177.tt2.init.TT2Items;
+import xy177.tt2.init.TT2Blocks;
+import xy177.tt2.init.TT2ModifierCrystalRecipes;
+import xy177.tt2.modifiers.ModExperienceTransfer;
 import xy177.tt2.network.TT2Network;
 
 import java.io.File;
@@ -23,14 +26,17 @@ public class CommonProxy {
 
     protected ScoutArmorEvents scoutArmorEvents;
     protected MaracaEvents maracaEvents;
+    public static ModExperienceTransfer experienceTransfer;
 
     public void preInit(FMLPreInitializationEvent event) {
         TT2Config.init(new File(event.getModConfigurationDirectory(), "tt2.cfg"));
         TT2Network.init();
+        TT2Blocks.preInit();
 
         if (TT2Config.enableNunchaku) {
             TinkerRegistry.addTrait(xy177.tt2.tools.TinkerNunchaku.COMBO_TRAIT);
         }
+        experienceTransfer = new ModExperienceTransfer();
     }
 
     public void init(FMLInitializationEvent event) {
@@ -86,6 +92,7 @@ public class CommonProxy {
     }
 
     public void postInit(FMLPostInitializationEvent event) {
+        TT2ModifierCrystalRecipes.register();
     }
 
     public ScoutArmorEvents getScoutArmorEvents() {

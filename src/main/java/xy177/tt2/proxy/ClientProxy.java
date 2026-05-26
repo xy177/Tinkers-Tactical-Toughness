@@ -4,6 +4,7 @@ import c4.conarm.lib.ArmoryRegistryClient;
 import c4.conarm.lib.book.ArmoryBook;
 import c4.conarm.lib.client.ArmorBuildGuiInfo;
 import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -24,6 +25,7 @@ import xy177.tt2.client.book.content.TT2ContentScoutArmor;
 import xy177.tt2.config.TT2Config;
 import xy177.tt2.events.HeavyShieldClientEvents;
 import xy177.tt2.init.TT2Items;
+import xy177.tt2.item.ItemModifierCrystal;
 
 public class ClientProxy extends CommonProxy {
 
@@ -69,6 +71,12 @@ public class ClientProxy extends CommonProxy {
             if (TT2Items.SCOUT_BOOTS != null) {
                 ArmoryRegistryClient.addArmorBuilding(ArmorBuildGuiInfo.default3Part(TT2Items.SCOUT_BOOTS));
             }
+        }
+        if (TT2Items.MODIFIER_CRYSTAL != null) {
+            Minecraft.getMinecraft().getItemColors().registerItemColorHandler(
+                (stack, tintIndex) -> tintIndex == 0 ? ItemModifierCrystal.getColor(stack) : 0xFFFFFF,
+                TT2Items.MODIFIER_CRYSTAL
+            );
         }
         TinkerBook.INSTANCE.addTransformer(new TT2ToolSectionTransformer());
     }

@@ -10,6 +10,8 @@ import xy177.tt2.armor.ScoutChestplate;
 import xy177.tt2.armor.ScoutHelmet;
 import xy177.tt2.armor.ScoutLeggings;
 import xy177.tt2.config.TT2Config;
+import xy177.tt2.item.ItemExperienceBottle;
+import xy177.tt2.item.ItemModifierCrystal;
 import xy177.tt2.tools.Doppelhander;
 import xy177.tt2.tools.HeavyShield;
 import xy177.tt2.tools.Maraca;
@@ -24,6 +26,8 @@ public class TT2Items {
     public static TinkerNunchaku NUNCHAKU;
     public static Doppelhander DOPPELHANDER;
     public static Maraca MARACA;
+    public static ItemModifierCrystal MODIFIER_CRYSTAL;
+    public static ItemExperienceBottle EXPERIENCE_BOTTLE;
     public static ScoutHelmet SCOUT_HELMET;
     public static ScoutChestplate SCOUT_CHESTPLATE;
     public static ScoutLeggings SCOUT_LEGGINGS;
@@ -58,6 +62,14 @@ public class TT2Items {
         MARACA = new Maraca();
         MARACA.setRegistryName(TT2.MOD_ID, "maraca");
         event.getRegistry().register(MARACA);
+
+        MODIFIER_CRYSTAL = new ItemModifierCrystal();
+        MODIFIER_CRYSTAL.setRegistryName(TT2.MOD_ID, "modifier_crystal");
+        event.getRegistry().register(MODIFIER_CRYSTAL);
+
+        EXPERIENCE_BOTTLE = new ItemExperienceBottle();
+        EXPERIENCE_BOTTLE.setRegistryName(TT2.MOD_ID, "experience_bottle");
+        event.getRegistry().register(EXPERIENCE_BOTTLE);
 
         if (TT2Config.enableScoutArmor) {
             SCOUT_HELMET = new ScoutHelmet();
