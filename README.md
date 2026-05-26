@@ -11,6 +11,7 @@
 5. （已添加一种）或许会增加新的盔甲种类；
 6. 目前暂不打算增加新的材料，是否增加新的trait视情况而定(目前已经有足够多的优秀模组添加了富有创意的材料和trait了)；
 7. (已完成)添加护甲损伤体系；
+8. (已完成)添加强化调配台，可调整匠魂工具、武器与盔甲的强化，支持强化移除、纹理隐藏、纹理排序以及强化、刻印、磨制/研磨强化与阅历提取；
 
 请注意，该模组的部分内容由ai辅助完成(提供解决思路或解决方案)，但相关内容经由“活人”二次检查后才投入使用;
 
@@ -27,5 +28,6 @@ Current Plans:
 5. (Finished first type) Potentially add new types of armor;
 6. No plans to add new materials for now; whether to add new traits will be decided on a case-by-case basis (as many excellent mods already offer a wealth of creative materials and traits).
 7. (Finished) Added the Defense Damager system;
+8. (Finished) Added the Modifier Worktable, which adjusts modifiers on Tinkers' tools, weapons, and armor, including modifier removal, texture hiding, texture sorting, and extracting modifiers, embossments, sharpening/polishing upgrades, and stored experience;
 
 Please note: Portions of this mod were created with AI assistance (for brainstorming and problem-solving). All relevant parts have been manually verified and reviewed by a human developer.
