@@ -210,7 +210,7 @@ public class DefenseDamageEvents {
 
         Long lastAppliedEnd = lastBookCooldownEndTick.get(id);
         if (cooldownTicks <= 0) {
-            player.getCooldownTracker().removeCooldown(armoryBook);
+            clearBookCooldown(player, armoryBook);
             lastBookCooldownEndTick.remove(id);
         } else if (lastAppliedEnd == null || lastAppliedEnd != cooldownEnd) {
             player.getCooldownTracker().setCooldown(armoryBook, cooldownTicks);
@@ -225,8 +225,12 @@ public class DefenseDamageEvents {
         }
 
         if (updateArmoryBookBar(player, armoryBook, 1f)) {
-            player.getCooldownTracker().removeCooldown(armoryBook);
+            clearBookCooldown(player, armoryBook);
         }
+    }
+
+    private void clearBookCooldown(EntityPlayer player, Item armoryBook) {
+        player.getCooldownTracker().setCooldown(armoryBook, 1);
     }
 
     private boolean updateArmoryBookBar(EntityPlayer player, Item armoryBook, float efficiency) {
