@@ -15,6 +15,8 @@ import net.minecraft.nbt.NBTTagString;
 import net.minecraft.potion.PotionUtils;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
+import slimeknights.mantle.util.RecipeMatch;
+import slimeknights.mantle.util.RecipeMatchRegistry;
 import slimeknights.tconstruct.library.TinkerRegistry;
 import slimeknights.tconstruct.library.modifiers.IModifier;
 import slimeknights.tconstruct.library.modifiers.ModifierNBT;
@@ -34,6 +36,7 @@ import xy177.tt2.tile.TileModifierWorktable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public final class ModifierWorktableLogic {
@@ -172,6 +175,7 @@ public final class ModifierWorktableLogic {
         ItemStack result = tool.copy();
         result.setCount(1);
         applyToTool(result, modifier, action);
+        repairCurrentHiddenModifiers(result, tool);
         return result;
     }
 
@@ -207,7 +211,9 @@ public final class ModifierWorktableLogic {
             if (action == TYPE_REMOVE) {
                 consumeRemovalInput(tile, input1);
             } else {
+                ItemStack originalTool = tool.copy();
                 applyToTool(tool, modifier, action);
+                repairCurrentHiddenModifiers(tool, originalTool);
                 tile.setInventorySlotContents(TileModifierWorktable.SLOT_TOOL, tool);
                 consumeOne(input1);
                 consumeExtractionSecond(input2, action);
@@ -430,6 +436,100 @@ public final class ModifierWorktableLogic {
         }
     }
 
+    public static void preserveHiddenModifiersAfterRebuild(ItemStack result, ItemStack original) {
+        if (!isTinkerItem(result) || !isTinkerItem(original)) {
+            return;
+        }
+        NBTTagList hidden = hiddenList(original);
+        if (hidden.tagCount() == 0) {
+            return;
+        }
+
+        boolean changed = copyHiddenState(result, hidden);
+        changed |= restoreHiddenModifierTags(result, original, hidden);
+
+        if (changed) {
+            rebuild(result);
+        } else {
+            applyHiddenVisuals(result);
+        }
+    }
+
+    public static void repairCurrentHiddenModifiers(ItemStack result, ItemStack original) {
+        if (!isTinkerItem(result) || !isTinkerItem(original)) {
+            return;
+        }
+        NBTTagList hidden = hiddenList(result);
+        if (hidden.tagCount() == 0) {
+            return;
+        }
+
+        boolean changed = restoreHiddenModifierTags(result, original, hidden);
+        if (changed) {
+            rebuild(result);
+        } else {
+            applyHiddenVisuals(result);
+        }
+    }
+
+    private static boolean restoreHiddenModifierTags(ItemStack result, ItemStack original, NBTTagList hidden) {
+        boolean changed = false;
+        for (int i = 0; i < hidden.tagCount(); i++) {
+            String modifier = hidden.getStringTagAt(i);
+            NBTTagCompound source = TinkerUtil.getModifierTag(original, modifier);
+            if (source.getKeySet().isEmpty()) {
+                continue;
+            }
+            if (!hasModifier(result, modifier)) {
+                NBTTagList modifiers = TagUtil.getModifiersTagList(result);
+                modifiers.appendTag(source.copy());
+                TagUtil.setModifiersTagList(result, modifiers);
+                changed = true;
+            }
+            if (restoreVisualModifierForRebuild(result, modifier)) {
+                changed = true;
+            }
+        }
+        return changed;
+    }
+
+    private static boolean copyHiddenState(ItemStack stack, NBTTagList hidden) {
+        NBTTagCompound extra = TagUtil.getExtraTag(stack);
+        NBTTagCompound tt2 = extra.getCompoundTag(TAG_TT2);
+        NBTTagList current = tt2.getTagList(TAG_HIDDEN, TagUtil.TAG_TYPE_STRING);
+        NBTTagList next = new NBTTagList();
+        boolean changed = current.tagCount() != hidden.tagCount();
+
+        for (int i = 0; i < current.tagCount(); i++) {
+            String id = current.getStringTagAt(i);
+            if (!containsString(next, id)) {
+                next.appendTag(new NBTTagString(id));
+            }
+        }
+        for (int i = 0; i < hidden.tagCount(); i++) {
+            String id = hidden.getStringTagAt(i);
+            if (!containsString(next, id)) {
+                next.appendTag(new NBTTagString(id));
+                changed = true;
+            }
+        }
+        if (changed) {
+            tt2.setTag(TAG_HIDDEN, next);
+            extra.setTag(TAG_TT2, tt2);
+            TagUtil.setExtraTag(stack, extra);
+        }
+        return changed;
+    }
+
+    private static boolean containsString(NBTTagList list, String value) {
+        for (int i = 0; i < list.tagCount(); i++) {
+            if (value.equals(list.getStringTagAt(i))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private static void applyHiddenVisuals(ItemStack stack) {
         NBTTagList hidden = hiddenList(stack);
         for (int i = 0; i < hidden.tagCount(); i++) {
@@ -496,6 +596,16 @@ public final class ModifierWorktableLogic {
         }
         base.appendTag(new NBTTagString(modifier));
         TagUtil.setBaseModifiersTagList(stack, base);
+    }
+
+    private static boolean restoreVisualModifierForRebuild(ItemStack stack, String modifier) {
+        NBTTagList base = TagUtil.getBaseModifiersTagList(stack);
+        if (TinkerUtil.getIndexInList(base, modifier) >= 0) {
+            return false;
+        }
+        base.appendTag(new NBTTagString(modifier));
+        TagUtil.setBaseModifiersTagList(stack, base);
+        return true;
     }
 
     private static boolean hasModifier(ItemStack stack, String modifier) {
@@ -638,6 +748,10 @@ public final class ModifierWorktableLogic {
     }
 
     public static boolean isCrystalExtractable(IModifier modifier) {
+        return isExtractableModifierCandidate(modifier) && hasBoundModifierItem(modifier);
+    }
+
+    private static boolean isExtractableModifierCandidate(IModifier modifier) {
         return modifier != null
             && !ModExperienceTransfer.ID.equals(modifier.getIdentifier())
             && !isLevelingModifier(modifier.getIdentifier())
@@ -646,10 +760,39 @@ public final class ModifierWorktableLogic {
             && !modifier.getClass().getName().endsWith("ModCreative");
     }
 
+    private static boolean hasBoundModifierItem(IModifier modifier) {
+        if (!(modifier instanceof RecipeMatchRegistry)) {
+            return false;
+        }
+        try {
+            Field field = RecipeMatchRegistry.class.getDeclaredField("items");
+            field.setAccessible(true);
+            Object value = field.get(modifier);
+            if (!(value instanceof Collection)) {
+                return false;
+            }
+            for (Object match : (Collection<?>) value) {
+                if (isNativeModifierRecipe(match)) {
+                    return true;
+                }
+            }
+        } catch (ReflectiveOperationException ignored) {
+        }
+        return false;
+    }
+
+    private static boolean isNativeModifierRecipe(Object match) {
+        if (!(match instanceof RecipeMatch) || match instanceof ModifierCrystalRecipeMatch) {
+            return false;
+        }
+        List<ItemStack> inputs = ((RecipeMatch) match).getInputs();
+        return inputs != null && !inputs.isEmpty();
+    }
+
     private static boolean isAdjustableModifier(String modifier) {
         return !isLevelingModifier(modifier)
             && !isEmboss(modifier)
-            && (isCrystalExtractable(getModifier(modifier)) || isFortifyOrPolished(modifier));
+            && (isExtractableModifierCandidate(getModifier(modifier)) || isFortifyOrPolished(modifier));
     }
 
     private static boolean isRegularExtractable(String modifier) {
