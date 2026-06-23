@@ -11,6 +11,7 @@ import xy177.tt2.config.TT2Config;
 import xy177.tt2.events.DefenseDamageEvents;
 import xy177.tt2.events.DoppelhanderEvents;
 import xy177.tt2.events.HeavyShieldEvents;
+import xy177.tt2.events.HiddenModifierEvents;
 import xy177.tt2.events.ScoutArmorEvents;
 import xy177.tt2.events.MaracaEvents;
 import xy177.tt2.events.ShieldEvents;
@@ -47,6 +48,7 @@ public class CommonProxy {
         if (TT2Config.enableDefenseDamage) {
             MinecraftForge.EVENT_BUS.register(new DefenseDamageEvents());
         }
+        MinecraftForge.EVENT_BUS.register(new HiddenModifierEvents());
 
         if (TT2Config.enableSwiftShield && TT2Items.SWIFT_SHIELD != null) {
             TinkerRegistry.registerToolCrafting(TT2Items.SWIFT_SHIELD);
