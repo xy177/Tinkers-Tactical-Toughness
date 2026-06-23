@@ -34,7 +34,10 @@ import xy177.tt2.tile.TileModifierWorktable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public final class ModifierWorktableLogic {
 
@@ -283,11 +286,16 @@ public final class ModifierWorktableLogic {
     }
 
     private static void removeModifier(ItemStack tool, String modifier) {
+        Set<String> linkedTraits = isEmboss(modifier) ? removableEmbossTraits(tool, modifier) : new HashSet<>();
+        Set<String> removeIds = new HashSet<>();
+        removeIds.add(modifier);
+        removeIds.addAll(linkedTraits);
+
         NBTTagList base = TagUtil.getBaseModifiersTagList(tool);
         NBTTagList newBase = new NBTTagList();
         for (int i = 0; i < base.tagCount(); i++) {
             String id = base.getStringTagAt(i);
-            if (!modifier.equals(id)) {
+            if (!removeIds.contains(id)) {
                 newBase.appendTag(new NBTTagString(id));
             }
         }
@@ -297,7 +305,7 @@ public final class ModifierWorktableLogic {
         NBTTagList newModifiers = new NBTTagList();
         for (int i = 0; i < modifiers.tagCount(); i++) {
             NBTTagCompound tag = modifiers.getCompoundTagAt(i);
-            if (!modifier.equals(ModifierNBT.readTag(tag).identifier)) {
+            if (!removeIds.contains(ModifierNBT.readTag(tag).identifier)) {
                 newModifiers.appendTag(tag.copy());
             }
         }
@@ -307,7 +315,7 @@ public final class ModifierWorktableLogic {
         NBTTagList newTraits = new NBTTagList();
         for (int i = 0; i < traits.tagCount(); i++) {
             String id = traits.getStringTagAt(i);
-            if (!modifier.equals(id)) {
+            if (!removeIds.contains(id)) {
                 newTraits.appendTag(new NBTTagString(id));
             }
         }
@@ -316,6 +324,119 @@ public final class ModifierWorktableLogic {
         clearHidden(tool, modifier);
         returnSlot(tool);
         rebuild(tool);
+        if (isEmboss(modifier)) {
+            purgeIds(tool, removeIds);
+        }
+    }
+
+    private static Set<String> removableEmbossTraits(ItemStack tool, String modifier) {
+        Set<String> traits = embossTraitIds(modifier);
+        traits.removeAll(baseMaterialTraits(tool));
+        traits.removeAll(otherEmbossTraits(tool, modifier));
+        return traits;
+    }
+
+    private static Set<String> otherEmbossTraits(ItemStack tool, String removedModifier) {
+        Set<String> traits = new HashSet<>();
+        NBTTagList base = TagUtil.getBaseModifiersTagList(tool);
+        for (int i = 0; i < base.tagCount(); i++) {
+            String id = base.getStringTagAt(i);
+            if (isEmboss(id) && !removedModifier.equals(id)) {
+                traits.addAll(embossTraitIds(id));
+            }
+        }
+        return traits;
+    }
+
+    private static Set<String> baseMaterialTraits(ItemStack tool) {
+        ItemStack copy = tool.copy();
+        if (!copy.hasTagCompound()) {
+            return new HashSet<>();
+        }
+        TagUtil.setBaseModifiersTagList(copy, new NBTTagList());
+        TagUtil.setModifiersTagList(copy, new NBTTagList());
+        TagUtil.setTraitsTagList(copy, new NBTTagList());
+        TagUtil.setBaseModifiersUsed(copy.getTagCompound(), 0);
+        rebuild(copy);
+        Set<String> traits = stringSet(TagUtil.getTraitsTagList(copy));
+        traits.addAll(stringSet(TagUtil.getBaseModifiersTagList(copy)));
+        NBTTagList modifiers = TagUtil.getModifiersTagList(copy);
+        for (int i = 0; i < modifiers.tagCount(); i++) {
+            traits.add(ModifierNBT.readTag(modifiers.getCompoundTagAt(i)).identifier);
+        }
+        return traits;
+    }
+
+    private static Set<String> embossTraitIds(String modifier) {
+        Set<String> traits = new HashSet<>();
+        IModifier mod = getModifier(modifier);
+        if (mod == null) {
+            return traits;
+        }
+        Object value = fieldValue(mod, "traits");
+        if (!(value instanceof Collection)) {
+            return traits;
+        }
+        for (Object entry : (Collection<?>) value) {
+            if (entry instanceof ITrait) {
+                traits.add(((ITrait) entry).getIdentifier());
+            }
+        }
+        return traits;
+    }
+
+    private static Object fieldValue(Object object, String name) {
+        Class<?> type = object.getClass();
+        while (type != null) {
+            try {
+                Field field = type.getDeclaredField(name);
+                field.setAccessible(true);
+                return field.get(object);
+            } catch (ReflectiveOperationException ignored) {
+                type = type.getSuperclass();
+            }
+        }
+        return null;
+    }
+
+    private static Set<String> stringSet(NBTTagList list) {
+        Set<String> values = new HashSet<>();
+        for (int i = 0; i < list.tagCount(); i++) {
+            values.add(list.getStringTagAt(i));
+        }
+        return values;
+    }
+
+    private static void purgeIds(ItemStack tool, Set<String> ids) {
+        NBTTagList base = TagUtil.getBaseModifiersTagList(tool);
+        NBTTagList newBase = new NBTTagList();
+        for (int i = 0; i < base.tagCount(); i++) {
+            String id = base.getStringTagAt(i);
+            if (!ids.contains(id)) {
+                newBase.appendTag(new NBTTagString(id));
+            }
+        }
+        TagUtil.setBaseModifiersTagList(tool, newBase);
+
+        NBTTagList modifiers = TagUtil.getModifiersTagList(tool);
+        NBTTagList newModifiers = new NBTTagList();
+        for (int i = 0; i < modifiers.tagCount(); i++) {
+            NBTTagCompound tag = modifiers.getCompoundTagAt(i);
+            if (!ids.contains(ModifierNBT.readTag(tag).identifier)) {
+                newModifiers.appendTag(tag.copy());
+            }
+        }
+        TagUtil.setModifiersTagList(tool, newModifiers);
+
+        NBTTagList traits = TagUtil.getTraitsTagList(tool);
+        NBTTagList newTraits = new NBTTagList();
+        for (int i = 0; i < traits.tagCount(); i++) {
+            String id = traits.getStringTagAt(i);
+            if (!ids.contains(id)) {
+                newTraits.appendTag(new NBTTagString(id));
+            }
+        }
+        TagUtil.setTraitsTagList(tool, newTraits);
     }
 
     private static void reduceModifier(ItemStack tool, String modifier, int amount) {

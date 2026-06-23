@@ -1,11 +1,13 @@
 package xy177.tt2;
 
 import xy177.tt2.proxy.CommonProxy;
+import xy177.tt2.command.CommandTT2Debug;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import org.apache.logging.log4j.Logger;
 
 @Mod(
@@ -19,7 +21,7 @@ public class TT2 {
 
     public static final String MOD_ID  = "tt2";
     public static final String MOD_NAME = "Tinkers' Tactical Toughness";
-    public static final String VERSION  = "1.6.1";
+    public static final String VERSION  = "1.6.2";
     public static final String DEPS =
         "required-after:mantle;" +
         "required-after:tconstruct;" +
@@ -50,5 +52,10 @@ public class TT2 {
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
         proxy.postInit(event);
+    }
+
+    @Mod.EventHandler
+    public void serverStarting(FMLServerStartingEvent event) {
+        event.registerServerCommand(new CommandTT2Debug());
     }
 }

@@ -3,6 +3,8 @@ package xy177.tt2.events;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IEntityOwnable;
+import net.minecraft.entity.IProjectile;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityIronGolem;
 import net.minecraft.entity.monster.EntitySnowman;
 import net.minecraft.entity.passive.EntityTameable;
@@ -16,6 +18,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.DamageSource;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
@@ -25,7 +29,9 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraft.util.math.MathHelper;
+import slimeknights.tconstruct.library.entity.EntityProjectileBase;
 import slimeknights.tconstruct.library.utils.ToolHelper;
+import xy177.tt2.TT2;
 import xy177.tt2.armor.ScoutArmorCore;
 import xy177.tt2.config.TT2Config;
 
@@ -40,21 +46,69 @@ import java.util.stream.Collectors;
 
 public class ScoutArmorEvents {
 
+    public static boolean debugScoutRanged = Boolean.getBoolean("tt2.debugScoutRanged")
+        || "true".equalsIgnoreCase(System.getenv("TT2_DEBUG_SCOUT_RANGED"));
+
     private final Map<UUID, Long> dodgedTicks = new HashMap<>();
     private final Set<UUID> retargeting = java.util.Collections.newSetFromMap(new HashMap<>());
     private final Map<UUID, Integer> airJumpsUsed = new HashMap<>();
 
-    @SubscribeEvent(priority = EventPriority.HIGH)
-    public void onLivingHurt(LivingHurtEvent event) {
-        if (event.getSource().isProjectile()
-                && event.getSource().getTrueSource() instanceof EntityPlayer) {
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public void onRangedLivingAttackProbe(LivingAttackEvent event) {
+        if (debugScoutRanged && shouldLogScoutRangedDebug(event.getEntityLiving(), event.getSource())) {
+            logScoutRanged("attack", event.getEntityLiving(), event.getSource(), event.isCanceled(),
+                event.getAmount(), event.getAmount(), 0f, false);
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public void onTargetDummyRangedLivingAttack(LivingAttackEvent event) {
+        if (isTargetDummyWithoutLivingHurt(event.getEntityLiving()) && isRangedAttackFromPlayer(event.getSource())) {
+            enableTargetDummyLivingHurtEvent();
+            if (debugScoutRanged) {
+                logScoutRanged("target_dummy_enable_hurt_event", event.getEntityLiving(), event.getSource(),
+                    event.isCanceled(), event.getAmount(), event.getAmount(), 0f, false);
+            }
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public void onRangedLivingHurtProbe(LivingHurtEvent event) {
+        if (debugScoutRanged && shouldLogScoutRangedDebug(event.getEntityLiving(), event.getSource())) {
+            logScoutRanged("probe", event, 0f, event.getAmount(), false);
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public void onRangedLivingDamageProbe(LivingDamageEvent event) {
+        if (debugScoutRanged && shouldLogScoutRangedDebug(event.getEntityLiving(), event.getSource())) {
+            logScoutRanged("damage", event.getEntityLiving(), event.getSource(), event.isCanceled(),
+                event.getAmount(), event.getAmount(), 0f, isRangedAttackFromPlayer(event.getSource()));
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public void onRangedLivingHurt(LivingHurtEvent event) {
+        boolean ranged = isRangedAttackFromPlayer(event.getSource());
+        if (ranged) {
             EntityPlayer attacker = (EntityPlayer) event.getSource().getTrueSource();
             float bonusPercent = getRangedDamageBonusPercent(attacker);
             if (bonusPercent > 0f) {
+                float before = event.getAmount();
                 event.setAmount(event.getAmount() * (1f + bonusPercent / 100f));
+                if (debugScoutRanged) {
+                    logScoutRanged("apply", event, bonusPercent, before, true);
+                }
+            } else if (debugScoutRanged && shouldLogScoutRangedDebug(event.getEntityLiving(), event.getSource())) {
+                logScoutRanged("no_bonus", event, bonusPercent, event.getAmount(), true);
             }
+        } else if (debugScoutRanged && shouldLogScoutRangedDebug(event.getEntityLiving(), event.getSource())) {
+            logScoutRanged("not_ranged", event, 0f, event.getAmount(), false);
         }
+    }
 
+    @SubscribeEvent(priority = EventPriority.HIGH)
+    public void onLivingHurt(LivingHurtEvent event) {
         if (!(event.getEntityLiving() instanceof EntityPlayer)) {
             return;
         }
@@ -300,6 +354,113 @@ public class ScoutArmorEvents {
             }
         }
         return Math.min(total, (float) TT2Config.scoutEnvironmentalDamageReduction);
+    }
+
+    private boolean isRangedAttackFromPlayer(DamageSource source) {
+        if (source == null || !(source.getTrueSource() instanceof EntityPlayer)) {
+            return false;
+        }
+        if (source.isProjectile()) {
+            return true;
+        }
+
+        net.minecraft.entity.Entity immediate = source.getImmediateSource();
+        return immediate instanceof EntityProjectileBase || immediate instanceof IProjectile;
+    }
+
+    private boolean shouldLogScoutRangedDebug(EntityLivingBase target, DamageSource source) {
+        return source != null && !(target instanceof EntityPlayer);
+    }
+
+    private boolean isTargetDummyWithoutLivingHurt(EntityLivingBase target) {
+        return target != null
+            && "testdummy.entity.EntityDummy".equals(target.getClass().getName())
+            && !isTargetDummyLivingHurtEnabled();
+    }
+
+    private boolean isTargetDummyLivingHurtEnabled() {
+        try {
+            Class<?> config = Class.forName("testdummy.handlers.ConfigHandler");
+            Object server = config.getField("server").get(null);
+            return server == null || server.getClass().getField("useLivingHurtEvent").getBoolean(server);
+        } catch (ReflectiveOperationException | LinkageError e) {
+            return true;
+        }
+    }
+
+    private void enableTargetDummyLivingHurtEvent() {
+        try {
+            Class<?> config = Class.forName("testdummy.handlers.ConfigHandler");
+            Object server = config.getField("server").get(null);
+            if (server != null) {
+                server.getClass().getField("useLivingHurtEvent").setBoolean(server, true);
+            }
+        } catch (ReflectiveOperationException | LinkageError ignored) {
+        }
+    }
+
+    private void logScoutRanged(String stage, LivingHurtEvent event, float bonusPercent, float before, boolean recognized) {
+        logScoutRanged(stage, event.getEntityLiving(), event.getSource(), event.isCanceled(), before, event.getAmount(),
+            bonusPercent, recognized);
+    }
+
+    private void logScoutRanged(String stage, EntityLivingBase target, DamageSource source, boolean canceled,
+                                float before, float after, float bonusPercent, boolean recognized) {
+        if (TT2.logger == null) {
+            return;
+        }
+        Entity trueSource = source == null ? null : source.getTrueSource();
+        Entity immediate = source == null ? null : source.getImmediateSource();
+        EntityPlayer player = trueSource instanceof EntityPlayer ? (EntityPlayer) trueSource : null;
+        int scoutPieces = player == null ? 0 : getScoutPieceCount(player);
+        float actualBonus = player == null ? 0f : getRangedDamageBonusPercent(player);
+        TT2.logger.info(
+            "[ScoutRangedDebug] stage={} recognized={} canceled={} damageType={} sourceProjectile={} reason={} before={} after={} bonusPercent={} actualBonus={} scoutPieces={} attacker={} target={} immediate={} mainHand={} offHand={}",
+            stage,
+            recognized,
+            canceled,
+            source == null ? "null" : source.damageType,
+            source != null && source.isProjectile(),
+            rangedReason(source),
+            before,
+            after,
+            bonusPercent,
+            actualBonus,
+            scoutPieces,
+            entityName(trueSource),
+            entityName(target),
+            entityName(immediate),
+            stackName(player == null ? ItemStack.EMPTY : player.getHeldItemMainhand()),
+            stackName(player == null ? ItemStack.EMPTY : player.getHeldItemOffhand())
+        );
+    }
+
+    private String rangedReason(DamageSource source) {
+        if (source == null) {
+            return "null_source";
+        }
+        if (source.isProjectile()) {
+            return "damage_source_projectile";
+        }
+        Entity immediate = source.getImmediateSource();
+        if (immediate instanceof EntityProjectileBase) {
+            return "tconstruct_projectile_entity";
+        }
+        if (immediate instanceof IProjectile) {
+            return "minecraft_projectile_entity";
+        }
+        return "not_projectile";
+    }
+
+    private String entityName(Entity entity) {
+        return entity == null ? "null" : entity.getClass().getName() + "#" + entity.getEntityId();
+    }
+
+    private String stackName(ItemStack stack) {
+        if (stack.isEmpty() || stack.getItem().getRegistryName() == null) {
+            return "empty";
+        }
+        return stack.getItem().getRegistryName().toString();
     }
 
     private void applyEnvironmentalReduction(EntityPlayer player, LivingHurtEvent event) {
