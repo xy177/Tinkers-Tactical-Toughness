@@ -49,6 +49,14 @@ tooltip.tt2.scout.set_bonus_1=套装奖励（1）：存在多个潜在目标时�
 tooltip.tt2.scout.set_bonus_2=套装奖励（2）：存在多个潜在目标时，较不容易成为敌人的仇恨对象，自然跳跃高度提升
 tooltip.tt2.scout.set_bonus_3=套装奖励（3）：存在多个潜在目标时，更不容易成为敌人的仇恨对象，跨步高度提升，自然跳跃高度提升
 tooltip.tt2.scout.set_bonus_4=套装奖励（4）：存在多个潜在目标时，极不容易成为敌人的仇恨对象，跨步高度提升，自然跳跃高度提升，可以二段跳
+tooltip.tt2.construct_armor.set_bonus_1=套装奖励（1）：挖掘速度提升15%，防御损伤开始恢复的等待时长缩短
+tooltip.tt2.construct_armor.set_bonus_2=套装奖励（2）：挖掘速度提升30%，防御损伤开始恢复的等待时长缩短，防御损伤恢复效率提高
+tooltip.tt2.construct_armor.set_bonus_3=套装奖励（3）：挖掘速度提升45%，防御损伤开始恢复的等待时长缩短，防御损伤恢复效率提高，敌人造成的防御损伤降低
+tooltip.tt2.construct_armor.set_bonus_4=套装奖励（4）：挖掘速度提升60%，防御损伤开始恢复的等待时长缩短，防御损伤恢复效率提高，敌人造成的防御损伤降低，防御损伤累计上限降低
+tooltip.tt2.construct_armor.set_bonus_mining_1=套装奖励（1）：挖掘速度提升15%
+tooltip.tt2.construct_armor.set_bonus_mining_2=套装奖励（2）：挖掘速度提升30%
+tooltip.tt2.construct_armor.set_bonus_mining_3=套装奖励（3）：挖掘速度提升45%
+tooltip.tt2.construct_armor.set_bonus_mining_4=套装奖励（4）：挖掘速度提升60%
 
 # 状态提示
 tt2.doppelhander.guard_performance=防御性能 %s%%

@@ -49,6 +49,14 @@ tooltip.tt2.scout.set_bonus_1=Set Bonus (1): When multiple valid targets exist, 
 tooltip.tt2.scout.set_bonus_2=Set Bonus (2): When multiple valid targets exist, enemies are somewhat less likely to target you, and your natural jump height increases
 tooltip.tt2.scout.set_bonus_3=Set Bonus (3): When multiple valid targets exist, enemies are much less likely to target you, your step height increases, and your natural jump height increases
 tooltip.tt2.scout.set_bonus_4=Set Bonus (4): When multiple valid targets exist, enemies are extremely unlikely to target you, your step height increases, your natural jump height increases, and you gain Double Jump
+tooltip.tt2.construct_armor.set_bonus_1=Set Bonus (1): +15% mining speed, shorter Defense Damage recovery delay
+tooltip.tt2.construct_armor.set_bonus_2=Set Bonus (2): +30% mining speed, shorter Defense Damage recovery delay, improved Defense Damage recovery
+tooltip.tt2.construct_armor.set_bonus_3=Set Bonus (3): +45% mining speed, shorter Defense Damage recovery delay, improved Defense Damage recovery, reduced Defense Damage taken
+tooltip.tt2.construct_armor.set_bonus_4=Set Bonus (4): +60% mining speed, shorter Defense Damage recovery delay, improved Defense Damage recovery, reduced Defense Damage taken, lower Defense Damage cap
+tooltip.tt2.construct_armor.set_bonus_mining_1=Set Bonus (1): +15% mining speed
+tooltip.tt2.construct_armor.set_bonus_mining_2=Set Bonus (2): +30% mining speed
+tooltip.tt2.construct_armor.set_bonus_mining_3=Set Bonus (3): +45% mining speed
+tooltip.tt2.construct_armor.set_bonus_mining_4=Set Bonus (4): +60% mining speed
 
 # Status
 tt2.doppelhander.guard_performance=Defense Performance %s%%

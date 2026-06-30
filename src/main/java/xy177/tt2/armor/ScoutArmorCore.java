@@ -53,6 +53,7 @@ import java.util.UUID;
 public abstract class ScoutArmorCore extends ArmorCore {
 
     private static final String POLISHED_ARMOR_PREFIX = "polished_armor";
+    private static final String SCOUT_ARMOR_TEXTURE_ROOT = "models/armor/scout/armor_full_";
     private final Map<EntityEquipmentSlot, ModelBiped> scoutModels = new EnumMap<>(EntityEquipmentSlot.class);
 
     private static final UUID[] ARMOR_VALUE_MODIFIERS = new UUID[]{
@@ -138,17 +139,17 @@ public abstract class ScoutArmorCore extends ArmorCore {
     @Override
     public String getArmorModelTexture(ItemStack stack, String type) {
         if (ToolHelper.isBroken(stack) && type.equals(ArmorMaterialType.CORE)) {
-            return new ResourceLocation(TT2.MOD_ID, "models/armor/scout/armor_core_broken").toString();
+            return new ResourceLocation(TT2.MOD_ID, SCOUT_ARMOR_TEXTURE_ROOT + "core_broken").toString();
         }
         String leg = armorType == EntityEquipmentSlot.LEGS ? "leg_" : "";
         if (type.equals(ArmorMaterialType.CORE)) {
-            return new ResourceLocation(TT2.MOD_ID, "models/armor/scout/armor_" + leg + "core").toString();
+            return new ResourceLocation(TT2.MOD_ID, SCOUT_ARMOR_TEXTURE_ROOT + leg + "core").toString();
         }
         if (type.equals(ArmorMaterialType.PLATES)) {
-            return new ResourceLocation(TT2.MOD_ID, "models/armor/scout/armor_" + leg + "plate1").toString();
+            return new ResourceLocation(TT2.MOD_ID, SCOUT_ARMOR_TEXTURE_ROOT + leg + "plate1").toString();
         }
         if (type.equals(ArmorMaterialType.TRIM)) {
-            return new ResourceLocation(TT2.MOD_ID, "models/armor/scout/armor_" + leg + "plate2").toString();
+            return new ResourceLocation(TT2.MOD_ID, SCOUT_ARMOR_TEXTURE_ROOT + leg + "plate2").toString();
         }
         return super.getArmorModelTexture(stack, type);
     }

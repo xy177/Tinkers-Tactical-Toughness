@@ -8,6 +8,8 @@ import c4.conarm.lib.ArmoryRegistry;
 import c4.conarm.common.ConstructsRegistry;
 import slimeknights.tconstruct.library.TinkerRegistry;
 import xy177.tt2.config.TT2Config;
+import xy177.tt2.events.ConstructArmorExtraModifierEvents;
+import xy177.tt2.events.ConstructArmorSetBonusEvents;
 import xy177.tt2.events.DefenseDamageEvents;
 import xy177.tt2.events.DoppelhanderEvents;
 import xy177.tt2.events.HeavyShieldEvents;
@@ -48,6 +50,8 @@ public class CommonProxy {
         if (TT2Config.enableDefenseDamage) {
             MinecraftForge.EVENT_BUS.register(new DefenseDamageEvents());
         }
+        MinecraftForge.EVENT_BUS.register(new ConstructArmorExtraModifierEvents());
+        MinecraftForge.EVENT_BUS.register(new ConstructArmorSetBonusEvents());
         MinecraftForge.EVENT_BUS.register(new HiddenModifierEvents());
 
         if (TT2Config.enableSwiftShield && TT2Items.SWIFT_SHIELD != null) {

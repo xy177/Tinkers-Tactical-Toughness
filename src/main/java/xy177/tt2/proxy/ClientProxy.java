@@ -22,6 +22,7 @@ import xy177.tt2.client.MaracaClientEvents;
 import xy177.tt2.client.book.TT2ArmorySectionTransformer;
 import xy177.tt2.client.book.TT2ToolSectionTransformer;
 import xy177.tt2.client.book.content.TT2ContentScoutArmor;
+import xy177.tt2.client.texture.ScoutArmorLayerSprite;
 import xy177.tt2.config.TT2Config;
 import xy177.tt2.events.HeavyShieldClientEvents;
 import xy177.tt2.init.TT2Items;
@@ -123,20 +124,34 @@ public class ClientProxy extends CommonProxy {
     }
 
     private void registerScoutArmorTextures() {
-        CustomTextureCreator.registerTexture(new net.minecraft.util.ResourceLocation(TT2.MOD_ID, "models/armor/scout/armor_core"));
-        CustomTextureCreator.registerTexture(new net.minecraft.util.ResourceLocation(TT2.MOD_ID, "models/armor/scout/armor_core_broken"));
-        CustomTextureCreator.registerTexture(new net.minecraft.util.ResourceLocation(TT2.MOD_ID, "models/armor/scout/armor_plate1"));
-        CustomTextureCreator.registerTexture(new net.minecraft.util.ResourceLocation(TT2.MOD_ID, "models/armor/scout/armor_plate2"));
-        CustomTextureCreator.registerTexture(new net.minecraft.util.ResourceLocation(TT2.MOD_ID, "models/armor/scout/armor_leg_core"));
-        CustomTextureCreator.registerTexture(new net.minecraft.util.ResourceLocation(TT2.MOD_ID, "models/armor/scout/armor_leg_plate1"));
-        CustomTextureCreator.registerTexture(new net.minecraft.util.ResourceLocation(TT2.MOD_ID, "models/armor/scout/armor_leg_plate2"));
+        for (String layer : SCOUT_ARMOR_TEXTURE_LAYERS) {
+            CustomTextureCreator.registerTexture(new net.minecraft.util.ResourceLocation(TT2.MOD_ID, layer));
+        }
+    }
+
+    private void registerScoutArmorLayerSprites(TextureStitchEvent.Pre event) {
+        for (String layer : SCOUT_ARMOR_TEXTURE_LAYERS) {
+            net.minecraft.util.ResourceLocation location = new net.minecraft.util.ResourceLocation(TT2.MOD_ID, layer);
+            event.getMap().setTextureEntry(new ScoutArmorLayerSprite(location));
+        }
     }
 
     @SubscribeEvent
     public void onTextureStitchPre(TextureStitchEvent.Pre event) {
         if (TT2Config.enableScoutArmor) {
             registerScoutArmorTextures();
+            registerScoutArmorLayerSprites(event);
         }
     }
+
+    private static final String[] SCOUT_ARMOR_TEXTURE_LAYERS = {
+        "models/armor/scout/armor_full_core",
+        "models/armor/scout/armor_full_core_broken",
+        "models/armor/scout/armor_full_plate1",
+        "models/armor/scout/armor_full_plate2",
+        "models/armor/scout/armor_full_leg_core",
+        "models/armor/scout/armor_full_leg_plate1",
+        "models/armor/scout/armor_full_leg_plate2"
+    };
 }
 

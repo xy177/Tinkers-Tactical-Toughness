@@ -1,6 +1,7 @@
 package xy177.tt2.events;
 
 import c4.conarm.common.ConstructsRegistry;
+import c4.conarm.lib.armor.ArmorCore;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -96,6 +97,9 @@ public class DefenseDamageEvents {
         float gain = attacker.isNonBoss()
             ? (float) TT2Config.defenseDamageNormalHitPercent
             : (float) TT2Config.defenseDamageBossHitPercent;
+        if (getBaseConstructArmorPieces(player) >= 3) {
+            gain *= (float) TT2Config.constructArmorSetDefenseDamageGainMultiplier;
+        }
         tryAddDefenseDamage(player, gain);
         syncArmoryBookDisplay(player);
     }
@@ -109,6 +113,11 @@ public class DefenseDamageEvents {
         EntityPlayer player = event.player;
         UUID id = player.getUniqueID();
         float current = damage.getOrDefault(id, 0f);
+        float maxDamage = getMaxDefenseDamage(player);
+        if (current > maxDamage) {
+            current = maxDamage;
+            damage.put(id, current);
+        }
         if (current <= 0f) {
             damage.remove(id);
             lastHitTick.remove(id);
@@ -122,12 +131,13 @@ public class DefenseDamageEvents {
 
         long now = player.world.getTotalWorldTime();
         long lastHit = lastHitTick.getOrDefault(id, now);
-        if (now - lastHit >= TT2Config.defenseDamageRecoveryDelayTicks) {
+        int recoveryDelay = getRecoveryDelayTicks(player);
+        if (now - lastHit >= recoveryDelay) {
             long next = nextRecoveryTick.getOrDefault(id, now);
             if (now >= next) {
-                current = Math.max(0f, current - (float) TT2Config.defenseDamageRecoveryPercent);
+                current = Math.max(0f, current - getRecoveryPercent(player));
                 damage.put(id, current);
-                nextRecoveryTick.put(id, now + TT2Config.defenseDamageRecoveryIntervalTicks);
+                nextRecoveryTick.put(id, now + getRecoveryIntervalTicks(player));
             }
         }
 
@@ -171,10 +181,10 @@ public class DefenseDamageEvents {
 
     private void addDefenseDamage(EntityPlayer player, float amount) {
         UUID id = player.getUniqueID();
-        float maxDamage = 1f - (float) TT2Config.defenseDamageMinimumEfficiency;
+        float maxDamage = getMaxDefenseDamage(player);
         float next = Math.min(maxDamage, damage.getOrDefault(id, 0f) + amount);
         damage.put(id, next);
-        nextRecoveryTick.put(id, player.world.getTotalWorldTime() + TT2Config.defenseDamageRecoveryDelayTicks);
+        nextRecoveryTick.put(id, player.world.getTotalWorldTime() + getRecoveryDelayTicks(player));
         updateArmorPenalty(player, getEfficiency(next));
     }
 
@@ -200,8 +210,9 @@ public class DefenseDamageEvents {
         long lastHit = lastHitTick.getOrDefault(id, now);
         long cooldownEnd;
         int cooldownTicks;
-        if (now - lastHit < TT2Config.defenseDamageRecoveryDelayTicks) {
-            cooldownEnd = lastHit + TT2Config.defenseDamageRecoveryDelayTicks;
+        int recoveryDelay = getRecoveryDelayTicks(player);
+        if (now - lastHit < recoveryDelay) {
+            cooldownEnd = lastHit + recoveryDelay;
             cooldownTicks = (int) Math.max(1, cooldownEnd - now);
         } else {
             cooldownEnd = nextRecoveryTick.getOrDefault(id, now);
@@ -290,6 +301,54 @@ public class DefenseDamageEvents {
     private boolean isEnemyDamage(DamageSource source) {
         Entity trueSource = source.getTrueSource();
         return trueSource instanceof EntityLivingBase && !(trueSource instanceof EntityPlayer);
+    }
+
+    private int getRecoveryDelayTicks(EntityPlayer player) {
+        return getBaseConstructArmorPieces(player) >= 1
+            ? TT2Config.constructArmorSetDefenseDamageRecoveryDelayTicks
+            : TT2Config.defenseDamageRecoveryDelayTicks;
+    }
+
+    private int getRecoveryIntervalTicks(EntityPlayer player) {
+        return getBaseConstructArmorPieces(player) >= 2
+            ? TT2Config.constructArmorSetDefenseDamageRecoveryIntervalTicks
+            : TT2Config.defenseDamageRecoveryIntervalTicks;
+    }
+
+    private float getRecoveryPercent(EntityPlayer player) {
+        return getBaseConstructArmorPieces(player) >= 2
+            ? (float) TT2Config.constructArmorSetDefenseDamageRecoveryPercent
+            : (float) TT2Config.defenseDamageRecoveryPercent;
+    }
+
+    private float getMaxDefenseDamage(EntityPlayer player) {
+        float configuredMax = 1f - (float) TT2Config.defenseDamageMinimumEfficiency;
+        if (getBaseConstructArmorPieces(player) >= 4) {
+            configuredMax = Math.min(configuredMax, (float) TT2Config.constructArmorSetMaxDefenseDamage);
+        }
+        return Math.max(0f, Math.min(1f, configuredMax));
+    }
+
+    public static int getBaseConstructArmorPieces(EntityPlayer player) {
+        int pieces = 0;
+        for (ItemStack stack : player.inventory.armorInventory) {
+            if (isBaseConstructArmor(stack)) {
+                pieces++;
+            }
+        }
+        return pieces;
+    }
+
+    public static boolean isBaseConstructArmor(ItemStack stack) {
+        return stack != null && !stack.isEmpty() && isBaseConstructArmor(stack.getItem());
+    }
+
+    private static boolean isBaseConstructArmor(Item item) {
+        return item instanceof ArmorCore
+            && (item == ConstructsRegistry.helmet
+            || item == ConstructsRegistry.chestplate
+            || item == ConstructsRegistry.leggings
+            || item == ConstructsRegistry.boots);
     }
 
     private boolean isBlocking(EntityPlayer player, DamageSource source) {
