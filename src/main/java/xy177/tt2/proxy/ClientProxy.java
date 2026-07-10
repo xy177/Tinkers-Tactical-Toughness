@@ -16,6 +16,7 @@ import slimeknights.tconstruct.library.book.TinkerBook;
 import slimeknights.tconstruct.library.client.CustomTextureCreator;
 import slimeknights.tconstruct.library.client.ToolBuildGuiInfo;
 import xy177.tt2.TT2;
+import xy177.tt2.client.ConstructArmorSetBonusClientEvents;
 import xy177.tt2.client.NunchakuClientHandler;
 import xy177.tt2.client.ScoutArmorClientEvents;
 import xy177.tt2.client.MaracaClientEvents;
@@ -45,6 +46,7 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void init(FMLInitializationEvent event) {
         super.init(event);
+        MinecraftForge.EVENT_BUS.register(new ConstructArmorSetBonusClientEvents());
 
         if (TT2Config.enableHeavyShield) {
             MinecraftForge.EVENT_BUS.register(new HeavyShieldClientEvents());
@@ -54,7 +56,7 @@ public class ClientProxy extends CommonProxy {
             MinecraftForge.EVENT_BUS.register(new NunchakuClientHandler());
         }
 
-        if (TT2Items.MARACA != null) {
+        if (TT2Config.enableMaraca && TT2Items.MARACA != null) {
             MinecraftForge.EVENT_BUS.register(new MaracaClientEvents());
         }
 
@@ -114,7 +116,7 @@ public class ClientProxy extends CommonProxy {
             TinkerRegistryClient.addToolBuilding(info);
         }
 
-        if (TT2Items.MARACA != null) {
+        if (TT2Config.enableMaraca && TT2Items.MARACA != null) {
             ToolBuildGuiInfo info = new ToolBuildGuiInfo(TT2Items.MARACA);
             info.addSlotPosition(53, 22);
             info.addSlotPosition(33, 42);

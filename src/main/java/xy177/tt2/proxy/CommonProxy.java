@@ -73,7 +73,7 @@ public class CommonProxy {
             MinecraftForge.EVENT_BUS.register(new DoppelhanderEvents());
         }
 
-        if (TT2Items.MARACA != null) {
+        if (TT2Config.enableMaraca && TT2Items.MARACA != null) {
             TinkerRegistry.registerToolForgeCrafting(TT2Items.MARACA);
             maracaEvents = new MaracaEvents();
             MinecraftForge.EVENT_BUS.register(maracaEvents);

@@ -59,9 +59,11 @@ public class TT2Items {
             event.getRegistry().register(DOPPELHANDER);
         }
 
-        MARACA = new Maraca();
-        MARACA.setRegistryName(TT2.MOD_ID, "maraca");
-        event.getRegistry().register(MARACA);
+        if (TT2Config.enableMaraca) {
+            MARACA = new Maraca();
+            MARACA.setRegistryName(TT2.MOD_ID, "maraca");
+            event.getRegistry().register(MARACA);
+        }
 
         MODIFIER_CRYSTAL = new ItemModifierCrystal();
         MODIFIER_CRYSTAL.setRegistryName(TT2.MOD_ID, "modifier_crystal");

@@ -31,7 +31,7 @@ public class ClientRegistration {
         if (TT2Config.enableDoppelhander && TT2Items.DOPPELHANDER != null) {
             ModelRegisterUtil.registerToolModel(TT2Items.DOPPELHANDER);
         }
-        if (TT2Items.MARACA != null) {
+        if (TT2Config.enableMaraca && TT2Items.MARACA != null) {
             ModelRegisterUtil.registerToolModel(TT2Items.MARACA);
         }
         if (TT2Items.MODIFIER_CRYSTAL != null) {

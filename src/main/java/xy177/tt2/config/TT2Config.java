@@ -10,6 +10,7 @@ public class TT2Config {
     public static boolean enableHeavyShield = true;
     public static boolean enableNunchaku = true;
     public static boolean enableDoppelhander = true;
+    public static boolean enableMaraca = true;
     public static boolean enableScoutArmor = true;
     public static boolean enableConstructArmorExtraModifierSlots = true;
     public static int constructArmorExtraModifierSlots = 1;
@@ -112,6 +113,16 @@ public class TT2Config {
                 desc(
                     "是否注册并启用德式双手剑。设为 false 后，该物品不会出现在游戏中，需要重启生效。",
                     "Whether to register and enable the Doppelhander. Set to false to remove it from the game. Requires restart."
+                )
+            ).getBoolean();
+
+            enableMaraca = cfg.get(
+                Configuration.CATEGORY_GENERAL,
+                "enableMaraca",
+                true,
+                desc(
+                    "是否注册并启用沙锤。设为 false 后，该物品不会出现在游戏中，需要重启生效。",
+                    "Whether to register and enable the Maraca. Set to false to remove it from the game. Requires restart."
                 )
             ).getBoolean();
 
