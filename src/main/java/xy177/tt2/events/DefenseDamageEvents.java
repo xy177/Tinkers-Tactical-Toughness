@@ -123,7 +123,6 @@ public class DefenseDamageEvents {
             lastHitTick.remove(id);
             lastTriggerTick.remove(id);
             nextRecoveryTick.remove(id);
-            lastBookCooldownEndTick.remove(id);
             updateArmorPenalty(player, 1f);
             clearArmoryBookDisplay(player);
             return;
@@ -201,8 +200,7 @@ public class DefenseDamageEvents {
 
         UUID id = player.getUniqueID();
         if (damage.getOrDefault(id, 0f) <= 0f) {
-            player.getCooldownTracker().removeCooldown(armoryBook);
-            lastBookCooldownEndTick.remove(id);
+            clearArmoryBookDisplay(player);
             return;
         }
 
@@ -235,7 +233,9 @@ public class DefenseDamageEvents {
             return;
         }
 
-        if (updateArmoryBookBar(player, armoryBook, 1f)) {
+        boolean hadActiveCooldown = lastBookCooldownEndTick.remove(player.getUniqueID()) != null;
+        updateArmoryBookBar(player, armoryBook, 1f);
+        if (hadActiveCooldown) {
             clearBookCooldown(player, armoryBook);
         }
     }
@@ -254,13 +254,17 @@ public class DefenseDamageEvents {
 
         for (ItemStack stack : inventory.mainInventory) {
             if (stack.getItem() == armoryBook) {
-                stack.setItemDamage(displayDamage);
+                if (stack.getItemDamage() != displayDamage) {
+                    stack.setItemDamage(displayDamage);
+                }
                 found = true;
             }
         }
         for (ItemStack stack : inventory.offHandInventory) {
             if (stack.getItem() == armoryBook) {
-                stack.setItemDamage(displayDamage);
+                if (stack.getItemDamage() != displayDamage) {
+                    stack.setItemDamage(displayDamage);
+                }
                 found = true;
             }
         }
