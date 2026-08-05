@@ -1,0 +1,6 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "tt2:items/forging_templates/mining"
+  }
+}

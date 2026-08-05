@@ -13,6 +13,7 @@ import xy177.tt2.TT2;
 import xy177.tt2.config.TT2Config;
 import xy177.tt2.init.TT2Items;
 import xy177.tt2.init.TT2Blocks;
+import xy177.tt2.item.ItemForgingTemplate;
 
 @Mod.EventBusSubscriber(modid = TT2.MOD_ID, value = Side.CLIENT)
 public class ClientRegistration {
@@ -34,6 +35,12 @@ public class ClientRegistration {
         if (TT2Config.enableMaraca && TT2Items.MARACA != null) {
             ModelRegisterUtil.registerToolModel(TT2Items.MARACA);
         }
+        if (TT2Config.enableSpear && TT2Items.SPEAR != null) {
+            ModelRegisterUtil.registerToolModel(TT2Items.SPEAR);
+        }
+        if (TT2Items.CRAFTSMAN_STAFF != null) {
+            ModelRegisterUtil.registerToolModel(TT2Items.CRAFTSMAN_STAFF);
+        }
         if (TT2Items.MODIFIER_CRYSTAL != null) {
             ModelLoader.setCustomModelResourceLocation(TT2Items.MODIFIER_CRYSTAL, 0,
                 new ModelResourceLocation(TT2.MOD_ID + ":modifier_crystal", "inventory"));
@@ -41,6 +48,12 @@ public class ClientRegistration {
         if (TT2Items.EXPERIENCE_BOTTLE != null) {
             ModelLoader.setCustomModelResourceLocation(TT2Items.EXPERIENCE_BOTTLE, 0,
                 new ModelResourceLocation(TT2.MOD_ID + ":experience_bottle", "inventory"));
+        }
+        for (ItemForgingTemplate template : TT2Items.FORGING_TEMPLATES) {
+            if (template != null && template.getRegistryName() != null) {
+                ModelLoader.setCustomModelResourceLocation(template, 0,
+                    new ModelResourceLocation(template.getRegistryName(), "inventory"));
+            }
         }
         if (TT2Blocks.MODIFIER_WORKTABLE != null) {
             ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(TT2Blocks.MODIFIER_WORKTABLE), 0,

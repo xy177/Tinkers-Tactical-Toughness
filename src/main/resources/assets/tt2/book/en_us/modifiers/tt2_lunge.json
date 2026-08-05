@@ -1,0 +1,17 @@
+{
+  "modifier": "tt2_lunge",
+  "text": [
+    {
+      "text": "Infuse your spear with knightly spirit and piston-powered thrust to propel yourself whenever you attack. Whether charging into enemy ranks or breaking out of an encirclement, there is no better choice."
+    }
+  ],
+  "effects": [
+    "Propels you forward when attacking",
+    "Activates even without a target",
+    "Multiple levels",
+    "Hey, that windmill isn't a giant!"
+  ],
+  "demoTool": [
+    "tt2:spear"
+  ]
+}

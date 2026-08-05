@@ -11,6 +11,7 @@ import c4.conarm.lib.materials.PlatesMaterialStats;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.client.model.ModelBiped;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -24,6 +25,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.common.ISpecialArmor;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -41,6 +43,7 @@ import c4.conarm.lib.tinkering.ArmorTooltipBuilder;
 import slimeknights.tconstruct.library.Util;
 import xy177.tt2.TT2;
 import xy177.tt2.client.model.ScoutArmorModel;
+import xy177.tt2.client.texture.ScoutTmtArmorTextures;
 import xy177.tt2.config.TT2Config;
 import xy177.tt2.events.ScoutArmorEvents;
 
@@ -133,6 +136,15 @@ public abstract class ScoutArmorCore extends ArmorCore {
         }
 
         return info.getTooltip();
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type) {
+        if (!Loader.isModLoaded("toomanytinkers")) {
+            return super.getArmorTexture(stack, entity, slot, type);
+        }
+        return ScoutTmtArmorTextures.INSTANCE.getTexture(stack, this);
     }
 
     @SideOnly(Side.CLIENT)

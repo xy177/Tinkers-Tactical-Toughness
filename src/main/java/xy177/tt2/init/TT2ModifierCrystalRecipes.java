@@ -62,7 +62,6 @@ public final class TT2ModifierCrystalRecipes {
         if (modifier == null) {
             return;
         }
-        TinkerRegistry.registerModifier(modifier);
         ArmoryRegistry.registerModifier(modifier);
     }
 }

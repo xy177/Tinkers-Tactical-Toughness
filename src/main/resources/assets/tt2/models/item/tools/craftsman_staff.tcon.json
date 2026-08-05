@@ -1,0 +1,7 @@
+{
+  "textures": {
+    "layer0": "tt2:items/craftsman_staff/head",
+    "layer1": "tt2:items/craftsman_staff/extra",
+    "layer2": "tt2:items/craftsman_staff/handle"
+  }
+}

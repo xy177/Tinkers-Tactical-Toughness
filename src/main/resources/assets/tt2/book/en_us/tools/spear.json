@@ -1,0 +1,17 @@
+{
+  "tool": "spear",
+  "text": [
+    {
+      "text": "The spear is an aggressive weapon with extended reach. A single thrust can pierce multiple targets lined up ahead. Left-click to stab; hold right-click to brace the spear and charge forward.\n\n"
+    },
+    {
+      "text": "The greater your speed relative to the target, the more damage your charge deals."
+    }
+  ],
+  "properties": [
+    "Longer attack reach",
+    "Fast and mobile",
+    "Right-click: Brace to charge",
+    "A knight's soul!"
+  ]
+}

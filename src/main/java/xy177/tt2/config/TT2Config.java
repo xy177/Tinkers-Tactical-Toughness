@@ -6,11 +6,14 @@ import java.io.File;
 
 public class TT2Config {
 
+    private static final String CATEGORY_SPEAR = "spear";
+
     public static boolean enableSwiftShield = true;
     public static boolean enableHeavyShield = true;
     public static boolean enableNunchaku = true;
     public static boolean enableDoppelhander = true;
     public static boolean enableMaraca = true;
+    public static boolean enableSpear = true;
     public static boolean enableScoutArmor = true;
     public static boolean enableConstructArmorExtraModifierSlots = true;
     public static int constructArmorExtraModifierSlots = 1;
@@ -35,7 +38,10 @@ public class TT2Config {
     public static double imbalanceKnockbackReduction = 1.0;
     public static double imbalanceBossKnockbackReduction = 0.5;
     public static double imbalanceDamageTakenIncrease = 0.5;
-    public static int imbalanceGlowMode = 0;
+    public static boolean enableImbalanceStatusOutline = true;
+    public static int imbalanceOutlineColor = 0xE34A32;
+    public static int imbalanceImmunityOutlineColor = 0x55D9E8;
+    public static boolean imbalanceOutlineThroughWalls = true;
 
     public static double nunchakuAttackSpeed = 2.5;
     public static float nunchakuComboGainPerHit = 0.1f;
@@ -62,6 +68,92 @@ public class TT2Config {
     public static int maracaAttackMelodyDurationTicks = 1200;
     public static double maracaPartyDurationCoefficient = 1.0;
 
+    public static double craftsmanStaffMovementSpeedCoefficient = 0.10;
+    public static double craftsmanStaffCombatDamageCoefficient = 1.0;
+    public static double craftsmanStaffFellingDamageCoefficient = 1.2;
+    public static double craftsmanStaffCombatFellingDamageCoefficient = 1.35;
+    public static double craftsmanStaffInsightSpellDamageCoefficient = 1.0;
+
+    public static double spearAttackSpeed = 1.1;
+    public static double spearDamageCoefficient = 0.7;
+
+    public static double spearStabMinReach = 2.0;
+    public static double spearStabMaxReach = 4.5;
+    public static double spearStabCreativeMaxReach = 6.5;
+    public static double spearStabAimTolerance = 0.125;
+    public static double spearStabMinimumAttackRecharge = 1.0;
+    public static int spearStabMaxTargets = 0;
+    public static double spearStabBasePushback = 0.4;
+    public static int spearStabDurabilityPerTarget = 1;
+    public static double spearStabExhaustionPerTarget = 0.1;
+
+    public static String spearChargeCalculationMode = "fixed";
+    public static int spearChargeFixedBraceDelayTicks = 10;
+    public static double spearChargeFixedDamageMultiplier = 1.1;
+    public static int spearChargeFixedKnockOffMountDurationTicks = 100;
+    public static int spearChargeFixedPushbackDurationTicks = 200;
+    public static int spearChargeFixedDamageDurationTicks = 500;
+    public static double spearChargeFixedKnockOffMountSpeed = 9.0;
+
+    public static double spearChargeHandleCalculationScale = 1.0;
+    public static int spearChargeHandleBraceDelayHighestTicks = 15;
+    public static double spearChargeHandleDamageMultiplierLowest = 0.7;
+    public static int spearChargeHandleKnockOffMountDurationHighestTicks = 100;
+    public static int spearChargeHandlePushbackDurationHighestTicks = 200;
+    public static int spearChargeHandleDamageDurationHighestTicks = 300;
+    public static double spearChargeHandleKnockOffMountSpeedHighest = 14.0;
+    public static int spearChargeHandleBraceDelayLowestTicks = 8;
+    public static double spearChargeHandleDamageMultiplierHighest = 1.2;
+    public static int spearChargeHandleKnockOffMountDurationLowestTicks = 50;
+    public static int spearChargeHandlePushbackDurationLowestTicks = 110;
+    public static int spearChargeHandleDamageDurationLowestTicks = 175;
+    public static double spearChargeHandleKnockOffMountSpeedLowest = 9.0;
+
+    public static boolean spearChargeHandleLimitsEnabled = true;
+    public static int spearChargeHandleBraceDelayMinimumTicks = 8;
+    public static int spearChargeHandleBraceDelayMaximumTicks = 15;
+    public static double spearChargeHandleDamageMultiplierMinimum = 0.7;
+    public static double spearChargeHandleDamageMultiplierMaximum = 1.2;
+    public static int spearChargeHandleKnockOffMountDurationMinimumTicks = 50;
+    public static int spearChargeHandleKnockOffMountDurationMaximumTicks = 100;
+    public static int spearChargeHandlePushbackDurationMinimumTicks = 110;
+    public static int spearChargeHandlePushbackDurationMaximumTicks = 200;
+    public static int spearChargeHandleDamageDurationMinimumTicks = 175;
+    public static int spearChargeHandleDamageDurationMaximumTicks = 300;
+    public static double spearChargeHandleKnockOffMountSpeedMinimum = 9.0;
+    public static double spearChargeHandleKnockOffMountSpeedMaximum = 14.0;
+
+    public static double spearChargeMinimumClosingSpeedForDamage = 4.6;
+    public static double spearChargeMinimumWielderSpeedForPushback = 5.1;
+    public static int spearChargeSameTargetDelayTicks = 10;
+    public static double spearChargeBaseDamage = 1.0;
+    public static double spearChargeBasePushback = 0.4;
+    public static int spearChargeDurabilityCost = 1;
+    public static double spearChargeExhaustion = 0.1;
+    public static int spearChargeMaxTargets = 0;
+    public static double spearChargeDamageCap = 0.0;
+    public static double spearChargeMovementMultiplier = 1.0;
+    public static boolean spearChargeBrieflyIgnoreSlowTouches = true;
+    public static boolean spearChargeCanKnockTargetsOffMounts = true;
+
+    public static double spearStabAnimationStrength = 1.0;
+    public static double spearBraceAnimationStrength = 1.0;
+    public static double spearFatigueAnimationStrength = 1.0;
+    public static double spearFatigueAnimationSpeed = 1.0;
+
+    public static int spearLungeMaxLevel = 3;
+    public static double spearLungeForwardBoostPerLevel = 0.458;
+    public static double spearLungeExhaustionPerLevel = 4.0;
+    public static int spearLungeDurabilityCost = 1;
+    public static int spearLungeMinFoodLevel = 7;
+    public static double spearLungeMaxHorizontalSpeed = 0.0;
+    public static int spearLungePistonCost = 1;
+    public static int spearLungeKnightSlimeIngotCost = 1;
+    public static int spearLungeModifierSlotsPerLevel = 1;
+    public static boolean spearLungeDisallowRiding = true;
+    public static boolean spearLungeDisallowWater = true;
+    public static boolean spearLungeDisallowElytraFlight = true;
+
     public static boolean enableDefenseDamage = true;
     public static double defenseDamageBossHitPercent = 0.075;
     public static double defenseDamageNormalHitPercent = 0.0375;
@@ -73,8 +165,20 @@ public class TT2Config {
 
     public static void init(File configFile) {
         Configuration cfg = new Configuration(configFile);
+        boolean removedLegacyImbalanceGlowMode = false;
         try {
             cfg.load();
+            if (cfg.hasKey(Configuration.CATEGORY_GENERAL, "imbalanceGlowMode")) {
+                cfg.getCategory(Configuration.CATEGORY_GENERAL).remove("imbalanceGlowMode");
+                removedLegacyImbalanceGlowMode = true;
+            }
+            cfg.setCategoryComment(
+                CATEGORY_SPEAR,
+                desc(
+                    "矛的基础属性、戳刺、冲锋和专属强化“突进”的设置。所有 tick 时间均为 20 tick = 1 秒。",
+                    "Settings for the Spear's base stats, stab, charge, and exclusive Lunge modifier. All times use 20 ticks = 1 second."
+                )
+            );
 
             enableSwiftShield = cfg.get(
                 Configuration.CATEGORY_GENERAL,
@@ -126,6 +230,16 @@ public class TT2Config {
                 )
             ).getBoolean();
 
+            enableSpear = cfg.get(
+                Configuration.CATEGORY_GENERAL,
+                "enableSpear",
+                true,
+                desc(
+                    "是否注册并启用矛。设为 false 后，该物品及其专属突进强化不会出现在游戏中，需要重启生效。",
+                    "Whether to register and enable the Spear. Set to false to remove the item and its exclusive Lunge modifier from the game. Requires restart."
+                )
+            ).getBoolean();
+
             enableScoutArmor = cfg.get(
                 Configuration.CATEGORY_GENERAL,
                 "enableScoutArmor",
@@ -135,6 +249,380 @@ public class TT2Config {
                     "Whether to register and enable the Scout Armor set. Set to false to remove it from the game. Requires restart."
                 )
             ).getBoolean();
+
+            spearAttackSpeed = spearDouble(
+                cfg, "attackSpeed", 1.1, 0.0, 100.0,
+                "矛的攻击速度。数值越高，攻击条恢复越快。",
+                "Spear attack speed. Higher values refill the attack indicator faster."
+            );
+            spearDamageCoefficient = spearDouble(
+                cfg, "damageCoefficient", 0.7, 0.0, 100.0,
+                "矛头材料攻击力乘以此数值后，计入矛的面板伤害。",
+                "The Spear head material's attack value is multiplied by this number for the displayed damage."
+            );
+
+            spearStabMinReach = spearDouble(
+                cfg, "stabMinReach", 2.0, 0.0, 64.0,
+                "目标离玩家至少这么远，戳刺才能命中，单位为格。",
+                "A target must be at least this far from the player to be hit by a stab, in blocks."
+            );
+            spearStabMaxReach = spearDouble(
+                cfg, "stabMaxReach", 4.5, 0.0, 64.0,
+                "生存模式下戳刺最远能命中的距离，单位为格。",
+                "Farthest distance a stab can hit in Survival mode, in blocks."
+            );
+            spearStabCreativeMaxReach = spearDouble(
+                cfg, "stabCreativeMaxReach", 6.5, 0.0, 64.0,
+                "创造模式下戳刺最远能命中的距离，单位为格。",
+                "Farthest distance a stab can hit in Creative mode, in blocks."
+            );
+            spearStabAimTolerance = spearDouble(
+                cfg, "stabAimTolerance", 0.125, 0.0, 8.0,
+                "戳刺判定的宽松程度。数值越大，准星稍有偏差也越容易命中，单位为格。",
+                "How forgiving the stab aim is. Higher values allow a wider miss around the crosshair, in blocks."
+            );
+            spearStabMinimumAttackRecharge = spearDouble(
+                cfg, "stabMinimumAttackRecharge", 1.0, 0.0, 1.0,
+                "按左键时，攻击条至少恢复到这个比例才会发动戳刺。1.0 表示完全恢复，0.5 表示恢复一半。",
+                "How full the attack indicator must be before a left-click can stab. 1.0 means full; 0.5 means half full."
+            );
+            spearStabMaxTargets = spearInt(
+                cfg, "stabMaxTargets", 0, 0, Integer.MAX_VALUE,
+                "一次戳刺最多能命中多少个目标。0 表示不限制。",
+                "Maximum targets one stab can hit. 0 means unlimited."
+            );
+            spearStabBasePushback = spearDouble(
+                cfg, "stabBasePushback", 0.4, 0.0, 100.0,
+                "戳刺命中后把目标推开的力度。",
+                "How strongly a successful stab pushes the target away."
+            );
+            spearStabDurabilityPerTarget = spearInt(
+                cfg, "stabDurabilityPerTarget", 1, 0, Integer.MAX_VALUE,
+                "戳刺每命中一个生物时，矛消耗的耐久。",
+                "Spear durability consumed for each living target hit by a stab."
+            );
+            spearStabExhaustionPerTarget = spearDouble(
+                cfg, "stabExhaustionPerTarget", 0.1, 0.0, 1000.0,
+                "戳刺每命中一个目标增加的饥饿消耗值。累计约 4 点通常会消耗 1 点饱和度或饥饿值。",
+                "Exhaustion added for each target hit by a stab. About 4 exhaustion normally consumes 1 saturation or food point."
+            );
+
+            spearChargeCalculationMode = spearString(
+                cfg, "chargeCalculationMode", "fixed",
+                "冲锋数值的计算方式：fixed 始终使用下方固定数值；handle 根据坚韧手柄的耐久系数计算。",
+                "How charge values are chosen: fixed always uses the fixed values below; handle calculates them from the tough handle durability modifier."
+            );
+            if ("handle".equalsIgnoreCase(spearChargeCalculationMode)) {
+                spearChargeCalculationMode = "handle";
+            } else {
+                spearChargeCalculationMode = "fixed";
+            }
+
+            spearChargeFixedBraceDelayTicks = spearInt(
+                cfg, "chargeFixedBraceDelayTicks", 10, 0, 72000,
+                "固定模式下，按住右键架矛后要等待多少 tick，撞到目标才会触发冲锋效果。",
+                "In fixed mode, ticks after bracing the Spear before colliding with a target can trigger charge effects."
+            );
+            spearChargeFixedDamageMultiplier = spearDouble(
+                cfg, "chargeFixedDamageMultiplier", 1.1, 0.0, 100.0,
+                "固定模式下，双方迎面接近的速度带来多少冲锋伤害。数值越大，速度增加的伤害越多。",
+                "In fixed mode, how much damage comes from the speed at which wielder and target approach each other. Higher values add more damage."
+            );
+            spearChargeFixedKnockOffMountDurationTicks = spearInt(
+                cfg, "chargeFixedKnockOffMountDurationTicks", 100, 0, 72000,
+                "固定模式下，开始检测目标后，冲锋还能把目标撞下坐骑的持续时间，单位为 tick。",
+                "In fixed mode, how long after target detection starts that a charge can still knock a target off its mount, in ticks."
+            );
+            spearChargeFixedPushbackDurationTicks = spearInt(
+                cfg, "chargeFixedPushbackDurationTicks", 200, 0, 72000,
+                "固定模式下，开始检测目标后，冲锋还能击退目标的持续时间，单位为 tick。",
+                "In fixed mode, how long after target detection starts that a charge can still push targets back, in ticks."
+            );
+            spearChargeFixedDamageDurationTicks = spearInt(
+                cfg, "chargeFixedDamageDurationTicks", 500, 0, 72000,
+                "固定模式下，开始检测目标后，冲锋还能造成伤害的持续时间，单位为 tick。",
+                "In fixed mode, how long after target detection starts that a charge can still deal damage, in ticks."
+            );
+            spearChargeFixedKnockOffMountSpeed = spearDouble(
+                cfg, "chargeFixedKnockOffMountSpeed", 9.0, 0.0, 1000.0,
+                "固定模式下，要把目标撞下坐骑，玩家自己朝准星方向移动至少要达到的速度，单位为格每秒。",
+                "In fixed mode, minimum speed the wielder must move toward the crosshair to knock a target off its mount, in blocks per second."
+            );
+
+            spearChargeHandleCalculationScale = spearDouble(
+                cfg, "chargeHandleCalculationScale", 1.0, 0.0, 100.0,
+                "手柄模式的计算倍率。计算位置 = 坚韧手柄耐久系数 x 此值；每项结果 = 位置 0 参考值 +（位置 1 参考值 - 位置 0 参考值）x 计算位置。下方会按实际作用注明最高值和最低值。",
+                "Handle-mode calculation scale. Position = tough handle durability modifier x this value; each result = position 0 reference + (position 1 reference - position 0 reference) x position. The descriptions below identify the higher and lower values."
+            );
+            spearChargeHandleBraceDelayHighestTicks = spearInt(
+                cfg, "chargeHandleBraceDelayHighestTicks", 15, 0, 72000,
+                "手柄模式架矛等待时间的最高参考值（计算位置 0），单位为 tick。",
+                "Higher reference value for handle-mode brace delay (position 0), in ticks."
+            );
+            spearChargeHandleDamageMultiplierLowest = spearDouble(
+                cfg, "chargeHandleDamageMultiplierLowest", 0.7, 0.0, 100.0,
+                "手柄模式速度伤害倍率的最低参考值（计算位置 0）。",
+                "Lower reference value for the handle-mode speed-based damage multiplier (position 0)."
+            );
+            spearChargeHandleKnockOffMountDurationHighestTicks = spearInt(
+                cfg, "chargeHandleKnockOffMountDurationHighestTicks", 100, 0, 72000,
+                "手柄模式“能把目标撞下坐骑”持续时间的最高参考值（计算位置 0），单位为 tick。",
+                "Higher reference value for how long handle-mode charges can knock targets off mounts (position 0), in ticks."
+            );
+            spearChargeHandlePushbackDurationHighestTicks = spearInt(
+                cfg, "chargeHandlePushbackDurationHighestTicks", 200, 0, 72000,
+                "手柄模式击退持续时间的最高参考值（计算位置 0），单位为 tick。",
+                "Higher reference value for handle-mode pushback time (position 0), in ticks."
+            );
+            spearChargeHandleDamageDurationHighestTicks = spearInt(
+                cfg, "chargeHandleDamageDurationHighestTicks", 300, 0, 72000,
+                "手柄模式伤害持续时间的最高参考值（计算位置 0），单位为 tick。",
+                "Higher reference value for handle-mode damage-dealing time (position 0), in ticks."
+            );
+            spearChargeHandleKnockOffMountSpeedHighest = spearDouble(
+                cfg, "chargeHandleKnockOffMountSpeedHighest", 14.0, 0.0, 1000.0,
+                "手柄模式“撞下坐骑所需玩家速度”的最高参考值（计算位置 0），单位为格每秒。",
+                "Higher reference value for the wielder speed needed to knock targets off mounts in handle mode (position 0), in blocks per second."
+            );
+            spearChargeHandleBraceDelayLowestTicks = spearInt(
+                cfg, "chargeHandleBraceDelayLowestTicks", 8, 0, 72000,
+                "手柄模式架矛等待时间的最低参考值（计算位置 1），单位为 tick。",
+                "Lower reference value for handle-mode brace delay (position 1), in ticks."
+            );
+            spearChargeHandleDamageMultiplierHighest = spearDouble(
+                cfg, "chargeHandleDamageMultiplierHighest", 1.2, 0.0, 100.0,
+                "手柄模式速度伤害倍率的最高参考值（计算位置 1）。",
+                "Higher reference value for the handle-mode speed-based damage multiplier (position 1)."
+            );
+            spearChargeHandleKnockOffMountDurationLowestTicks = spearInt(
+                cfg, "chargeHandleKnockOffMountDurationLowestTicks", 50, 0, 72000,
+                "手柄模式“能把目标撞下坐骑”持续时间的最低参考值（计算位置 1），单位为 tick。",
+                "Lower reference value for how long handle-mode charges can knock targets off mounts (position 1), in ticks."
+            );
+            spearChargeHandlePushbackDurationLowestTicks = spearInt(
+                cfg, "chargeHandlePushbackDurationLowestTicks", 110, 0, 72000,
+                "手柄模式击退持续时间的最低参考值（计算位置 1），单位为 tick。",
+                "Lower reference value for handle-mode pushback time (position 1), in ticks."
+            );
+            spearChargeHandleDamageDurationLowestTicks = spearInt(
+                cfg, "chargeHandleDamageDurationLowestTicks", 175, 0, 72000,
+                "手柄模式伤害持续时间的最低参考值（计算位置 1），单位为 tick。",
+                "Lower reference value for handle-mode damage-dealing time (position 1), in ticks."
+            );
+            spearChargeHandleKnockOffMountSpeedLowest = spearDouble(
+                cfg, "chargeHandleKnockOffMountSpeedLowest", 9.0, 0.0, 1000.0,
+                "手柄模式“撞下坐骑所需玩家速度”的最低参考值（计算位置 1），单位为格每秒。",
+                "Lower reference value for the wielder speed needed to knock targets off mounts in handle mode (position 1), in blocks per second."
+            );
+
+            spearChargeHandleLimitsEnabled = spearBoolean(
+                cfg, "chargeHandleLimitsEnabled", true,
+                "是否限制手柄模式的计算结果。设为 true 后，每项结果都不会低于下方最小值，也不会高于下方最大值。",
+                "Whether to limit handle-mode results. When true, each result stays between its minimum and maximum below."
+            );
+            spearChargeHandleBraceDelayMinimumTicks = spearInt(
+                cfg, "chargeHandleBraceDelayMinimumTicks", 8, 0, 72000,
+                "手柄模式计算出的架矛等待时间允许的最小值，单位为 tick。",
+                "Minimum allowed brace delay calculated in handle mode, in ticks."
+            );
+            spearChargeHandleBraceDelayMaximumTicks = spearInt(
+                cfg, "chargeHandleBraceDelayMaximumTicks", 15, 0, 72000,
+                "手柄模式计算出的架矛等待时间允许的最大值，单位为 tick。",
+                "Maximum allowed brace delay calculated in handle mode, in ticks."
+            );
+            spearChargeHandleDamageMultiplierMinimum = spearDouble(
+                cfg, "chargeHandleDamageMultiplierMinimum", 0.7, 0.0, 100.0,
+                "手柄模式计算出的速度伤害倍率允许的最小值。",
+                "Minimum allowed speed-based damage multiplier calculated in handle mode."
+            );
+            spearChargeHandleDamageMultiplierMaximum = spearDouble(
+                cfg, "chargeHandleDamageMultiplierMaximum", 1.2, 0.0, 100.0,
+                "手柄模式计算出的速度伤害倍率允许的最大值。",
+                "Maximum allowed speed-based damage multiplier calculated in handle mode."
+            );
+            spearChargeHandleKnockOffMountDurationMinimumTicks = spearInt(
+                cfg, "chargeHandleKnockOffMountDurationMinimumTicks", 50, 0, 72000,
+                "手柄模式计算出的“能把目标撞下坐骑”持续时间允许的最小值，单位为 tick。",
+                "Minimum allowed time for knocking targets off mounts calculated in handle mode, in ticks."
+            );
+            spearChargeHandleKnockOffMountDurationMaximumTicks = spearInt(
+                cfg, "chargeHandleKnockOffMountDurationMaximumTicks", 100, 0, 72000,
+                "手柄模式计算出的“能把目标撞下坐骑”持续时间允许的最大值，单位为 tick。",
+                "Maximum allowed time for knocking targets off mounts calculated in handle mode, in ticks."
+            );
+            spearChargeHandlePushbackDurationMinimumTicks = spearInt(
+                cfg, "chargeHandlePushbackDurationMinimumTicks", 110, 0, 72000,
+                "手柄模式计算出的击退持续时间允许的最小值，单位为 tick。",
+                "Minimum allowed pushback time calculated in handle mode, in ticks."
+            );
+            spearChargeHandlePushbackDurationMaximumTicks = spearInt(
+                cfg, "chargeHandlePushbackDurationMaximumTicks", 200, 0, 72000,
+                "手柄模式计算出的击退持续时间允许的最大值，单位为 tick。",
+                "Maximum allowed pushback time calculated in handle mode, in ticks."
+            );
+            spearChargeHandleDamageDurationMinimumTicks = spearInt(
+                cfg, "chargeHandleDamageDurationMinimumTicks", 175, 0, 72000,
+                "手柄模式计算出的伤害持续时间允许的最小值，单位为 tick。",
+                "Minimum allowed damage-dealing time calculated in handle mode, in ticks."
+            );
+            spearChargeHandleDamageDurationMaximumTicks = spearInt(
+                cfg, "chargeHandleDamageDurationMaximumTicks", 300, 0, 72000,
+                "手柄模式计算出的伤害持续时间允许的最大值，单位为 tick。",
+                "Maximum allowed damage-dealing time calculated in handle mode, in ticks."
+            );
+            spearChargeHandleKnockOffMountSpeedMinimum = spearDouble(
+                cfg, "chargeHandleKnockOffMountSpeedMinimum", 9.0, 0.0, 1000.0,
+                "手柄模式计算出的“撞下坐骑所需速度”允许的最小值，单位为格每秒。",
+                "Minimum allowed wielder speed needed to knock targets off mounts in handle mode, in blocks per second."
+            );
+            spearChargeHandleKnockOffMountSpeedMaximum = spearDouble(
+                cfg, "chargeHandleKnockOffMountSpeedMaximum", 14.0, 0.0, 1000.0,
+                "手柄模式计算出的“撞下坐骑所需速度”允许的最大值，单位为格每秒。",
+                "Maximum allowed wielder speed needed to knock targets off mounts in handle mode, in blocks per second."
+            );
+
+            spearChargeMinimumClosingSpeedForDamage = spearDouble(
+                cfg, "chargeMinimumClosingSpeedForDamage", 4.6, 0.0, 1000.0,
+                "冲锋要造成伤害，玩家与目标沿准星方向相互接近的速度差至少要达到此值，单位为格每秒。",
+                "Minimum closing speed toward the target required for charge damage, in blocks per second."
+            );
+            spearChargeMinimumWielderSpeedForPushback = spearDouble(
+                cfg, "chargeMinimumWielderSpeedForPushback", 5.1, 0.0, 1000.0,
+                "冲锋要击退目标，玩家自己朝准星方向移动至少要达到的速度，单位为格每秒。",
+                "Minimum speed the wielder must move toward the crosshair for a charge to push targets back, in blocks per second."
+            );
+            spearChargeSameTargetDelayTicks = spearInt(
+                cfg, "chargeSameTargetDelayTicks", 10, 0, 72000,
+                "同一目标被一次冲锋效果影响后，至少等待多少 tick 才能再次被这次冲锋影响。",
+                "Ticks before the same braced charge can affect the same target again."
+            );
+            spearChargeBaseDamage = spearDouble(
+                cfg, "chargeBaseDamage", 1.0, 0.0, 1000000.0,
+                "速度达到要求后，每次冲锋伤害都会固定加入的基础值。",
+                "Fixed base value added whenever a charge is fast enough to deal damage."
+            );
+            spearChargeBasePushback = spearDouble(
+                cfg, "chargeBasePushback", 0.4, 0.0, 100.0,
+                "速度达到要求后，冲锋把目标推开的力度。",
+                "How strongly a charge pushes targets away when moving fast enough."
+            );
+            spearChargeDurabilityCost = spearInt(
+                cfg, "chargeDurabilityCost", 1, 0, Integer.MAX_VALUE,
+                "冲锋每次对一个生物实际造成伤害、击退或把它撞下坐骑时，矛消耗的耐久。",
+                "Spear durability consumed each time a charge damages, pushes, or knocks a living target off its mount."
+            );
+            spearChargeExhaustion = spearDouble(
+                cfg, "chargeExhaustion", 0.1, 0.0, 1000.0,
+                "冲锋每次成功影响一个目标增加的饥饿消耗值。累计约 4 点通常会消耗 1 点饱和度或饥饿值。",
+                "Exhaustion added each time a charge successfully affects a target. About 4 exhaustion normally consumes 1 saturation or food point."
+            );
+            spearChargeMaxTargets = spearInt(
+                cfg, "chargeMaxTargets", 0, 0, Integer.MAX_VALUE,
+                "一次按住右键架矛期间，最多能影响多少个不同目标。0 表示不限制。",
+                "Maximum different targets affected during one continuous right-click brace. 0 means unlimited."
+            );
+            spearChargeDamageCap = spearDouble(
+                cfg, "chargeDamageCap", 0.0, 0.0, 1000000.0,
+                "速度和基础值算出的单次冲锋伤害，在材料词条与强化继续修改前最多达到多少。0 表示不限制；词条仍可让最终伤害更高。",
+                "Maximum charge damage from speed and base value before material traits and modifiers change it. 0 means unlimited; traits may still raise the final damage."
+            );
+            spearChargeMovementMultiplier = spearDouble(
+                cfg, "chargeMovementMultiplier", 1.0, 0.0, 100.0,
+                "架矛时相对平常移动速度的倍率。1.0 表示不减速，0.5 表示只保留一半速度。",
+                "Movement speed while bracing compared with normal. 1.0 means full speed; 0.5 means half speed."
+            );
+            spearChargeBrieflyIgnoreSlowTouches = spearBoolean(
+                cfg, "chargeBrieflyIgnoreSlowTouches", true,
+                "撞到目标但速度不够，没有触发伤害、击退或撞下坐骑时，是否仍暂时忽略这个目标，避免贴住目标时每 tick 重复检查。忽略时间由 chargeSameTargetDelayTicks 决定。",
+                "Whether a target touched too slowly to trigger damage, pushback, or being knocked off a mount is briefly ignored, avoiding checks every tick while overlapping it. The delay uses chargeSameTargetDelayTicks."
+            );
+            spearChargeCanKnockTargetsOffMounts = spearBoolean(
+                cfg, "chargeCanKnockTargetsOffMounts", true,
+                "移动速度达到要求时，冲锋是否能把骑乘中的目标撞下坐骑。",
+                "Whether a charge moving fast enough can knock a mounted target off its mount."
+            );
+
+            spearStabAnimationStrength = spearDouble(
+                cfg, "stabAnimationStrength", 1.0, 0.0, 10.0,
+                "戳刺时矛和手臂的动作幅度。1.0 与高版本原版相同；0 会关闭额外动作。只影响画面，不影响攻击距离或伤害。",
+                "Strength of the Spear and arm movement during a stab. 1.0 matches modern vanilla; 0 disables the extra motion. Visual only; reach and damage are unchanged."
+            );
+            spearBraceAnimationStrength = spearDouble(
+                cfg, "braceAnimationStrength", 1.0, 0.0, 10.0,
+                "按住右键架矛和收回时的动作幅度。1.0 与高版本原版相同；0 会关闭额外动作。只影响画面。",
+                "Strength of the motion while raising and lowering the Spear with right-click. 1.0 matches modern vanilla; 0 disables the extra motion. Visual only."
+            );
+            spearFatigueAnimationStrength = spearDouble(
+                cfg, "fatigueAnimationStrength", 1.0, 0.0, 10.0,
+                "架矛过久后矛头下垂和摇晃的明显程度。1.0 与高版本原版相同；0 表示不显示这些疲劳动作。只影响画面。",
+                "How strongly the Spear droops and sways after being braced too long. 1.0 matches modern vanilla; 0 hides these fatigue motions. Visual only."
+            );
+            spearFatigueAnimationSpeed = spearDouble(
+                cfg, "fatigueAnimationSpeed", 1.0, 0.0, 10.0,
+                "架矛过久后矛头摇晃的速度。1.0 与高版本原版相同，数值越大摇晃越快。只影响画面。",
+                "Speed of the Spear sway after it has been braced too long. 1.0 matches modern vanilla; higher values sway faster. Visual only."
+            );
+
+            spearLungeMaxLevel = spearInt(
+                cfg, "lungeMaxLevel", 3, 1, 100,
+                "矛的专属强化“突进”最多能升到多少级。",
+                "Maximum level of the Spear-exclusive Lunge modifier."
+            );
+            spearLungeForwardBoostPerLevel = spearDouble(
+                cfg, "lungeForwardBoostPerLevel", 0.458, 0.0, 100.0,
+                "每级突进提供的向前冲刺力度。数值越大，冲出的距离通常越远。",
+                "Forward boost per Lunge level. Higher values usually travel farther."
+            );
+            spearLungeExhaustionPerLevel = spearDouble(
+                cfg, "lungeExhaustionPerLevel", 4.0, 0.0, 1000.0,
+                "每级突进增加的饥饿消耗值。累计约 4 点通常会消耗 1 点饱和度或饥饿值。",
+                "Exhaustion added per Lunge level. About 4 exhaustion normally consumes 1 saturation or food point."
+            );
+            spearLungeDurabilityCost = spearInt(
+                cfg, "lungeDurabilityCost", 1, 0, Integer.MAX_VALUE,
+                "每次成功发动突进额外消耗的耐久。",
+                "Extra durability consumed by each successful Lunge."
+            );
+            spearLungeMinFoodLevel = spearInt(
+                cfg, "lungeMinFoodLevel", 7, 0, 20,
+                "非创造模式发动突进所需的最低饥饿值。20 表示全满，2 点约等于 1 个饥饿图标。",
+                "Minimum food level required for Lunge outside Creative mode. 20 is full; 2 points equal about one food icon."
+            );
+            spearLungeMaxHorizontalSpeed = spearDouble(
+                cfg, "lungeMaxHorizontalSpeed", 0.0, 0.0, 1000.0,
+                "突进后左右和前后移动速度合计最多能达到多少。0 表示不限制。",
+                "Maximum combined sideways and forward speed after Lunge. 0 means unlimited."
+            );
+            spearLungePistonCost = spearInt(
+                cfg, "lungePistonCost", 1, 0, 64,
+                "每升一级突进需要消耗多少个活塞。",
+                "Pistons consumed for each Lunge level."
+            );
+            spearLungeKnightSlimeIngotCost = spearInt(
+                cfg, "lungeKnightSlimeIngotCost", 1, 0, 64,
+                "每升一级突进需要消耗多少个骑士史莱姆锭。",
+                "Knightslime ingots consumed for each Lunge level."
+            );
+            spearLungeModifierSlotsPerLevel = spearInt(
+                cfg, "lungeModifierSlotsPerLevel", 1, 0, 10,
+                "每升一级突进占用多少个强化槽。",
+                "Modifier slots consumed for each Lunge level."
+            );
+            spearLungeDisallowRiding = spearBoolean(
+                cfg, "lungeDisallowRiding", true,
+                "设为 true 时，骑着坐骑不能发动突进。",
+                "When true, Lunge cannot activate while mounted."
+            );
+            spearLungeDisallowWater = spearBoolean(
+                cfg, "lungeDisallowWater", true,
+                "设为 true 时，身处水中不能发动突进。",
+                "When true, Lunge cannot activate while in water."
+            );
+            spearLungeDisallowElytraFlight = spearBoolean(
+                cfg, "lungeDisallowElytraFlight", true,
+                "设为 true 时，使用鞘翅飞行不能发动突进。",
+                "When true, Lunge cannot activate while flying with an Elytra."
+            );
 
             enableConstructArmorExtraModifierSlots = cfg.get(
                 Configuration.CATEGORY_GENERAL,
@@ -326,16 +814,45 @@ public class TT2Config {
                 )
             ).getDouble();
 
-            imbalanceGlowMode = cfg.get(
+            enableImbalanceStatusOutline = cfg.get(
                 Configuration.CATEGORY_GENERAL,
-                "imbalanceGlowMode",
-                0,
+                "enableImbalanceStatusOutline",
+                true,
                 desc(
-                    "失衡发光显示模式：\n0 = 仅在纯失衡免疫期发光\n1 = 仅在失衡期间发光\n2 = 失衡与失衡免疫期间都发光",
-                    "Stagger Glow Display Mode:\n0 = Glow only during pure Imbalance Immunity period (after Stagger ends)\n1 = Glow during Stagger, but not during Imbalance Immunity alone\n2 = Glow during both Stagger and Imbalance Immunity periods"
-                ),
-                0, 2
-            ).getInt();
+                    "是否为失衡和失衡免疫显示不同颜色的实体轮廓。关闭后不会显示 TT2 的状态轮廓。",
+                    "Whether to show differently colored entity outlines for Imbalance and Imbalance Immunity. Disabling this removes TT2's status outlines."
+                )
+            ).getBoolean();
+
+            imbalanceOutlineColor = parseHexColor(cfg.get(
+                Configuration.CATEGORY_GENERAL,
+                "imbalanceOutlineColor",
+                "E34A32",
+                desc(
+                    "失衡状态的轮廓颜色。填写 6 位十六进制 RGB 颜色，不要包含 #。\n默认值：E34A32",
+                    "Outline color for Imbalance. Enter a 6-digit hexadecimal RGB color without #.\nDefault: E34A32"
+                )
+            ).getString(), 0xE34A32);
+
+            imbalanceImmunityOutlineColor = parseHexColor(cfg.get(
+                Configuration.CATEGORY_GENERAL,
+                "imbalanceImmunityOutlineColor",
+                "55D9E8",
+                desc(
+                    "失衡免疫状态的轮廓颜色。填写 6 位十六进制 RGB 颜色，不要包含 #。\n默认值：55D9E8",
+                    "Outline color for Imbalance Immunity. Enter a 6-digit hexadecimal RGB color without #.\nDefault: 55D9E8"
+                )
+            ).getString(), 0x55D9E8);
+
+            imbalanceOutlineThroughWalls = cfg.get(
+                Configuration.CATEGORY_GENERAL,
+                "imbalanceOutlineThroughWalls",
+                true,
+                desc(
+                    "状态轮廓是否可以隔着方块看见。开启时与原版发光效果一致。",
+                    "Whether status outlines can be seen through blocks. Enabled matches vanilla glowing."
+                )
+            ).getBoolean();
 
             nunchakuAttackSpeed = cfg.get(
                 Configuration.CATEGORY_GENERAL,
@@ -568,6 +1085,61 @@ public class TT2Config {
                 0.0, 10.0
             ).getDouble();
 
+            craftsmanStaffMovementSpeedCoefficient = cfg.get(
+                Configuration.CATEGORY_GENERAL,
+                "craftsmanStaffMovementSpeedCoefficient",
+                0.10,
+                desc(
+                    "工匠手杖移动速度加成系数。实际加成 = 两个手柄耐久系数的平均值 x 此值。0.10 = 10%。",
+                    "Tinker's Staff movement speed coefficient. Actual bonus = average handle modifier x this value. 0.10 = 10% per modifier point."
+                ),
+                0.0, 10.0
+            ).getDouble();
+
+            craftsmanStaffCombatDamageCoefficient = cfg.get(
+                Configuration.CATEGORY_GENERAL,
+                "craftsmanStaffCombatDamageCoefficient",
+                1.0,
+                desc(
+                    "工匠手杖仅安装战斗模板时的伤害系数。\n默认值：1.0",
+                    "Damage coefficient for a Tinker's Staff with Combat but without Felling.\nDefault: 1.0"
+                ),
+                0.0, 100.0
+            ).getDouble();
+
+            craftsmanStaffFellingDamageCoefficient = cfg.get(
+                Configuration.CATEGORY_GENERAL,
+                "craftsmanStaffFellingDamageCoefficient",
+                1.2,
+                desc(
+                    "工匠手杖仅安装砍伐模板时的伤害系数。\n默认值：1.2",
+                    "Damage coefficient for a Tinker's Staff with Felling but without Combat.\nDefault: 1.2"
+                ),
+                0.0, 100.0
+            ).getDouble();
+
+            craftsmanStaffCombatFellingDamageCoefficient = cfg.get(
+                Configuration.CATEGORY_GENERAL,
+                "craftsmanStaffCombatFellingDamageCoefficient",
+                1.35,
+                desc(
+                    "工匠手杖同时安装战斗与砍伐模板时的伤害系数。\n默认值：1.35",
+                    "Damage coefficient for a Tinker's Staff with both Combat and Felling.\nDefault: 1.35"
+                ),
+                0.0, 100.0
+            ).getDouble();
+
+            craftsmanStaffInsightSpellDamageCoefficient = cfg.get(
+                Configuration.CATEGORY_GENERAL,
+                "craftsmanStaffInsightSpellDamageCoefficient",
+                1.0,
+                desc(
+                    "洞察工匠手杖施法时，将手杖当前面板伤害加入法术基础伤害的系数。新的法术基础伤害 = 法术原基础伤害 + 手杖当前面板伤害 x 此值。\n默认值：1.0",
+                    "Coefficient for adding the current displayed attack damage of an Insight Tinker's Staff to spell base damage. New spell base damage = original spell base damage + current displayed staff damage x this value.\nDefault: 1.0"
+                ),
+                0.0, 100.0
+            ).getDouble();
+
             enableDefenseDamage = cfg.get(
                 Configuration.CATEGORY_GENERAL,
                 "enableDefenseDamage",
@@ -655,7 +1227,42 @@ public class TT2Config {
                 0.0, 1.0
             ).getDouble();
         } finally {
-            if (cfg.hasChanged()) cfg.save();
+            if (removedLegacyImbalanceGlowMode || cfg.hasChanged()) cfg.save();
+        }
+    }
+
+    private static boolean spearBoolean(Configuration cfg, String key, boolean defaultValue,
+                                        String chinese, String english) {
+        return cfg.get(CATEGORY_SPEAR, key, defaultValue, desc(chinese, english)).getBoolean();
+    }
+
+    private static int spearInt(Configuration cfg, String key, int defaultValue, int minValue, int maxValue,
+                                String chinese, String english) {
+        return cfg.get(CATEGORY_SPEAR, key, defaultValue, desc(chinese, english), minValue, maxValue).getInt();
+    }
+
+    private static double spearDouble(Configuration cfg, String key, double defaultValue,
+                                      double minValue, double maxValue, String chinese, String english) {
+        return cfg.get(CATEGORY_SPEAR, key, defaultValue, desc(chinese, english), minValue, maxValue).getDouble();
+    }
+
+    private static String spearString(Configuration cfg, String key, String defaultValue,
+                                      String chinese, String english) {
+        return cfg.get(CATEGORY_SPEAR, key, defaultValue, desc(chinese, english)).getString();
+    }
+
+    private static int parseHexColor(String value, int fallback) {
+        if (value == null) return fallback;
+        String normalized = value.trim();
+        if (normalized.startsWith("#")) normalized = normalized.substring(1);
+        if (normalized.startsWith("0x") || normalized.startsWith("0X")) {
+            normalized = normalized.substring(2);
+        }
+        if (normalized.length() != 6) return fallback;
+        try {
+            return Integer.parseInt(normalized, 16) & 0xFFFFFF;
+        } catch (NumberFormatException ignored) {
+            return fallback;
         }
     }
 

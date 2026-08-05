@@ -5,7 +5,6 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
-import slimeknights.tconstruct.library.client.texture.MetalTextureTexture;
 import slimeknights.tconstruct.library.client.texture.TextureColoredTexture;
 
 import javax.imageio.ImageIO;
@@ -19,75 +18,75 @@ import java.util.function.Function;
 
 public class NewTinkerTexture {
     public static Field framesTextureData;
-    public static Field width, height;
-    public static Field iconWidth, iconHeight;
+    public static Field width;
+    public static Field height;
     public static Field animateMeta;
     public static Field backupTextureLocation;
     public static Method copyFrom;
+    public static Method getResource;
+    public static Method getInputStream;
     public static Method processData;
-    public static boolean fail_token = false;
+    private static boolean minecraftReflectionFailed;
+    private static boolean coloredTextureReflectionFailed;
+    private static boolean metalTextureReflectionFailed;
 
     static {
         try {
-            framesTextureData = TextureAtlasSprite.class.getDeclaredField("field_110976_a");
+            framesTextureData = findField(TextureAtlasSprite.class, "framesTextureData", "field_110976_a");
+            width = findField(TextureAtlasSprite.class, "width", "field_130223_c");
+            height = findField(TextureAtlasSprite.class, "height", "field_130224_d");
+            copyFrom = findMethod(TextureAtlasSprite.class, new Class<?>[] {TextureAtlasSprite.class}, "copyFrom", "func_94217_a");
+            getResource = findMethod(IResourceManager.class, new Class<?>[] {ResourceLocation.class}, "getResource", "func_110536_a");
+            getInputStream = findMethod(IResource.class, new Class<?>[0], "getInputStream", "func_110527_b");
             framesTextureData.setAccessible(true);
-            width = TextureAtlasSprite.class.getDeclaredField("field_110973_g");
             width.setAccessible(true);
-            height = TextureAtlasSprite.class.getDeclaredField("field_110983_h");
             height.setAccessible(true);
-            iconWidth = TextureAtlasSprite.class.getDeclaredField("field_130223_c");
-            iconWidth.setAccessible(true);
-            iconHeight = TextureAtlasSprite.class.getDeclaredField("field_130224_d");
-            iconHeight.setAccessible(true);
-            copyFrom = TextureAtlasSprite.class.getDeclaredMethod("func_94217_a", TextureAtlasSprite.class);
             copyFrom.setAccessible(true);
-            animateMeta = TextureAtlasSprite.class.getDeclaredField("field_110982_k");
-            animateMeta.setAccessible(true);
+            getResource.setAccessible(true);
+            getInputStream.setAccessible(true);
         } catch (NoSuchFieldException | NoSuchMethodException | SecurityException e) {
-            System.out.println("Initialize failed,Tinker Construct texture won't show correctly...");
+            System.out.println("Unable to access required Minecraft texture methods; affected custom textures will be skipped.");
             e.printStackTrace();
-            fail_token = true;
+            minecraftReflectionFailed = true;
+        }
+
+        try {
+            animateMeta = findField(TextureAtlasSprite.class, "animationMetadata", "field_110982_k");
+            animateMeta.setAccessible(true);
+        } catch (NoSuchFieldException | SecurityException e) {
+            System.out.println("Unable to access texture animation metadata; animated Tinkers textures will use static frames.");
+            e.printStackTrace();
         }
     }
 
-    @SuppressWarnings({"unused", "SameReturnValue"})
-    public static boolean load(Object texture, IResourceManager manager, ResourceLocation location,
-                               Function<ResourceLocation, TextureAtlasSprite> textureGetter) {
-        if (fail_token) return false;
-        if (backupTextureLocation == null) {
+    private static Field findField(Class<?> type, String... names) throws NoSuchFieldException {
+        for (String name : names) {
             try {
-                Class<?> clazz = Class.forName("slimeknights.tconstruct.library.client.texture.AbstractColoredTexture");
-                if (clazz.getDeclaredFields().length != 1) {
-                    System.out.println(
-                        "Class loading invalid,AbstractColoredTexture only have 1 field in source,actual " +
-                        clazz.getDeclaredFields().length + " in game"
-                    );
-                    fail_token = true;
-                    return false;
-                }
-                backupTextureLocation = clazz.getDeclaredFields()[0];
-                backupTextureLocation.setAccessible(true);
-                processData = clazz.getDeclaredMethod("processData", int[].class);
-                if (processData == null) {
-                    System.out.println(
-                        "Class loading invalid,AbstractColoredTexture haven't processData(int[]) in game."
-                    );
-                    fail_token = true;
-                    return false;
-                }
-                processData.setAccessible(true);
-            } catch (ClassNotFoundException | NoSuchMethodException | SecurityException e) {
-                System.out.println("Lazy Initialize failed,Tinker Construct texture won't show correctly...");
-                e.printStackTrace();
-                fail_token = true;
+                return type.getDeclaredField(name);
+            } catch (NoSuchFieldException ignored) {
             }
         }
+        throw new NoSuchFieldException(type.getName() + " does not contain any of " + Arrays.toString(names));
+    }
+
+    private static Method findMethod(Class<?> type, Class<?>[] parameterTypes, String... names)
+        throws NoSuchMethodException {
+        for (String name : names) {
+            try {
+                return type.getDeclaredMethod(name, parameterTypes);
+            } catch (NoSuchMethodException ignored) {
+            }
+        }
+        throw new NoSuchMethodException(type.getName() + " does not contain any of " + Arrays.toString(names));
+    }
+
+    @SuppressWarnings("unused")
+    public static boolean load(Object texture, IResourceManager manager, ResourceLocation location,
+                               Function<ResourceLocation, TextureAtlasSprite> textureGetter) {
+        if (minecraftReflectionFailed || !setTransparentTexture(texture)) return true;
+        if (!initializeColoredTextureReflection()) return false;
+
         try {
-            framesTextureData.set(texture, Lists.newArrayList());
-            width.set(texture, 0);
-            height.set(texture, 0);
-            iconWidth.set(texture, 0);
-            iconHeight.set(texture, 0);
             ResourceLocation backUp = (ResourceLocation) backupTextureLocation.get(texture);
             if (backUp == null) return false;
 
@@ -96,77 +95,184 @@ public class NewTinkerTexture {
             }
 
             TextureAtlasSprite baseTexture = textureGetter.apply(backUp);
-            if (baseTexture != null && baseTexture.getFrameCount() > 0) {
+            if (baseTexture != null && getFrameCount(baseTexture) > 0) {
                 copyFrom.invoke(texture, baseTexture);
-                @SuppressWarnings("unchecked")
-                List<int[][]> tinkerTextureData = ((List<int[][]>) framesTextureData.get(texture));
-                for (int i = 0; i < baseTexture.getFrameCount(); i++) {
-                    int[][] original = baseTexture.getFrameTextureData(i);
+                List<int[][]> tinkerTextureData = Lists.newArrayList();
+                framesTextureData.set(texture, tinkerTextureData);
+                for (int i = 0; i < getFrameCount(baseTexture); i++) {
+                    int[][] original = getFrameTextureData(baseTexture, i);
                     int[][] data = new int[original.length][];
                     data[0] = Arrays.copyOf(original[0], original[0].length);
                     processData.invoke(texture, ((Object) data[0]));
                     tinkerTextureData.add(data);
                 }
-                animateMeta.set(texture, animateMeta.get(baseTexture));
-                return false;
-            } else {
-                width.set(texture, 1);
-                height.set(texture, 1);
-                iconWidth.set(texture, 1);
-                iconHeight.set(texture, 1);
-                return false;
+                if (animateMeta != null) {
+                    animateMeta.set(texture, animateMeta.get(baseTexture));
+                }
             }
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            System.out.println("Failed");
+        } catch (Exception e) {
+            System.out.println("Failed to load Tinkers texture: " + location);
             e.printStackTrace();
-            fail_token = true;
+            if (!setTransparentTexture(texture)) return true;
+        }
+        return false;
+    }
+
+    private static boolean initializeColoredTextureReflection() {
+        if (backupTextureLocation != null && processData != null) return true;
+        if (coloredTextureReflectionFailed) return false;
+
+        try {
+            Class<?> clazz = Class.forName("slimeknights.tconstruct.library.client.texture.AbstractColoredTexture");
+            backupTextureLocation = clazz.getDeclaredField("backupTextureLocation");
+            backupTextureLocation.setAccessible(true);
+            processData = clazz.getDeclaredMethod("processData", int[].class);
+            processData.setAccessible(true);
+            return true;
+        } catch (ClassNotFoundException | NoSuchFieldException | NoSuchMethodException | SecurityException e) {
+            System.out.println("Unable to initialize Tinkers colored texture access; using a transparent fallback.");
+            e.printStackTrace();
+            coloredTextureReflectionFailed = true;
             return false;
         }
     }
 
     @SuppressWarnings("unchecked")
+    private static List<int[][]> getFrames(Object texture) throws IllegalAccessException {
+        if (texture == null) return null;
+        return (List<int[][]>) framesTextureData.get(texture);
+    }
+
+    private static int getFrameCount(Object texture) throws IllegalAccessException {
+        List<int[][]> frames = getFrames(texture);
+        return frames == null ? 0 : frames.size();
+    }
+
+    private static int[][] getFrameTextureData(Object texture, int index) throws IllegalAccessException {
+        List<int[][]> frames = getFrames(texture);
+        return frames == null || index < 0 || index >= frames.size() ? null : frames.get(index);
+    }
+
+    public static IResource openResource(IResourceManager manager, ResourceLocation location)
+        throws IllegalAccessException, InvocationTargetException {
+        if (minecraftReflectionFailed || getResource == null) {
+            return null;
+        }
+        return (IResource) getResource.invoke(manager, location);
+    }
+
+    public static java.io.InputStream openResourceStream(IResource resource)
+        throws IllegalAccessException, InvocationTargetException {
+        if (minecraftReflectionFailed || getInputStream == null) {
+            return null;
+        }
+        return (java.io.InputStream) getInputStream.invoke(resource);
+    }
+
+    public static int getSpriteWidth(TextureAtlasSprite sprite) {
+        return getSpriteDimension(sprite, width);
+    }
+
+    public static int getSpriteHeight(TextureAtlasSprite sprite) {
+        return getSpriteDimension(sprite, height);
+    }
+
+    private static int getSpriteDimension(TextureAtlasSprite sprite, Field field) {
+        if (sprite == null || minecraftReflectionFailed || field == null) {
+            return 0;
+        }
+        try {
+            return (Integer) field.get(sprite);
+        } catch (IllegalAccessException e) {
+            return 0;
+        }
+    }
+
+    public static int getSpriteFrameCount(TextureAtlasSprite sprite) {
+        try {
+            return getFrameCount(sprite);
+        } catch (IllegalAccessException e) {
+            return 0;
+        }
+    }
+
+    public static int[][] getSpriteFrame(TextureAtlasSprite sprite, int index) {
+        try {
+            return getFrameTextureData(sprite, index);
+        } catch (IllegalAccessException | IndexOutOfBoundsException e) {
+            return null;
+        }
+    }
+
+    public static boolean setSpriteFrame(TextureAtlasSprite sprite, int spriteWidth, int spriteHeight, int[] pixels) {
+        if (minecraftReflectionFailed || width == null || height == null || framesTextureData == null
+            || spriteWidth <= 0 || spriteHeight <= 0 || pixels == null
+            || pixels.length < spriteWidth * spriteHeight) {
+            return false;
+        }
+        try {
+            width.set(sprite, spriteWidth);
+            height.set(sprite, spriteHeight);
+            List<int[][]> frames = Lists.newArrayList();
+            frames.add(new int[][] {Arrays.copyOf(pixels, spriteWidth * spriteHeight)});
+            framesTextureData.set(sprite, frames);
+            return true;
+        } catch (IllegalAccessException e) {
+            return false;
+        }
+    }
+
     private static boolean loadArmorTexture(Object texture, IResourceManager manager, ResourceLocation baseLocation)
         throws IllegalAccessException, InvocationTargetException {
         ResourceLocation file = getScoutArmorSource(baseLocation);
 
-        try (IResource resource = manager.getResource(file)) {
-            BufferedImage image = ImageIO.read(resource.getInputStream());
+        try (IResource resource = (IResource) getResource.invoke(manager, file)) {
+            BufferedImage image = ImageIO.read((java.io.InputStream) getInputStream.invoke(resource));
             if (image == null) {
-                setTransparentTexture(texture);
-                return false;
+                return !setTransparentTexture(texture);
             }
 
             width.set(texture, image.getWidth());
             height.set(texture, image.getHeight());
-            iconWidth.set(texture, image.getWidth());
-            iconHeight.set(texture, image.getHeight());
 
             int[] pixels = new int[image.getWidth() * image.getHeight()];
             image.getRGB(0, 0, image.getWidth(), image.getHeight(), pixels, 0, image.getWidth());
             int[] rawPixels = Arrays.copyOf(pixels, pixels.length);
-            applyScoutArmorMask(baseLocation.getPath(), pixels, image.getWidth(), image.getHeight());
+            applyScoutArmorMask(getPath(baseLocation), pixels, image.getWidth(), image.getHeight());
             processData.invoke(texture, (Object) pixels);
-            applyScoutArmorRawPixels(baseLocation.getPath(), rawPixels, pixels, image.getWidth(), image.getHeight());
+            applyScoutArmorRawPixels(getPath(baseLocation), rawPixels, pixels, image.getWidth(), image.getHeight());
 
             int[][] frameData = new int[getMipLevelCount(image.getWidth(), image.getHeight())][];
             frameData[0] = pixels;
 
-            List<int[][]> tinkerTextureData = (List<int[][]>) framesTextureData.get(texture);
+            List<int[][]> tinkerTextureData = Lists.newArrayList();
+            framesTextureData.set(texture, tinkerTextureData);
             tinkerTextureData.add(frameData);
             return false;
         } catch (Exception e) {
             System.out.println("Failed to load armor texture directly: " + file);
             e.printStackTrace();
-            setTransparentTexture(texture);
-            return false;
+            return !setTransparentTexture(texture);
         }
     }
 
     public static ResourceLocation getScoutArmorSource(ResourceLocation location) {
-        if (isScoutArmorLayerPath(location.getPath())) {
-            return new ResourceLocation(location.getNamespace(), "textures/models/armor/scout/armor_full.png");
+        if (isScoutArmorLayerPath(getPath(location))) {
+            return new ResourceLocation(getNamespace(location), "textures/models/armor/scout/armor_full.png");
         }
-        return new ResourceLocation(location.getNamespace(), "textures/" + location.getPath() + ".png");
+        return new ResourceLocation(getNamespace(location), "textures/" + getPath(location) + ".png");
+    }
+
+    private static String getNamespace(ResourceLocation location) {
+        String value = location.toString();
+        int separator = value.indexOf(':');
+        return separator < 0 ? "minecraft" : value.substring(0, separator);
+    }
+
+    private static String getPath(ResourceLocation location) {
+        String value = location.toString();
+        int separator = value.indexOf(':');
+        return separator < 0 ? value : value.substring(separator + 1);
     }
 
     public static boolean isScoutArmorLayerPath(String path) {
@@ -228,26 +334,17 @@ public class NewTinkerTexture {
         return name.equals(prefix) || name.startsWith(prefix + "_");
     }
 
-    @SuppressWarnings("unchecked")
-    private static void setTransparentTexture(Object texture) {
+    private static boolean setTransparentTexture(Object texture) {
+        if (minecraftReflectionFailed) return false;
         try {
             width.set(texture, 1);
             height.set(texture, 1);
-            iconWidth.set(texture, 1);
-            iconHeight.set(texture, 1);
-
-            List<int[][]> textureData = (List<int[][]>) framesTextureData.get(texture);
-            if (textureData == null) {
-                textureData = Lists.newArrayList();
-                framesTextureData.set(texture, textureData);
-            } else {
-                textureData.clear();
-            }
-
-            int[][] frameData = new int[1][];
-            frameData[0] = new int[] {0};
-            textureData.add(frameData);
-        } catch (IllegalAccessException ignored) {
+            framesTextureData.set(texture, Lists.newArrayList());
+            return true;
+        } catch (IllegalAccessException e) {
+            System.out.println("Unable to install the transparent texture fallback.");
+            e.printStackTrace();
+            return false;
         }
     }
 
@@ -266,31 +363,38 @@ public class NewTinkerTexture {
 
     @SuppressWarnings({"unused"})
     public static void processData(Object texture, int[] data) {
-        if (fail_token) return;
-        if (texture2 == null || addTexture == null) {
-            try {
-                Class<?> clazz = Class.forName("slimeknights.tconstruct.library.client.texture.MetalTextureTexture");
-                texture2 = clazz.getDeclaredField("texture2");
-                texture2.setAccessible(true);
-                Class<?> texturedClazz = Class.forName("slimeknights.tconstruct.library.client.texture.TextureColoredTexture");
-                addTexture = texturedClazz.getDeclaredField("addTexture");
-                addTexture.setAccessible(true);
-            } catch (ClassNotFoundException | SecurityException | NoSuchFieldException e) {
-                System.out.println("Lazy Initialize MetalTextureTexture failed,Tinker Construct texture won't show correctly...");
-                fail_token = true;
-            }
-        }
+        if (!initializeMetalTextureReflection()) return;
         try {
             if (isScoutArmorTexture(texture)) {
                 applyScoutArmorOverlay(texture, data);
                 return;
             }
             TextureColoredTexture got = (TextureColoredTexture) texture2.get(texture);
+            if (got == null || processData == null) return;
             processData.invoke(got, (Object) data);
         } catch (IllegalAccessException | InvocationTargetException e) {
-            System.out.println("Failed");
+            System.out.println("Failed to process Tinkers metal texture overlay.");
             e.printStackTrace();
-            fail_token = true;
+        }
+    }
+
+    private static boolean initializeMetalTextureReflection() {
+        if (texture2 != null && addTexture != null) return true;
+        if (metalTextureReflectionFailed) return false;
+
+        try {
+            Class<?> clazz = Class.forName("slimeknights.tconstruct.library.client.texture.MetalTextureTexture");
+            texture2 = clazz.getDeclaredField("texture2");
+            texture2.setAccessible(true);
+            Class<?> texturedClazz = Class.forName("slimeknights.tconstruct.library.client.texture.TextureColoredTexture");
+            addTexture = texturedClazz.getDeclaredField("addTexture");
+            addTexture.setAccessible(true);
+            return true;
+        } catch (ClassNotFoundException | SecurityException | NoSuchFieldException e) {
+            System.out.println("Unable to initialize Tinkers metal texture access; skipping the additional overlay.");
+            e.printStackTrace();
+            metalTextureReflectionFailed = true;
+            return false;
         }
     }
 
@@ -301,19 +405,19 @@ public class NewTinkerTexture {
         }
 
         TextureAtlasSprite overlaySprite = (TextureAtlasSprite) addTexture.get(overlayTexture);
-        if (overlaySprite == null || overlaySprite.getFrameCount() <= 0) {
+        if (overlaySprite == null || getFrameCount(overlaySprite) <= 0) {
             return;
         }
 
-        int[][] frame = overlaySprite.getFrameTextureData(0);
+        int[][] frame = getFrameTextureData(overlaySprite, 0);
         if (frame == null || frame.length == 0 || frame[0] == null) {
             return;
         }
 
-        int baseWidth = (Integer) iconWidth.get(texture);
-        int baseHeight = (Integer) iconHeight.get(texture);
-        int overlayWidth = overlaySprite.getIconWidth();
-        int overlayHeight = overlaySprite.getIconHeight();
+        int baseWidth = (Integer) width.get(texture);
+        int baseHeight = (Integer) height.get(texture);
+        int overlayWidth = (Integer) width.get(overlaySprite);
+        int overlayHeight = (Integer) height.get(overlaySprite);
         if (baseWidth <= 0 || baseHeight <= 0 || overlayWidth <= 0 || overlayHeight <= 0) {
             return;
         }

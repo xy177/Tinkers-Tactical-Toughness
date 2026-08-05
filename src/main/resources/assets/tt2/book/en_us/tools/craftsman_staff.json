@@ -1,0 +1,14 @@
+{
+  "tool": "craftsman_staff",
+  "text": [
+    {
+      "text": "The Tinker's Staff is a tool with no basic functions. In its initial state, it can only speed up its user's movement. However, various Forging Templates can grant it new functions."
+    }
+  ],
+  "properties": [
+    "Poor initial performance",
+    "Outstanding potential",
+    "Mix and match functions to your liking",
+    "At least it does not need a Walrus Tusk"
+  ]
+}

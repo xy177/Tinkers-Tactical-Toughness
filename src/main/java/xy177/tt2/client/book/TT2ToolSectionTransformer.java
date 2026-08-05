@@ -40,6 +40,8 @@ public class TT2ToolSectionTransformer extends SectionTransformer {
         appendToolPage(section, listing, TT2Items.NUNCHAKU, "nunchaku");
         appendToolPage(section, listing, TT2Items.DOPPELHANDER, "doppelhander");
         appendToolPage(section, listing, TT2Items.MARACA, "maraca");
+        appendToolPage(section, listing, TT2Items.SPEAR, "spear");
+        appendToolPage(section, listing, TT2Items.CRAFTSMAN_STAFF, "craftsman_staff");
     }
 
     @Nullable

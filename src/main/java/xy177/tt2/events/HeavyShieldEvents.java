@@ -31,7 +31,6 @@ public class HeavyShieldEvents {
         UUID.fromString("9a1b2c3d-4e5f-6070-8091-a2b3c4d5e6f7");
 
     private final Set<UUID> pendingBlock = new HashSet<>();
-    private final Set<UUID> glowingImmunity = new HashSet<>();
 
     @SubscribeEvent
     public void onLivingAttack(LivingAttackEvent event) {
@@ -130,9 +129,7 @@ public class HeavyShieldEvents {
         EntityLivingBase entity = event.getEntityLiving();
         if (entity.world.isRemote) return;
 
-        UUID id = entity.getUniqueID();
         boolean hasImbalance = entity.isPotionActive(TT2Potions.IMBALANCE);
-        boolean hasImmunity = entity.isPotionActive(TT2Potions.IMBALANCE_IMMUNITY);
         boolean isBoss = !entity.isNonBoss();
 
         IAttributeInstance speedAttr =
@@ -147,21 +144,6 @@ public class HeavyShieldEvents {
             } else if ((!hasImbalance || isBoss) && hasSpeedMod) {
                 speedAttr.removeModifier(IMBALANCE_SPEED_UUID);
             }
-        }
-
-        boolean shouldGlow;
-        switch (xy177.tt2.config.TT2Config.imbalanceGlowMode) {
-            case 1:  shouldGlow = hasImbalance; break;
-            case 2:  shouldGlow = hasImbalance || hasImmunity; break;
-            default: shouldGlow = hasImmunity && !hasImbalance; break;
-        }
-        boolean wasImmunity = glowingImmunity.contains(id);
-        if (shouldGlow && !wasImmunity) {
-            glowingImmunity.add(id);
-            entity.setGlowing(true);
-        } else if (!shouldGlow && wasImmunity) {
-            glowingImmunity.remove(id);
-            entity.setGlowing(false);
         }
     }
 
@@ -203,7 +185,6 @@ public class HeavyShieldEvents {
     public void onPlayerLogout(PlayerLoggedOutEvent event) {
         UUID id = event.player.getUniqueID();
         pendingBlock.remove(id);
-        glowingImmunity.remove(id);
         IAttributeInstance speedAttr =
             event.player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED);
         if (speedAttr != null && speedAttr.getModifier(BLOCKING_SPEED_UUID) != null) {

@@ -1,0 +1,64 @@
+{
+  "item.spear.attack": {
+    "subtitle": "subtitles.item.spear.attack",
+    "sounds": [
+      "tt2:item/spear/attack1",
+      "tt2:item/spear/attack2",
+      "tt2:item/spear/attack3"
+    ]
+  },
+  "item.spear.hit": {
+    "subtitle": "subtitles.item.spear.hit",
+    "sounds": [
+      "tt2:item/spear/hit1",
+      "tt2:item/spear/hit2",
+      "tt2:item/spear/hit3"
+    ]
+  },
+  "item.spear.use": {
+    "subtitle": "subtitles.item.spear.use",
+    "sounds": [
+      "tt2:item/spear/use"
+    ]
+  },
+  "item.spear.lunge_1": {
+    "subtitle": "subtitles.item.spear.lunge",
+    "sounds": [
+      "tt2:item/spear/lunge1"
+    ]
+  },
+  "item.spear.lunge_2": {
+    "subtitle": "subtitles.item.spear.lunge",
+    "sounds": [
+      "tt2:item/spear/lunge2"
+    ]
+  },
+  "item.spear.lunge_3": {
+    "subtitle": "subtitles.item.spear.lunge",
+    "sounds": [
+      "tt2:item/spear/lunge3"
+    ]
+  },
+  "item.spear_wood.attack": {
+    "subtitle": "subtitles.item.spear_wood.attack",
+    "sounds": [
+      "tt2:item/spear/wood/attack1",
+      "tt2:item/spear/wood/attack2",
+      "tt2:item/spear/wood/attack3"
+    ]
+  },
+  "item.spear_wood.hit": {
+    "subtitle": "subtitles.item.spear_wood.hit",
+    "sounds": [
+      "tt2:item/spear/wood/hit1",
+      "tt2:item/spear/wood/hit2",
+      "tt2:item/spear/wood/hit3"
+    ]
+  },
+  "item.spear_wood.use": {
+    "subtitle": "subtitles.item.spear_wood.use",
+    "sounds": [
+      "tt2:item/spear/wood/use"
+    ]
+  }
+}

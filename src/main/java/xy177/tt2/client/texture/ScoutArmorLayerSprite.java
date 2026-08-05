@@ -65,6 +65,5 @@ public class ScoutArmorLayerSprite extends TextureAtlasSprite {
         setIconWidth(1);
         setIconHeight(1);
         framesTextureData = Lists.newArrayList();
-        framesTextureData.add(new int[][] {new int[] {0}});
     }
 }

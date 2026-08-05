@@ -53,7 +53,7 @@ public class TinkerNunchaku extends SwordCore {
                 @SideOnly(Side.CLIENT)
                 public float apply(ItemStack stack, @Nullable World worldIn,
                                    @Nullable EntityLivingBase entityIn) {
-                    if (entityIn instanceof EntityPlayer) {
+                    if (entityIn instanceof EntityPlayer && stack == entityIn.getHeldItemMainhand()) {
                         NBTTagCompound nbt = entityIn.getEntityData();
                         if (nbt.getBoolean(KEY_SPINNING)) return 1.0F;
                     }

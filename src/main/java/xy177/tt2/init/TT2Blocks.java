@@ -17,6 +17,8 @@ import xy177.tt2.tile.TileModifierWorktable;
 public final class TT2Blocks {
 
     public static final int GUI_MODIFIER_WORKTABLE = 1;
+    public static final int GUI_CRAFTSMAN_STAFF_ALYZER = 2;
+    public static final int GUI_CRAFTSMAN_STAFF_AE_TOOL = 3;
     public static BlockModifierWorktable MODIFIER_WORKTABLE;
 
     private TT2Blocks() {

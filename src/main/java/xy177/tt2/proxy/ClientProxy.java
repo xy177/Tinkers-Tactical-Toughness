@@ -5,11 +5,15 @@ import c4.conarm.lib.book.ArmoryBook;
 import c4.conarm.lib.client.ArmorBuildGuiInfo;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.Loader;
 import slimeknights.mantle.client.book.BookLoader;
 import slimeknights.tconstruct.library.TinkerRegistryClient;
 import slimeknights.tconstruct.library.book.TinkerBook;
@@ -17,19 +21,50 @@ import slimeknights.tconstruct.library.client.CustomTextureCreator;
 import slimeknights.tconstruct.library.client.ToolBuildGuiInfo;
 import xy177.tt2.TT2;
 import xy177.tt2.client.ConstructArmorSetBonusClientEvents;
+import xy177.tt2.client.CraftsmanStaffNatureClientEvents;
 import xy177.tt2.client.NunchakuClientHandler;
 import xy177.tt2.client.ScoutArmorClientEvents;
+import xy177.tt2.client.SpearClientEvents;
+import xy177.tt2.client.SpearAnimationController;
+import xy177.tt2.client.SpearRenderContext;
 import xy177.tt2.client.MaracaClientEvents;
+import xy177.tt2.client.ThaumcraftFixKeybindCompat;
 import xy177.tt2.client.book.TT2ArmorySectionTransformer;
+import xy177.tt2.client.book.TT2ModifierSectionTransformer;
 import xy177.tt2.client.book.TT2ToolSectionTransformer;
 import xy177.tt2.client.book.content.TT2ContentScoutArmor;
 import xy177.tt2.client.texture.ScoutArmorLayerSprite;
+import xy177.tt2.client.texture.ScoutTmtArmorTextures;
 import xy177.tt2.config.TT2Config;
+import xy177.tt2.compat.CraftsmanStaffCompat;
 import xy177.tt2.events.HeavyShieldClientEvents;
 import xy177.tt2.init.TT2Items;
 import xy177.tt2.item.ItemModifierCrystal;
 
 public class ClientProxy extends CommonProxy {
+
+    @Override
+    public void requestSpearStab(EntityPlayer player, boolean cooldownAlreadyReset) {
+        SpearAnimationController.requestLocalStab(player, cooldownAlreadyReset);
+    }
+
+    @Override
+    public void handleSpearAnimation(int entityId, EnumHand hand, int requestSequence,
+                                     int animationSequence, int durationTicks) {
+        SpearAnimationController.acceptServerAnimation(
+            entityId, hand, requestSequence, animationSequence, durationTicks
+        );
+    }
+
+    @Override
+    public boolean isRenderingSpearInHand() {
+        return SpearRenderContext.isActive();
+    }
+
+    @Override
+    public void showCraftsmanStaffNatureMode(int mode) {
+        CraftsmanStaffNatureClientEvents.showMode(mode);
+    }
 
     @Override
     public void preInit(FMLPreInitializationEvent event) {
@@ -60,8 +95,18 @@ public class ClientProxy extends CommonProxy {
             MinecraftForge.EVENT_BUS.register(new MaracaClientEvents());
         }
 
+        if (TT2Config.enableSpear && TT2Items.SPEAR != null) {
+            MinecraftForge.EVENT_BUS.register(new SpearClientEvents());
+        }
+
+        if (TT2Items.CRAFTSMAN_STAFF != null && Loader.isModLoaded("botania")) {
+            MinecraftForge.EVENT_BUS.register(new CraftsmanStaffNatureClientEvents());
+        }
         if (TT2Config.enableScoutArmor) {
             MinecraftForge.EVENT_BUS.register(new ScoutArmorClientEvents());
+            if (Loader.isModLoaded("toomanytinkers")) {
+                ScoutTmtArmorTextures.INSTANCE.registerReloadListener();
+            }
             if (TT2Items.SCOUT_HELMET != null) {
                 ArmoryRegistryClient.addArmorBuilding(ArmorBuildGuiInfo.default3Part(TT2Items.SCOUT_HELMET));
             }
@@ -82,11 +127,17 @@ public class ClientProxy extends CommonProxy {
             );
         }
         TinkerBook.INSTANCE.addTransformer(new TT2ToolSectionTransformer());
+        TinkerBook.INSTANCE.addTransformer(new TT2ModifierSectionTransformer());
     }
 
     @Override
     public void postInit(FMLPostInitializationEvent event) {
         super.postInit(event);
+
+        if (TT2Items.CRAFTSMAN_STAFF != null && Loader.isModLoaded("thaumcraftfix")
+            && CraftsmanStaffCompat.isInsightAvailable()) {
+            ThaumcraftFixKeybindCompat.install();
+        }
 
         if (TT2Config.enableSwiftShield && TT2Items.SWIFT_SHIELD != null) {
             ToolBuildGuiInfo info = new ToolBuildGuiInfo(TT2Items.SWIFT_SHIELD);
@@ -118,6 +169,22 @@ public class ClientProxy extends CommonProxy {
 
         if (TT2Config.enableMaraca && TT2Items.MARACA != null) {
             ToolBuildGuiInfo info = new ToolBuildGuiInfo(TT2Items.MARACA);
+            info.addSlotPosition(53, 22);
+            info.addSlotPosition(33, 42);
+            info.addSlotPosition(13, 62);
+            TinkerRegistryClient.addToolBuilding(info);
+        }
+
+        if (TT2Config.enableSpear && TT2Items.SPEAR != null) {
+            ToolBuildGuiInfo info = new ToolBuildGuiInfo(TT2Items.SPEAR);
+            info.addSlotPosition(53, 22);
+            info.addSlotPosition(33, 42);
+            info.addSlotPosition(13, 62);
+            TinkerRegistryClient.addToolBuilding(info);
+        }
+
+        if (TT2Items.CRAFTSMAN_STAFF != null) {
+            ToolBuildGuiInfo info = new ToolBuildGuiInfo(TT2Items.CRAFTSMAN_STAFF);
             info.addSlotPosition(53, 22);
             info.addSlotPosition(33, 42);
             info.addSlotPosition(13, 62);
