@@ -155,6 +155,7 @@ public class TT2Config {
     public static boolean spearLungeDisallowElytraFlight = true;
 
     public static boolean enableDefenseDamage = true;
+    public static boolean enableFarmersDelightBeheadingDrops = true;
     public static double defenseDamageBossHitPercent = 0.075;
     public static double defenseDamageNormalHitPercent = 0.0375;
     public static double defenseDamageMinimumEfficiency = 0.25;
@@ -1147,6 +1148,16 @@ public class TT2Config {
                 desc(
                     "是否启用防御损伤系统。受到非玩家生物伤害会逐渐降低护甲、护甲韧性与部分受击防御词条效果。",
                     "Whether to enable Defense Damage. Damage from non-player living entities gradually weakens armor, toughness, and some defensive on-hit armor traits."
+                )
+            ).getBoolean();
+
+            enableFarmersDelightBeheadingDrops = cfg.get(
+                Configuration.CATEGORY_GENERAL,
+                "enableFarmersDelightBeheadingDrops",
+                true,
+                desc(
+                    "是否让带有斩首 trait 的匠魂工具触发农夫乐事的猎杀掉落规则。仅在安装农夫乐事 Legacy 时生效。",
+                    "Whether Tinkers' Construct tools with the Beheading trait should trigger Farmer's Delight hunting drops. Only works when Farmer's Delight Legacy is installed."
                 )
             ).getBoolean();
 

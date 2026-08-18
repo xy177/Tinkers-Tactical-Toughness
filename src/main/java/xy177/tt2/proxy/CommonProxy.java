@@ -4,6 +4,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
@@ -12,6 +13,7 @@ import c4.conarm.common.ConstructsRegistry;
 import slimeknights.tconstruct.library.TinkerRegistry;
 import xy177.tt2.config.TT2Config;
 import xy177.tt2.compat.CraftsmanStaffCompat;
+import xy177.tt2.compat.FarmersDelightBeheadingCompat;
 import xy177.tt2.events.ConstructArmorExtraModifierEvents;
 import xy177.tt2.events.ConstructArmorSetBonusEvents;
 import xy177.tt2.events.DefenseDamageEvents;
@@ -61,6 +63,9 @@ public class CommonProxy {
         if (CraftsmanStaffCompat.isNatureAvailable() || CraftsmanStaffCompat.isInsightAvailable()
             || CraftsmanStaffCompat.isResearchAvailable()) {
             MinecraftForge.EVENT_BUS.register(CraftsmanStaffCompat.EVENTS);
+        }
+        if (TT2Config.enableFarmersDelightBeheadingDrops && Loader.isModLoaded("farmersdelight")) {
+            FarmersDelightBeheadingCompat.register();
         }
         List<ModCraftsmanStaffTemplate> staffTemplateList = new ArrayList<>();
         addCraftsmanStaffTemplate(staffTemplateList, ModCraftsmanStaffTemplate.Type.FARMING,
