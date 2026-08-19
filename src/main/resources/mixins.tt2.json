@@ -1,0 +1,11 @@
+{
+  "required": false,
+  "minVersion": "0.8",
+  "package": "xy177.tt2.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "ToolHelperMixin"
+  ],
+  "client": [],
+  "server": []
+}

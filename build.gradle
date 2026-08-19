@@ -12,7 +12,7 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = '1.9.4'
+version = '1.9.5'
 group = "xy177.tt2"
 archivesBaseName = "TinkersTacticalToughness"
 
@@ -42,6 +42,7 @@ dependencies {
     implementation files('libs/AntiqueArmory-1.12.2-1.2.7.jar')
     compileOnly files('dev/forestry-reference.jar')
     compileOnly files('dev/jei-reference.jar')
+    compileOnly files('dev/mixinbooter-reference.jar')
 }
 
 sourceSets {
@@ -67,7 +68,9 @@ jar {
                 'FMLAT': 'tt2_at.cfg',
                 //ASM加载在这！
                 'FMLCorePlugin': "xy177.tt2.risky.asm.ASMLoader",
-                'FMLCorePluginContainsFMLMod': 'true'
+                'FMLCorePluginContainsFMLMod': 'true',
+                //MixinBooter存在时加载可选兼容层；未安装时该属性会被忽略。
+                'MixinConfigs': 'mixins.tt2.json'
         ])
     }
 }

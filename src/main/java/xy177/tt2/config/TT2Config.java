@@ -156,6 +156,7 @@ public class TT2Config {
 
     public static boolean enableDefenseDamage = true;
     public static boolean enableFarmersDelightBeheadingDrops = true;
+    public static boolean enableCriticalHitEventSync = true;
     public static double defenseDamageBossHitPercent = 0.075;
     public static double defenseDamageNormalHitPercent = 0.0375;
     public static double defenseDamageMinimumEfficiency = 0.25;
@@ -1158,6 +1159,16 @@ public class TT2Config {
                 desc(
                     "是否让带有斩首 trait 的匠魂工具触发农夫乐事的猎杀掉落规则。仅在安装农夫乐事 Legacy 时生效。",
                     "Whether Tinkers' Construct tools with the Beheading trait should trigger Farmer's Delight hunting drops. Only works when Farmer's Delight Legacy is installed."
+                )
+            ).getBoolean();
+
+            enableCriticalHitEventSync = cfg.get(
+                Configuration.CATEGORY_GENERAL,
+                "enableCriticalHitEventSync",
+                true,
+                desc(
+                    "是否让匠魂工具的暴击触发 Forge 原版暴击事件，使其他模组的暴击事件加成能够生效。不会重复计算匠魂与原版的基础暴击倍率。仅在安装 MixinBooter 时生效。",
+                    "Whether critical hits from Tinkers' Construct tools should fire Forge's vanilla critical-hit event so other mods can apply their event-based bonuses. The base Tinkers and vanilla critical multipliers are not applied twice. Only works when MixinBooter is installed."
                 )
             ).getBoolean();
 
