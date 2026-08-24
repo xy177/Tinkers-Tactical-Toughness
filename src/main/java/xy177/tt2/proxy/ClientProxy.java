@@ -22,6 +22,7 @@ import slimeknights.tconstruct.library.client.ToolBuildGuiInfo;
 import xy177.tt2.TT2;
 import xy177.tt2.client.ConstructArmorSetBonusClientEvents;
 import xy177.tt2.client.CraftsmanStaffNatureClientEvents;
+import xy177.tt2.client.CraftsmanStaffResearchClientEvents;
 import xy177.tt2.client.NunchakuClientHandler;
 import xy177.tt2.client.ScoutArmorClientEvents;
 import xy177.tt2.client.SpearClientEvents;
@@ -101,6 +102,9 @@ public class ClientProxy extends CommonProxy {
 
         if (TT2Items.CRAFTSMAN_STAFF != null && Loader.isModLoaded("botania")) {
             MinecraftForge.EVENT_BUS.register(new CraftsmanStaffNatureClientEvents());
+        }
+        if (TT2Items.CRAFTSMAN_STAFF != null && CraftsmanStaffCompat.isResearchAvailable()) {
+            MinecraftForge.EVENT_BUS.register(new CraftsmanStaffResearchClientEvents());
         }
         if (TT2Config.enableScoutArmor) {
             MinecraftForge.EVENT_BUS.register(new ScoutArmorClientEvents());

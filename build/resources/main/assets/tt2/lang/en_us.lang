@@ -87,6 +87,10 @@ tt2.maraca.melody.guard=Defense Up
 tt2.maraca.melody.stability=Poise
 tt2.maraca.melody.party=Party Time!
 tt2.maraca.melody.extend=Extended Existing Melodies
+message.tt2.craftsman_staff.research_tool.selected=Current wrench function: %s
+message.tt2.craftsman_staff.research_tool.automatic=Automatic
+tooltip.tt2.craftsman_staff.research_tool=Current wrench function: %s
+tooltip.tt2.craftsman_staff.research_tool.switch=Sneak and scroll the mouse wheel to switch wrench functions
 
 # Combo trait
 modifier.nunchaku_combo.name=Combo

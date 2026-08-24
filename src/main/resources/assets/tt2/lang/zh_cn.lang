@@ -87,6 +87,10 @@ tt2.maraca.melody.guard=防御力提升
 tt2.maraca.melody.stability=硬直无效
 tt2.maraca.melody.party=狂欢派对！
 tt2.maraca.melody.extend=延长全旋律效果
+message.tt2.craftsman_staff.research_tool.selected=当前扳手功能：%s
+message.tt2.craftsman_staff.research_tool.automatic=自动
+tooltip.tt2.craftsman_staff.research_tool=当前扳手功能：%s
+tooltip.tt2.craftsman_staff.research_tool.switch=潜行时滚动鼠标滚轮可切换扳手功能
 
 # 连击词条
 modifier.nunchaku_combo.name=连击

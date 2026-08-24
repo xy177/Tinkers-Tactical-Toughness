@@ -24,6 +24,8 @@ public final class TT2Network {
         CHANNEL.registerMessage(PacketMaracaUiState.Handler.class, PacketMaracaUiState.class, nextPacketId++, Side.SERVER);
         CHANNEL.registerMessage(PacketSpearStab.Handler.class, PacketSpearStab.class, nextPacketId++, Side.SERVER);
         CHANNEL.registerMessage(PacketSpearAnimation.Handler.class, PacketSpearAnimation.class, nextPacketId++, Side.CLIENT);
+        CHANNEL.registerMessage(PacketCraftsmanStaffResearchTool.Handler.class,
+            PacketCraftsmanStaffResearchTool.class, nextPacketId++, Side.SERVER);
     }
 }
 

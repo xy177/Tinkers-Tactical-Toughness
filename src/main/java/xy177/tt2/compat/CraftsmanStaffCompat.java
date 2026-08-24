@@ -88,6 +88,7 @@ public final class CraftsmanStaffCompat {
     private static final String TAG_EXTERNAL_CASTER_MOST = "TT2ExternalCasterMost";
     private static final String TAG_EXTERNAL_CASTER_LEAST = "TT2ExternalCasterLeast";
     private static final String TAG_NATURE_MODE = "TT2NatureMode";
+    private static final String TAG_RESEARCH_TOOL = "TT2ResearchTool";
     private static final String ITEM_BOTANIA_WAND = "botania:twigwand";
     private static final String ITEM_BOTANIA_GUN = "botania:managun";
     private static final String ITEM_THAUMCRAFT_GAUNTLET = "thaumcraft:caster_basic";
@@ -206,6 +207,102 @@ public final class CraftsmanStaffCompat {
             }
         }
         return ordered;
+    }
+
+    public static List<ResearchTool> getResearchToolsForUse(ItemStack staff, World world,
+                                                             @Nullable BlockPos pos) {
+        ResearchTool selected = getSelectedResearchTool(staff);
+        return selected == null ? getResearchToolsForTarget(world, pos)
+            : Collections.singletonList(selected);
+    }
+
+    public static List<ResearchTool> getResearchToolsForUse(ItemStack staff) {
+        ResearchTool selected = getSelectedResearchTool(staff);
+        return selected == null ? getResearchTools() : Collections.singletonList(selected);
+    }
+
+    @Nullable
+    public static String getSelectedResearchToolId(ItemStack staff) {
+        if (staff == null || staff.isEmpty() || !staff.hasTagCompound()) {
+            return null;
+        }
+        String itemId = staff.getTagCompound().getString(TAG_RESEARCH_TOOL);
+        return findResearchTool(itemId) == null ? null : itemId;
+    }
+
+    @Nullable
+    public static ResearchTool getSelectedResearchTool(ItemStack staff) {
+        return findResearchTool(getSelectedResearchToolId(staff));
+    }
+
+    public static boolean setSelectedResearchTool(ItemStack staff, @Nullable String itemId) {
+        if (staff == null || staff.isEmpty()) {
+            return false;
+        }
+        if (itemId == null || itemId.isEmpty()) {
+            if (staff.hasTagCompound()) {
+                staff.getTagCompound().removeTag(TAG_RESEARCH_TOOL);
+            }
+            return true;
+        }
+        if (findResearchTool(itemId) == null) {
+            return false;
+        }
+        if (!staff.hasTagCompound()) {
+            staff.setTagCompound(new NBTTagCompound());
+        }
+        staff.getTagCompound().setString(TAG_RESEARCH_TOOL, itemId);
+        return true;
+    }
+
+    @Nullable
+    public static String cycleSelectedResearchTool(ItemStack staff, int step) {
+        List<ResearchTool> tools = getResearchTools();
+        if (tools.isEmpty()) {
+            setSelectedResearchTool(staff, null);
+            return null;
+        }
+
+        String selectedId = getSelectedResearchToolId(staff);
+        int current = 0;
+        for (int i = 0; i < tools.size(); i++) {
+            if (tools.get(i).itemId.equals(selectedId)) {
+                current = i + 1;
+                break;
+            }
+        }
+        int next = Math.floorMod(current + step, tools.size() + 1);
+        String nextId = next == 0 ? null : tools.get(next - 1).itemId;
+        setSelectedResearchTool(staff, nextId);
+        return nextId;
+    }
+
+    public static String getResearchToolSelectionName(ItemStack staff) {
+        ResearchTool tool = getSelectedResearchTool(staff);
+        if (tool == null) {
+            return net.minecraft.util.text.translation.I18n.translateToLocal(
+                "message.tt2.craftsman_staff.research_tool.automatic");
+        }
+        Item item = getItem(tool.itemId);
+        String itemName = item == null ? tool.fallbackToolName : new ItemStack(item).getDisplayName();
+        String modName = net.minecraft.util.text.translation.I18n.translateToLocal(tool.modNameKey);
+        if (modName.equals(tool.modNameKey)) {
+            modName = tool.modId;
+        }
+        return modName + ": " + itemName;
+    }
+
+    @Nullable
+    private static ResearchTool findResearchTool(@Nullable String itemId) {
+        if (itemId == null || itemId.isEmpty()) {
+            return null;
+        }
+        for (ResearchTool tool : getResearchTools()) {
+            if (tool.itemId.equals(itemId)) {
+                return tool;
+            }
+        }
+        return null;
     }
 
     private static boolean ownsTarget(String modId, String namespace) {

@@ -22,6 +22,7 @@ import net.minecraft.item.EnumAction;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -117,7 +118,17 @@ public class CraftsmanStaff extends TinkerToolCore {
         if (detailed) {
             info.addModifierInfo();
         }
-        return info.getTooltip();
+        List<String> tooltip = info.getTooltip();
+        if (has(stack, ModCraftsmanStaffTemplate.Type.RESEARCH)) {
+            tooltip.add(TextFormatting.DARK_GRAY
+                + net.minecraft.util.text.translation.I18n.translateToLocalFormatted(
+                    "tooltip.tt2.craftsman_staff.research_tool",
+                    CraftsmanStaffCompat.getResearchToolSelectionName(stack)));
+            tooltip.add(TextFormatting.DARK_GRAY
+                + net.minecraft.util.text.translation.I18n.translateToLocal(
+                    "tooltip.tt2.craftsman_staff.research_tool.switch"));
+        }
+        return tooltip;
     }
 
     @Nonnull
@@ -248,7 +259,7 @@ public class CraftsmanStaff extends TinkerToolCore {
         }
         if (has(stack, ModCraftsmanStaffTemplate.Type.RESEARCH)) {
             for (CraftsmanStaffCompat.ResearchTool tool
-                : CraftsmanStaffCompat.getResearchToolsForTarget(world, pos)) {
+                : CraftsmanStaffCompat.getResearchToolsForUse(stack, world, pos)) {
                 EnumActionResult result = CraftsmanStaffCompat.onItemUseFirst(player, access, stack, hand, pos, facing,
                     hitX, hitY, hitZ, "research_" + tool.itemId, CraftsmanStaffCompat.getItem(tool.itemId));
                 if (result != EnumActionResult.PASS) {
@@ -331,7 +342,7 @@ public class CraftsmanStaff extends TinkerToolCore {
         }
         if (has(stack, ModCraftsmanStaffTemplate.Type.RESEARCH)) {
             for (CraftsmanStaffCompat.ResearchTool tool
-                : CraftsmanStaffCompat.getResearchToolsForTarget(world, pos)) {
+                : CraftsmanStaffCompat.getResearchToolsForUse(stack, world, pos)) {
                 EnumActionResult result = CraftsmanStaffCompat.onItemUse(player, access, stack, hand, pos, facing,
                     hitX, hitY, hitZ, "research_" + tool.itemId, CraftsmanStaffCompat.getItem(tool.itemId));
                 if (result != EnumActionResult.PASS) {
@@ -392,7 +403,7 @@ public class CraftsmanStaff extends TinkerToolCore {
             }
         }
         if (has(stack, ModCraftsmanStaffTemplate.Type.RESEARCH)) {
-            for (CraftsmanStaffCompat.ResearchTool tool : CraftsmanStaffCompat.getResearchTools()) {
+            for (CraftsmanStaffCompat.ResearchTool tool : CraftsmanStaffCompat.getResearchToolsForUse(stack)) {
                 net.minecraft.util.ActionResult<ItemStack> result = CraftsmanStaffCompat.onItemRightClick(
                     player, access, stack, hand, "research_" + tool.itemId,
                     CraftsmanStaffCompat.getItem(tool.itemId));
