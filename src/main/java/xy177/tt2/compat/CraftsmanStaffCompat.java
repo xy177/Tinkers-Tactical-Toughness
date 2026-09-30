@@ -1,5 +1,7 @@
 package xy177.tt2.compat;
 
+import xy177.tt2.api.consumable.ConsumableUses;
+
 import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -932,7 +934,7 @@ public final class CraftsmanStaffCompat {
         float finalDamage = baseDamage;
 
         beginExternalTraitCallbacks();
-        try {
+        try (ConsumableUses.Action ignored = ConsumableUses.beginAttack(cast.staff)) {
             for (ITrait trait : traits) {
                 finalDamage = trait.damage(cast.staff, cast.caster, livingTarget,
                     baseDamage, finalDamage, false);
@@ -976,14 +978,16 @@ public final class CraftsmanStaffCompat {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onLivingHurt(LivingHurtEvent event) {
         synchronized (PENDING_NATURE_HITS) {
-            PENDING_NATURE_HITS.remove(event.getEntityLiving());
+            PendingNatureHit old = PENDING_NATURE_HITS.remove(event.getEntityLiving());
+            if (old != null) old.action.close();
         }
         if (isApplyingExternalTraitCallbacks()) {
             return;
         }
 
         synchronized (PENDING_THAUMCRAFT_HITS) {
-            PENDING_THAUMCRAFT_HITS.remove(event.getEntityLiving());
+            PendingThaumcraftHit old = PENDING_THAUMCRAFT_HITS.remove(event.getEntityLiving());
+            if (old != null) old.action.close();
         }
 
         ActiveFocusCast focus = resolveThaumcraftFocusCast(event.getEntityLiving(), event.getSource());
@@ -995,18 +999,21 @@ public final class CraftsmanStaffCompat {
 
         NatureBurstContext nature = findNatureBurst(event.getEntityLiving(), event.getSource());
         if (nature != null) {
-            float baseDamage = event.getAmount() * getExternalDamageMultiplier(nature.staff);
-            float finalDamage = baseDamage;
-            for (ITrait trait : getTraits(nature.staff)) {
-                finalDamage = trait.damage(nature.staff, nature.caster, event.getEntityLiving(),
-                    baseDamage, finalDamage, false);
-            }
-            event.setAmount(finalDamage);
-            synchronized (PENDING_NATURE_HITS) {
-                PENDING_NATURE_HITS.put(event.getEntityLiving(),
-                    new PendingNatureHit(nature.staff, nature.caster, finalDamage,
-                        event.getEntityLiving().world.getTotalWorldTime()));
-            }
+            ConsumableUses.Action action = ConsumableUses.beginAttack(nature.staff);
+            try {
+                float baseDamage = event.getAmount() * getExternalDamageMultiplier(nature.staff);
+                float finalDamage = baseDamage;
+                for (ITrait trait : getTraits(nature.staff)) {
+                    finalDamage = trait.damage(nature.staff, nature.caster, event.getEntityLiving(),
+                        baseDamage, finalDamage, false);
+                }
+                event.setAmount(finalDamage);
+                synchronized (PENDING_NATURE_HITS) {
+                    PENDING_NATURE_HITS.put(event.getEntityLiving(),
+                        new PendingNatureHit(nature.staff, nature.caster, finalDamage,
+                            event.getEntityLiving().world.getTotalWorldTime(), action.suspend()));
+                }
+            } catch (RuntimeException | Error failure) { action.close(); throw failure; }
             return;
         }
 
@@ -1041,10 +1048,12 @@ public final class CraftsmanStaffCompat {
     public void onLivingDamage(LivingDamageEvent event) {
         if (isApplyingExternalTraitCallbacks()) {
             synchronized (PENDING_NATURE_HITS) {
-                PENDING_NATURE_HITS.remove(event.getEntityLiving());
+                PendingNatureHit old = PENDING_NATURE_HITS.remove(event.getEntityLiving());
+                if (old != null) old.action.close();
             }
             synchronized (PENDING_THAUMCRAFT_HITS) {
-                PENDING_THAUMCRAFT_HITS.remove(event.getEntityLiving());
+                PendingThaumcraftHit old = PENDING_THAUMCRAFT_HITS.remove(event.getEntityLiving());
+                if (old != null) old.action.close();
             }
             return;
         }
@@ -1056,7 +1065,7 @@ public final class CraftsmanStaffCompat {
         if (thaumcraft != null
             && thaumcraft.tick == event.getEntityLiving().world.getTotalWorldTime()) {
             beginExternalTraitCallbacks();
-            try {
+            try (ConsumableUses.Action ignored = thaumcraft.action.resume()) {
                 for (ITrait trait : getTraits(thaumcraft.staff)) {
                     trait.afterHit(thaumcraft.staff, thaumcraft.caster, event.getEntityLiving(),
                         event.getAmount(), false, true);
@@ -1064,23 +1073,38 @@ public final class CraftsmanStaffCompat {
             } finally {
                 endExternalTraitCallbacks();
             }
-        }
+        } else if (thaumcraft != null) thaumcraft.action.close();
 
         PendingNatureHit pending;
         synchronized (PENDING_NATURE_HITS) {
             pending = PENDING_NATURE_HITS.remove(event.getEntityLiving());
         }
         if (pending == null || pending.tick != event.getEntityLiving().world.getTotalWorldTime()) {
+            if (pending != null) pending.action.close();
             return;
         }
         beginExternalTraitCallbacks();
-        try {
+        try (ConsumableUses.Action ignored = pending.action.resume()) {
             for (ITrait trait : getTraits(pending.staff)) {
                 trait.onHit(pending.staff, pending.caster, event.getEntityLiving(), pending.damage, false);
                 trait.afterHit(pending.staff, pending.caster, event.getEntityLiving(), pending.damage, false, true);
             }
         } finally {
             endExternalTraitCallbacks();
+        }
+    }
+
+    @SubscribeEvent
+    public void finishCancelledConsumableHits(net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent event) {
+        if (event.phase != net.minecraftforge.fml.common.gameevent.TickEvent.Phase.END) return;
+        // Cancelled/fully absorbed hurt events never reach LivingDamageEvent.
+        synchronized (PENDING_NATURE_HITS) {
+            for (PendingNatureHit hit : PENDING_NATURE_HITS.values()) hit.action.close();
+            PENDING_NATURE_HITS.clear();
+        }
+        synchronized (PENDING_THAUMCRAFT_HITS) {
+            for (PendingThaumcraftHit hit : PENDING_THAUMCRAFT_HITS.values()) hit.action.close();
+            PENDING_THAUMCRAFT_HITS.clear();
         }
     }
 
@@ -1107,6 +1131,7 @@ public final class CraftsmanStaffCompat {
                 }
                 event.getEntity().getEntityData().setFloat(
                     TAG_EXTERNAL_DAMAGE_MULTIPLIER, getExternalDamageMultiplier(staff));
+                ConsumableUses.prepareSnapshot(staff);
                 NBTTagCompound snapshot = new NBTTagCompound();
                 staff.copy().writeToNBT(snapshot);
                 event.getEntity().getEntityData().setTag(TAG_EXTERNAL_STAFF, snapshot);
@@ -1183,6 +1208,7 @@ public final class CraftsmanStaffCompat {
 
     private static void applyExternalDamageTraits(LivingHurtEvent event, ItemStack staff,
                                                    EntityLivingBase caster) {
+        ConsumableUses.Action action = ConsumableUses.beginAttack(staff);
         float baseDamage = getThaumcraftTraitBaseDamage(event.getAmount(), staff, caster);
         float finalDamage = baseDamage;
         List<ITrait> traits = getTraits(staff);
@@ -1202,13 +1228,16 @@ public final class CraftsmanStaffCompat {
                 }
             }
             event.setAmount(finalDamage);
+        } catch (RuntimeException | Error failure) {
+            action.close();
+            throw failure;
         } finally {
             endExternalTraitCallbacks();
         }
         synchronized (PENDING_THAUMCRAFT_HITS) {
             PENDING_THAUMCRAFT_HITS.put(event.getEntityLiving(),
                 new PendingThaumcraftHit(staff, caster,
-                    event.getEntityLiving().world.getTotalWorldTime()));
+                    event.getEntityLiving().world.getTotalWorldTime(), action.suspend()));
         }
     }
 
@@ -1217,7 +1246,7 @@ public final class CraftsmanStaffCompat {
         private final EntityPlayer caster;
 
         private NatureBurstContext(ItemStack staff, EntityPlayer caster) {
-            this.staff = staff;
+            this.staff = ConsumableUses.resolveLiveTool(staff, caster);
             this.caster = caster;
         }
     }
@@ -1227,12 +1256,14 @@ public final class CraftsmanStaffCompat {
         private final EntityPlayer caster;
         private final float damage;
         private final long tick;
+        private final ConsumableUses.Action action;
 
-        private PendingNatureHit(ItemStack staff, EntityPlayer caster, float damage, long tick) {
+        private PendingNatureHit(ItemStack staff, EntityPlayer caster, float damage, long tick, ConsumableUses.Action action) {
             this.staff = staff;
             this.caster = caster;
             this.damage = damage;
             this.tick = tick;
+            this.action = action;
         }
     }
 
@@ -1240,11 +1271,13 @@ public final class CraftsmanStaffCompat {
         private final ItemStack staff;
         private final EntityLivingBase caster;
         private final long tick;
+        private final ConsumableUses.Action action;
 
-        private PendingThaumcraftHit(ItemStack staff, EntityLivingBase caster, long tick) {
-            this.staff = staff.copy();
+        private PendingThaumcraftHit(ItemStack staff, EntityLivingBase caster, long tick, ConsumableUses.Action action) {
+            this.staff = ConsumableUses.hasConsumables(staff) ? staff : staff.copy();
             this.caster = caster;
             this.tick = tick;
+            this.action = action;
         }
     }
 
@@ -1580,6 +1613,7 @@ public final class CraftsmanStaffCompat {
         private final UUID casterId;
 
         private StoredFocusCast(ItemStack staff, @Nullable UUID casterId) {
+            ConsumableUses.prepareSnapshot(staff);
             this.staff = staff.copy();
             this.casterId = casterId;
         }
@@ -1590,7 +1624,7 @@ public final class CraftsmanStaffCompat {
         private final EntityLivingBase caster;
 
         private ActiveFocusCast(ItemStack staff, EntityLivingBase caster) {
-            this.staff = staff;
+            this.staff = ConsumableUses.resolveLiveTool(staff, caster);
             this.caster = caster;
         }
     }

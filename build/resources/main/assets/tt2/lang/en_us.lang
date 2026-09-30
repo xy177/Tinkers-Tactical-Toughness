@@ -133,6 +133,7 @@ gui.tt2.modifier_worktable.panel.select_action=Select an adjustment strategy to 
 gui.tt2.modifier_worktable.modifiers=Modifiers
 gui.tt2.modifier_worktable.back=Back
 gui.tt2.modifier_worktable.no_targets=No available targets for this adjustment.
+gui.tt2.modifier_worktable.extraction_blocked=This modifier cannot be extracted
 gui.tt2.modifier_worktable.action.remove.title=Modifier Removal
 gui.tt2.modifier_worktable.action.remove.info=Use a venom bucket, venom bottle, or wet sponge to remove the selected modifier and refund its slot cost.
 gui.tt2.modifier_worktable.action.hide.title=Hide Modifier

@@ -157,6 +157,7 @@ public class TT2Config {
     public static boolean enableDefenseDamage = true;
     public static boolean enableFarmersDelightBeheadingDrops = true;
     public static boolean enableCriticalHitEventSync = true;
+    public static String[] modifierWorktableExtractionBlacklist = new String[0];
     public static double defenseDamageBossHitPercent = 0.075;
     public static double defenseDamageNormalHitPercent = 0.0375;
     public static double defenseDamageMinimumEfficiency = 0.25;
@@ -1171,6 +1172,16 @@ public class TT2Config {
                     "Whether critical hits from Tinkers' Construct tools should fire Forge's vanilla critical-hit event so other mods can apply their event-based bonuses. The base Tinkers and vanilla critical multipliers are not applied twice. Only works when MixinBooter is installed."
                 )
             ).getBoolean();
+
+            modifierWorktableExtractionBlacklist = cfg.get(
+                Configuration.CATEGORY_GENERAL,
+                "modifierWorktableExtractionBlacklist",
+                new String[0],
+                desc(
+                    "强化调配台的提取黑名单。每行填写一个词条或强化的内部 ID（不是显示名称），区分大小写，忽略首尾空格，例如 diamond。默认留空，不限制提取。\n适用于强化、刻印、磨砺/抛光和经验提取；刻印包含黑名单词条时也无法提取。不影响移除、隐藏或排序。修改后重启生效，多人游戏以服务器配置为准。",
+                    "Modifier Worktable extraction blacklist. Enter one internal trait or modifier ID per line (not its display name), case-sensitive with surrounding whitespace ignored, e.g. diamond. Empty by default, allowing all otherwise valid extractions.\nApplies to modifier, embossment, sharpening/polishing, and experience extraction; embossments containing a listed trait are also blocked. Does not affect removal, hiding, or sorting. Requires restart; the server config is authoritative in multiplayer."
+                )
+            ).getStringList();
 
             defenseDamageBossHitPercent = cfg.get(
                 Configuration.CATEGORY_GENERAL,

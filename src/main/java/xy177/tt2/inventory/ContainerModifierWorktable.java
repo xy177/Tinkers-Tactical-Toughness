@@ -21,9 +21,11 @@ public class ContainerModifierWorktable extends ContainerMultiModule<TileModifie
     private int selectedIndex;
     private int selectedAction;
     private boolean selectingModifier;
+    private boolean extractionBlocked;
     private int cachedSelection = -1;
     private int cachedAction = -1;
     private int cachedMode = -1;
+    private int cachedExtractionBlocked = -1;
     private String lastSignature = "";
     private final List<String> modifiers = new ArrayList<>();
     private final List<Integer> actions = new ArrayList<>();
@@ -75,6 +77,7 @@ public class ContainerModifierWorktable extends ContainerMultiModule<TileModifie
     }
 
     public void setSelectedIndex(int selectedIndex) {
+        extractionBlocked = false;
         this.selectedIndex = selectedIndex;
         refresh();
     }
@@ -91,8 +94,13 @@ public class ContainerModifierWorktable extends ContainerMultiModule<TileModifie
         return selectedAction;
     }
 
+    public boolean isExtractionBlocked() {
+        return selectingModifier && extractionBlocked;
+    }
+
     @Override
     public boolean enchantItem(EntityPlayer player, int id) {
+        extractionBlocked = false;
         if (selectingModifier) {
             if (id == 0) {
                 selectingModifier = false;
@@ -115,26 +123,34 @@ public class ContainerModifierWorktable extends ContainerMultiModule<TileModifie
         listener.sendWindowProperty(this, 0, selectedIndex);
         listener.sendWindowProperty(this, 1, selectedAction);
         listener.sendWindowProperty(this, 2, selectingModifier ? 1 : 0);
+        listener.sendWindowProperty(this, 3, extractionBlocked ? 1 : 0);
     }
 
     @Override
     public void detectAndSendChanges() {
         refresh();
         super.detectAndSendChanges();
-        if (cachedSelection != selectedIndex || cachedAction != selectedAction || cachedMode != (selectingModifier ? 1 : 0)) {
+        if (cachedSelection != selectedIndex || cachedAction != selectedAction || cachedMode != (selectingModifier ? 1 : 0)
+            || cachedExtractionBlocked != (extractionBlocked ? 1 : 0)) {
             cachedSelection = selectedIndex;
             cachedAction = selectedAction;
             cachedMode = selectingModifier ? 1 : 0;
+            cachedExtractionBlocked = extractionBlocked ? 1 : 0;
             for (IContainerListener listener : listeners) {
                 listener.sendWindowProperty(this, 0, selectedIndex);
                 listener.sendWindowProperty(this, 1, selectedAction);
                 listener.sendWindowProperty(this, 2, cachedMode);
+                listener.sendWindowProperty(this, 3, cachedExtractionBlocked);
             }
         }
     }
 
     @Override
     public void updateProgressBar(int id, int data) {
+        if (id == 3) {
+            extractionBlocked = data != 0;
+            return;
+        }
         if (id == 0) {
             selectedIndex = data;
         } else if (id == 1) {
@@ -218,6 +234,12 @@ public class ContainerModifierWorktable extends ContainerMultiModule<TileModifie
         if (selectedIndex >= modifiers.size()) {
             selectedIndex = Math.max(0, modifiers.size() - 1);
         }
+        // Use the server-synced output rather than applying the client's blacklist to it.
+        if (tile.getWorld() != null && tile.getWorld().isRemote) {
+            return;
+        }
+        extractionBlocked = selectingModifier
+            && ModifierWorktableLogic.isExtractionBlocked(selectedModifier(), selectedAction);
         String signature = selectedIndex + "|"
             + selectedAction + "|"
             + selectingModifier + "|"

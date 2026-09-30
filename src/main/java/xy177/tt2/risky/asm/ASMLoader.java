@@ -18,7 +18,7 @@ public class ASMLoader implements IFMLLoadingPlugin, IFMLCallHook {
 
     @Override
     public String[] getASMTransformerClass() {
-        return new String[]{"xy177.tt2.risky.asm.ASMTinkerAnimate"};
+        return new String[]{"xy177.tt2.risky.asm.ASMTinkerAnimate", "xy177.tt2.risky.asm.ConsumableTransformer"};
     }
 
     @Override

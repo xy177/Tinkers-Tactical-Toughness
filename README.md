@@ -1,5 +1,11 @@
 （tips：如果该有人搬运到MC百科的话，其中文名应为“工匠御械/御严抵阵”（非二选一，这八个字是完整的模组名称），其英文缩写应为“TTT”或“TT²”）
 
+开发者与整合包文档：[消耗次数词条 Java / CrT API](docs/consumable-uses.md)。
+
+强化调配台的提取黑名单位于 `config/tt2.cfg` 的 `general.modifierWorktableExtractionBlacklist`。每行填写一个内部词条/强化 ID（例如 `diamond`），不是显示名称，默认留空。黑名单同时阻止包含该词条的刻印提取，不影响移除、隐藏和排序；修改后重启生效，多人游戏以服务器配置为准。
+
+The Modifier Worktable extraction blacklist is `general.modifierWorktableExtractionBlacklist` in `config/tt2.cfg`. Enter one internal trait/modifier ID per line (e.g. `diamond`), not a display name; the default is empty. Embossments containing a listed trait are also blocked. Removal, hiding, and sorting are unaffected. Restart after editing; multiplayer uses the server's config.
+
 该模组目的是添加部分出于奇思妙想的匠魂工具，目前计划与防御或近距离交战有关，未来可能会拓展到其他方向。
 
 这个模组诞生的原因是我本想制作工匠防御的fork版本，但是因为工匠防御的体量过大并且存在部分未完成物品导致超出了我的能力范围，因此我将fork计划取消掉转而决定制作一个全新的mod来继承原来的想法计划，它的初始内容仍旧是与防御方面相关的但是会选用一些不同的思路——希望一切顺利。

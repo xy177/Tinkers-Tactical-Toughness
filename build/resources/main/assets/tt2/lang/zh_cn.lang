@@ -133,6 +133,7 @@ gui.tt2.modifier_worktable.panel.select_action=选中一项调整策略以查看
 gui.tt2.modifier_worktable.modifiers=强化
 gui.tt2.modifier_worktable.back=返回上一级
 gui.tt2.modifier_worktable.no_targets=该项目暂无可用于调整的目标
+gui.tt2.modifier_worktable.extraction_blocked=此强化无法提取
 gui.tt2.modifier_worktable.action.remove.title=强化移除
 gui.tt2.modifier_worktable.action.remove.info=使用毒液桶、毒液瓶或湿海绵移除所选强化，并返还该强化消耗的强化槽位。
 gui.tt2.modifier_worktable.action.hide.title=隐藏强化

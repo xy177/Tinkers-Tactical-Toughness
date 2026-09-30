@@ -28,10 +28,12 @@ import slimeknights.tconstruct.library.utils.TinkerUtil;
 import slimeknights.tconstruct.shared.TinkerCommons;
 import slimeknights.tconstruct.shared.TinkerFluids;
 import xy177.tt2.init.TT2Items;
+import xy177.tt2.config.TT2Config;
 import xy177.tt2.item.ItemExperienceBottle;
 import xy177.tt2.item.ItemModifierCrystal;
 import xy177.tt2.modifiers.ModExperienceTransfer;
 import xy177.tt2.tile.TileModifierWorktable;
+import xy177.tt2.api.consumable.ConsumableUses;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -86,7 +88,8 @@ public final class ModifierWorktableLogic {
         List<String> ids = new ArrayList<>();
         for (String id : getSelectableModifiers(tool)) {
             int action = selectedAction == 0 ? action(tile, tool, id) : selectedAction;
-            if (action != 0 && canApplyAction(tool, id, action)) {
+            // Keep button indices stable even when client/server blacklists differ.
+            if (action != 0 && isActionCandidate(tool, id, action)) {
                 ids.add(id);
             }
         }
@@ -160,7 +163,7 @@ public final class ModifierWorktableLogic {
         } else if (selectedAction != 0) {
             return ItemStack.EMPTY;
         }
-        if (action == 0) {
+        if (action == 0 || (isExtraction(action) && !canApplyAction(tool, modifier, action))) {
             return ItemStack.EMPTY;
         }
         if (isExtraction(action)) {
@@ -172,7 +175,26 @@ public final class ModifierWorktableLogic {
             boolean emboss = action == TYPE_EXTRACT_EMBOSS;
             int value = action == TYPE_EXTRACT ? extractValue(tool, modifier) : 1;
             int maxValue = action == TYPE_EXTRACT ? extractMaxValue(tool, modifier) : 0;
-            return ItemModifierCrystal.withModifier(modifier, 1, data.color, emboss, value, maxValue);
+            ConsumableUses.Definition consumable = ConsumableUses.definition(modifier);
+            if (consumable != null && consumable.kind == ConsumableUses.Kind.MODIFIER) {
+                NBTTagCompound tag = TinkerUtil.getModifierTag(tool, modifier);
+                value = tag.hasKey("current") ? tag.getInteger("current") : Math.max(1, data.level);
+                maxValue = value;
+            }
+            ItemStack crystal = ItemModifierCrystal.withModifier(modifier, 1, data.color, emboss, value, maxValue);
+            Set<String> transferred = new HashSet<>();
+            transferred.add(modifier);
+            if (emboss) transferred.addAll(embossTraitIds(modifier));
+            NBTTagCompound uses = ConsumableUses.snapshot(tool, transferred);
+            if (emboss) {
+                Set<String> removed = removableEmbossTraits(tool, modifier);
+                // A trait still supplied by another part stays on the source; don't copy its pool.
+                for (String id : uses.getKeySet()) {
+                    if (!removed.contains(id)) uses.getCompoundTag(id).setInteger(ConsumableUses.REMAINING, 0);
+                }
+            }
+            if (!uses.getKeySet().isEmpty()) crystal.getTagCompound().setTag(ConsumableUses.TAG, uses);
+            return crystal;
         }
         ItemStack result = tool.copy();
         result.setCount(1);
@@ -266,6 +288,15 @@ public final class ModifierWorktableLogic {
     }
 
     public static boolean canApplyAction(ItemStack tool, String modifier, int action) {
+        return isActionCandidate(tool, modifier, action)
+            && !isExtractionBlocked(modifier, action);
+    }
+
+    public static boolean isExtractionBlocked(String modifier, int action) {
+        return !modifier.isEmpty() && isExtraction(action) && isExtractionBlacklisted(modifier);
+    }
+
+    private static boolean isActionCandidate(ItemStack tool, String modifier, int action) {
         if (!isTinkerItem(tool) || !hasModifier(tool, modifier)) {
             return false;
         }
@@ -291,7 +322,16 @@ public final class ModifierWorktableLogic {
     }
 
     private static void removeModifier(ItemStack tool, String modifier) {
+        ConsumableUses.Definition consumable = ConsumableUses.definition(modifier);
+        if (consumable != null && consumable.kind == ConsumableUses.Kind.MODIFIER) {
+            ConsumableUses.removeModifier(tool, modifier);
+            return;
+        }
         Set<String> linkedTraits = isEmboss(modifier) ? removableEmbossTraits(tool, modifier) : new HashSet<>();
+        for (String id : linkedTraits) {
+            ConsumableUses.Definition def = ConsumableUses.definition(id);
+            if (def != null) ConsumableUses.state(tool.getTagCompound(), def).setInteger(ConsumableUses.REMAINING, 0);
+        }
         Set<String> removeIds = new HashSet<>();
         removeIds.add(modifier);
         removeIds.addAll(linkedTraits);
@@ -327,7 +367,10 @@ public final class ModifierWorktableLogic {
         TagUtil.setTraitsTagList(tool, newTraits);
 
         clearHidden(tool, modifier);
-        returnSlot(tool);
+        if (hasConsumableEmboss(modifier)) {
+            returnSlots(tool, ConsumableUses.paidSlots(tool, modifier));
+            tool.getTagCompound().getCompoundTag(ConsumableUses.TAG).removeTag(modifier);
+        } else returnSlot(tool);
         rebuild(tool);
         if (isEmboss(modifier)) {
             purgeIds(tool, removeIds);
@@ -388,6 +431,14 @@ public final class ModifierWorktableLogic {
             }
         }
         return traits;
+    }
+
+    public static boolean hasConsumableEmboss(String modifier) {
+        if (!isEmboss(modifier)) return false;
+        for (String trait : embossTraitIds(modifier)) {
+            if (ConsumableUses.definition(trait) != null) return true;
+        }
+        return false;
     }
 
     private static Object fieldValue(Object object, String name) {
@@ -485,7 +536,8 @@ public final class ModifierWorktableLogic {
         } else if (action == TYPE_SORT) {
             sortVisualModifier(tool, modifier);
         } else if (action == TYPE_EXTRACT) {
-            reduceModifier(tool, modifier, extractValue(tool, modifier));
+            if (ConsumableUses.definition(modifier) != null) removeModifier(tool, modifier);
+            else reduceModifier(tool, modifier, extractValue(tool, modifier));
         } else if (action == TYPE_EXTRACT_EXPERIENCE) {
             ModExperienceTransfer.extractExperience(tool, modifier, ModExperienceTransfer.totalExperience(tool, modifier));
         } else {
@@ -495,6 +547,23 @@ public final class ModifierWorktableLogic {
 
     private static boolean isExtraction(int action) {
         return action == TYPE_EXTRACT || action == TYPE_EXTRACT_EXPERIENCE || action == TYPE_EXTRACT_FORTIFY || action == TYPE_EXTRACT_EMBOSS;
+    }
+
+    private static boolean isExtractionBlacklisted(String modifier) {
+        if (TT2Config.modifierWorktableExtractionBlacklist.length == 0) {
+            return false;
+        }
+        Set<String> ids = new HashSet<>();
+        ids.add(modifier);
+        if (isEmboss(modifier)) {
+            ids.addAll(embossTraitIds(modifier));
+        }
+        for (String blocked : TT2Config.modifierWorktableExtractionBlacklist) {
+            if (blocked != null && ids.contains(blocked.trim())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static void sortVisualModifier(ItemStack tool, String modifier) {
@@ -910,12 +979,16 @@ public final class ModifierWorktableLogic {
     }
 
     private static boolean isAdjustableModifier(String modifier) {
+        ConsumableUses.Definition def = ConsumableUses.definition(modifier);
+        if (def != null && def.kind == ConsumableUses.Kind.MATERIAL) return false;
         return !isLevelingModifier(modifier)
             && !isEmboss(modifier)
             && (isExtractableModifierCandidate(getModifier(modifier)) || isFortifyOrPolished(modifier));
     }
 
     private static boolean isRegularExtractable(String modifier) {
+        ConsumableUses.Definition def = ConsumableUses.definition(modifier);
+        if (def != null && def.kind == ConsumableUses.Kind.MATERIAL) return false;
         IModifier mod = getModifier(modifier);
         return isCrystalExtractable(mod) && !isFortifyOrPolished(modifier) && !isEmboss(modifier);
     }

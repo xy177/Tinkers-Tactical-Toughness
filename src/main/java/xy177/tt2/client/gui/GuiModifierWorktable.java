@@ -208,24 +208,23 @@ public class GuiModifierWorktable extends GuiMultiModule {
     }
 
     private void updateModifierInfo() {
-        if (container.getSelectedAction() == ModifierWorktableLogic.TYPE_EXTRACT_EXPERIENCE) {
-            modifierInfo.setText(new String[0]);
-            return;
+        List<String> lines = new ArrayList<>();
+        List<String> tooltip = new ArrayList<>();
+        if (container.isExtractionBlocked()) {
+            String warning = TextFormatting.RED + I18n.format("gui.tt2.modifier_worktable.extraction_blocked");
+            lines.add(warning);
+            tooltip.add(warning);
         }
         IModifier modifier = ModifierWorktableLogic.getModifier(container.getSelectedModifier());
-        if (modifier == null) {
-            modifierInfo.setText(new String[0]);
-            return;
+        if (container.getSelectedAction() != ModifierWorktableLogic.TYPE_EXTRACT_EXPERIENCE && modifier != null) {
+            NBTTagCompound tag = TinkerUtil.getModifierTag(tile.getStackInSlot(TileModifierWorktable.SLOT_TOOL),
+                container.getSelectedModifier());
+            ModifierNBT data = ModifierNBT.readTag(tag);
+            lines.add(data.getColorString() + modifier.getTooltip(tag, true));
+            tooltip.add(data.getColorString() + modifier.getLocalizedDesc());
+            tooltip.addAll(modifier.getExtraInfo(tile.getStackInSlot(TileModifierWorktable.SLOT_TOOL),
+                tag));
         }
-        NBTTagCompound tag = TinkerUtil.getModifierTag(tile.getStackInSlot(TileModifierWorktable.SLOT_TOOL),
-            container.getSelectedModifier());
-        ModifierNBT data = ModifierNBT.readTag(tag);
-        List<String> lines = new ArrayList<>();
-        lines.add(data.getColorString() + modifier.getTooltip(tag, true));
-        List<String> tooltip = new ArrayList<>();
-        tooltip.add(data.getColorString() + modifier.getLocalizedDesc());
-        tooltip.addAll(modifier.getExtraInfo(tile.getStackInSlot(TileModifierWorktable.SLOT_TOOL),
-            tag));
         modifierInfo.setText(lines, tooltip);
     }
 
